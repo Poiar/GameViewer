@@ -23,6 +23,7 @@ import {
   d_heroesOfMightAndMagic4_windsOfWar,
   DLC
 } from "./dlc";
+import {GameIteration} from "./gameIteration";
 
 export enum systemEnum {
   windows,
@@ -150,7 +151,7 @@ export class GameVersion {
   readonly id: number;
   readonly game: Game;
   readonly version: versionEnum;
-  // readonly collections: Collection[];
+  readonly gameIterations: GameIteration[];
   readonly playableOn: systemEnum[];
   readonly controllerSupport: unsureBoolEnum;
   readonly localCoOp: unsureBoolEnum;
@@ -163,7 +164,7 @@ export class GameVersion {
     this.playableOn = playableOn;
     this.controllerSupport = controllerSupport;
     this.localCoOp = localCoOp;
-    // this.collections = [];
+    this.gameIterations = [];
     this.versionYear = versionYear;
   }
 
@@ -172,9 +173,9 @@ export class GameVersion {
     return playableOnTitles.join(', ');
   }
 
-  // addCollection(collection: Collection) {
-  //   this.collections.push(collection);
-  // }
+  addGameIteration(gameIteration: GameIteration) {
+    this.gameIterations.push(gameIteration);
+  }
 
   getVersion(): string{
     return versionEnum.toString(this.version);;
@@ -220,7 +221,7 @@ const gameVersions: GameVersion[] = [
 ];
 
 gameVersions.forEach(gameVersion => {
-  gameVersion.game.addGameVersionAndDlc(gameVersion);
+  gameVersion.game.addGameVersion(gameVersion);
   // gameVersion.dlcs?.forEach(dlc => dlc.addGameVersion(gameVersion));
 });
 

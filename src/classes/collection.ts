@@ -15,6 +15,13 @@ import {GameIteration, gi_PC_warcraft3,
   gi_PS3_metalGearSolid4,
   gi_PC_heroesOfMightAndMagic3_2,} from "./gameIteration";
 import {unsureBoolEnum} from "./gameVersion";
+import {
+  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
+  d_heroesOfMightAndMagic3_armageddonsBlade,
+  d_heroesOfMightAndMagic3_theShadowOfDeath,
+  d_heroesOfMightAndMagic4_theGatheringStorm,
+  d_heroesOfMightAndMagic4_windsOfWar
+} from "./dlc";
 
 enum mediaEnum {
   na,
@@ -88,10 +95,14 @@ export class Collection {
 
 const c_PC_none_warcraft3 = new Collection(1, "Warcraft 3: Reign of Chaos", [gi_PC_warcraft3], mediaEnum.cd, providerEnum.physical, unsureBoolEnum.true, 2002);
 const c_PC_none_HeroesOfMightAndMagicCollection =  new Collection(2, "Heroes of Might and Magic Collection", [gi_PC_heroesOfMightAndMagic, gi_PC_heroesOfMightAndMagic2, gi_PC_heroesOfMightAndMagic3_1, gi_PC_heroesOfMightAndMagic4], mediaEnum.dvd, providerEnum.physical, unsureBoolEnum.true, 2004);
+gi_PC_heroesOfMightAndMagic2.addDlcs([d_heroesOfMightAndMagic2_thePriceOfLoyalty]);
+gi_PC_heroesOfMightAndMagic3_1.addDlcs([d_heroesOfMightAndMagic3_armageddonsBlade, d_heroesOfMightAndMagic3_theShadowOfDeath]);
+gi_PC_heroesOfMightAndMagic4.addDlcs([d_heroesOfMightAndMagic4_windsOfWar, d_heroesOfMightAndMagic4_theGatheringStorm]);
 const c_PC_steam_TheOrangeBox =  new Collection(3, "The Orange Box", [gi_PC_halfLife2, gi_PC_halfLife2Episode1, gi_PC_halfLife2Episode2, gi_PC_portal], mediaEnum.digital, providerEnum.steam, unsureBoolEnum.na, 2007);
 const c_3DS_none_MetalGearSolid3SnakeEater3D =  new Collection(4, "Metal Gear Solid: Snake Eater 3D", [gi_3DS_metalGearSolid3], mediaEnum.na, providerEnum.physical, unsureBoolEnum.true, 2012);
 const c_PS3_none_MetalGearSolidTheLegacyCollection =  new Collection(5, "Metal Gear Solid: The Legacy Collection", [gi_PS3_metalGearSolid2, gi_PS3_metalGearSolid3, gi_PS3_metalGearSolid4], mediaEnum.na, providerEnum.physical, unsureBoolEnum.true, 2011);
 const c_PC_gog_HeroesOfMightAndMagic3Complete =  new Collection(6, "Heroes of Might and Magic 3: Complete", [gi_PC_heroesOfMightAndMagic3_2], mediaEnum.na, providerEnum.gog, unsureBoolEnum.maybe, undefined);
+gi_PC_heroesOfMightAndMagic3_2.addDlcs([d_heroesOfMightAndMagic3_armageddonsBlade, d_heroesOfMightAndMagic3_theShadowOfDeath]);
 
 export const collections: Collection[] = [
   c_PC_none_warcraft3,

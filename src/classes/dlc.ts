@@ -1,18 +1,18 @@
 import {
   Content
 } from "./content";
-import {GameIteration} from "./gameVersion";
+import {GameIteration} from "./gameIteration";
 
 export class DLC extends Content{
-  readonly gameVersions: GameIteration[];
+  readonly gameIterations: GameIteration[];
 
   constructor(id: number, title: string, firstRelease: number) {
     super(id, title, firstRelease);
-    this.gameVersions = [];
+    this.gameIterations = [];
   }
 
   addGameIteration(gameIteration: GameIteration) {
-    this.gameVersions.push(gameIteration);
+    this.gameIterations.push(gameIteration);
   }
 
   // addGame(game: Game) {

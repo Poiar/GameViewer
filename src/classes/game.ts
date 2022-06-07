@@ -1,7 +1,7 @@
 import {
   Content
 } from "./content";
-import {GameIteration} from "./gameVersion";
+import {GameVersion} from "./gameVersion";
 import {
   Series,
   s_none,
@@ -28,7 +28,7 @@ enum genreEnum {
 
 export class Game extends Content{
   readonly genre: genreEnum;
-  readonly gameVersions: GameIteration[];
+  readonly gameVersions: GameVersion[];
   readonly series: Series;
   readonly dlcs: DLC[]
 
@@ -40,9 +40,9 @@ export class Game extends Content{
     this.dlcs = [];
   }
 
-  addGameVersionAndDlc(gameVersion: GameIteration) {
+  addGameVersion(gameVersion: GameVersion) {
     this.gameVersions.push(gameVersion);
-    gameVersion.dlcs?.forEach(dlc => this.dlcs?.push(dlc));
+    // gameVersion.dlcs?.forEach(dlc => this.dlcs?.push(dlc));
   }
 }
 
