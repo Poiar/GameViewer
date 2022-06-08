@@ -2,9 +2,11 @@ import {
   Content
 } from "./content";
 import {GameIteration} from "./gameIteration";
+import {Game} from "./game";
 
 export class DLC extends Content{
   readonly gameIterations: GameIteration[];
+  game?: Game;
 
   constructor(id: number, title: string, firstRelease: number) {
     super(id, title, firstRelease);
@@ -15,9 +17,9 @@ export class DLC extends Content{
     this.gameIterations.push(gameIteration);
   }
 
-  // addGame(game: Game) {
-  //   this.games.push(game);
-  // }
+/*  addGame(game: Game) {
+    this.game = game;
+  }*/
 }
 
 export const d_heroesOfMightAndMagic2_thePriceOfLoyalty = new DLC(1, "The Price of Loyalty", 1997);

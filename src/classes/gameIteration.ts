@@ -34,6 +34,10 @@ export class GameIteration {
     this.collections.push(collection);
   }
 
+  getVersion(): string{
+    return this.gameVersion.getVersion();
+  }
+
 }
 
 export const gi_PC_warcraft3 = new GameIteration(1, gv_PC_warcraft3);

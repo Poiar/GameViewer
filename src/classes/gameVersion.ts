@@ -201,7 +201,7 @@ export const gv_PC_teamFortress2 = new GameVersion(10, g_teamFortress2, versionE
 export const gv_3DS_metalGearSolid3 = new GameVersion(11, g_MetalGearSolid3, versionEnum.downsample, [systemEnum._3ds], unsureBoolEnum.na, unsureBoolEnum.false, undefined, 2012);
 export const gv_PS3_metalGearSolid2 = new GameVersion(12, g_MetalGearSolid2, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, undefined, 2011);
 export const gv_PS3_metalGearSolid3 = new GameVersion(13, g_MetalGearSolid3, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, undefined, 2011);
-export const gv_PS3_metalGearSolid4 = new GameVersion(14, g_MetalGearSolid4, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, undefined,2008);
+export const gv_PS3_metalGearSolid4 = new GameVersion(14, g_MetalGearSolid4, versionEnum.original, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, undefined,2008);
 
 const gameVersions: GameVersion[] = [
   gv_PC_warcraft3,
