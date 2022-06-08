@@ -52,15 +52,13 @@ export class Game extends Content{
 
   addGameVersion(gameVersion: GameVersion) {
     this.gameVersions.push(gameVersion);
-    // gameVersion.dlcs?.forEach(dlc => this.dlcs?.push(dlc));
   }
 }
 
 export const g_warcraft3 = new Game(1, "Warcraft 3: Reign of Chaos", genreEnum.rts, 2002, s_warcraft, []);
 export const g_heroesOfMightAndMagic = new Game(2, "Heroes of Might and Magic", genreEnum.rpg, 1995, s_heroesOfMightAndMagic, []);
 export const g_heroesOfMightAndMagic2 = new Game(3, "Heroes of Might and Magic 2", genreEnum.rpg, 1996, s_heroesOfMightAndMagic, [d_heroesOfMightAndMagic2_thePriceOfLoyalty]);
-export const g_heroesOfMightAndMagic3 = new Game(4, "Heroes of Might and Magic 3", genreEnum.rpg, 1999, s_heroesOfMightAndMagic, [  d_heroesOfMightAndMagic3_armageddonsBlade,
-  d_heroesOfMightAndMagic3_theShadowOfDeath,]);
+export const g_heroesOfMightAndMagic3 = new Game(4, "Heroes of Might and Magic 3", genreEnum.rpg, 1999, s_heroesOfMightAndMagic, [d_heroesOfMightAndMagic3_armageddonsBlade, d_heroesOfMightAndMagic3_theShadowOfDeath]);
 export const g_heroesOfMightAndMagic4 = new Game(5, "Heroes of Might and Magic 4", genreEnum.rpg, 2002, s_heroesOfMightAndMagic, [d_heroesOfMightAndMagic4_windsOfWar, d_heroesOfMightAndMagic4_theGatheringStorm]);
 export const g_halfLife2 = new Game(6, "Half-Life 2", genreEnum.fps, 2004, s_halfLife, []);
 export const g_halfLife2Episode1 = new Game(7, "Half-Life 2: Episode One", genreEnum.fps, 2006, s_halfLife, []);
@@ -91,7 +89,6 @@ export const games: Game[] = [
 
 //Populate series
 games.forEach(game => game.series.addGame(game));
-//games.forEach(game => game.dlcs?.forEach(dlc => dlc.addGame(game)));
 
 export function getAllGames():Game[] {
   return games;

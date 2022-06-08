@@ -16,10 +16,6 @@ export class DLC extends Content{
   addGameIteration(gameIteration: GameIteration) {
     this.gameIterations.push(gameIteration);
   }
-
-/*  addGame(game: Game) {
-    this.game = game;
-  }*/
 }
 
 export const d_heroesOfMightAndMagic2_thePriceOfLoyalty = new DLC(1, "The Price of Loyalty", 1997);

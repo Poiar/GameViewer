@@ -101,15 +101,15 @@ export class Collection {
     this.blackLabel = blackLabel;
     this.releaseYear = releaseYear;
 
-    if (dlcs) {
-      dlcs?.forEach((dlc) => {
-        this.gameIterations.forEach((gameIteration) => {
-          if (gameIteration.gameVersion.game === dlc.game) {
-            gameIteration.dlcs.push(dlc);
-          }
-        });
+    // if (dlcs) {
+    dlcs?.forEach((dlc) => {
+      this.gameIterations.forEach((gameIteration) => {
+        if (gameIteration.gameVersion.game === dlc.game) {
+          gameIteration.dlcs.push(dlc);
+        }
       });
-    }
+    });
+    // }
   }
 
   getPlayableOnTitles(): string {
@@ -140,7 +140,8 @@ const c_PC_none_warcraft3 = new Collection(
   mediaEnum.cd,
   providerEnum.physical,
   unsureBoolEnum.true,
-  2002
+  2002,
+  undefined,
 );
 const c_PC_none_HeroesOfMightAndMagicCollection = new Collection(
   2,
@@ -172,6 +173,7 @@ const c_PC_steam_TheOrangeBox = new Collection(
     gi_PC_halfLife2Episode1,
     gi_PC_halfLife2Episode2,
     gi_PC_portal,
+    gi_PC_teamFortress2,
   ],
   mediaEnum.digital,
   providerEnum.steam,
@@ -220,8 +222,8 @@ export const collections: Collection[] = [
 ];
 
 collections.forEach((collection) =>
-  collection.gameIterations.map((gameVersion) =>
-    gameVersion.addCollection(collection)
+  collection.gameIterations.map((gameIteration) =>
+    gameIteration.addCollection(collection)
   )
 );
 

@@ -17,7 +17,6 @@ export class AppComponent {
   collections:Collection[] = collections;
   games:Game[] = games;
   series:Series[] = getAllSeries();
-  // gameVersions:GameVersion[] = getAllGameVersions();
   gameIterations:GameIteration[] = getAllGameIterations();
 
   getProvidersFromGameIteration(gameIteration: GameIteration): string{
