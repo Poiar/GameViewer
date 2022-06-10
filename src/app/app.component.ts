@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
-import {collections, Collection, providerEnum} from "../classes/collection";
-import {games, Game, getAllSeries} from "../classes/game";
-import {GameVersion, gameVersions} from "../classes/gameVersion";
+import {allCollections, Collection, providerEnum} from "../classes/collection";
+import {allGames, Game, getAllSeries} from "../classes/game";
+import {GameVersion, allGameVersions} from "../classes/gameVersion";
 import {Series} from "../classes/series";
 import {GameIteration, getAllGameIterations} from "../classes/gameIteration";
 
@@ -14,11 +14,11 @@ import {GameIteration, getAllGameIterations} from "../classes/gameIteration";
 export class AppComponent {
   title = 'gameViewer';
 
-  collections:Collection[] = collections;
-  games:Game[] = games;
+  collections:Collection[] = allCollections;
+  games:Game[] = allGames;
   series:Series[] = getAllSeries();
   gameIterations:GameIteration[] = getAllGameIterations();
-  gameVersions:GameVersion[] = gameVersions;
+  gameVersions:GameVersion[] = allGameVersions;
 
   getProvidersFromGameIteration(gameIteration: GameIteration): string{
     const providers: string[] = gameIteration.collections.map(collection => providerEnum.toString(collection.provider));
