@@ -14,13 +14,7 @@ import {
   g_warcraft3,
   Game,
 } from "./game";
-import {Collection} from "./collection";
 import {
-  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
-  d_heroesOfMightAndMagic3_armageddonsBlade,
-  d_heroesOfMightAndMagic3_theShadowOfDeath,
-  d_heroesOfMightAndMagic4_theGatheringStorm,
-  d_heroesOfMightAndMagic4_windsOfWar,
   DLC
 } from "./dlc";
 import {GameIteration} from "./gameIteration";
@@ -147,25 +141,35 @@ namespace versionEnum {
   }
 }
 
+export const gameVersions: GameVersion[] = [];
+
 export class GameVersion {
   readonly id: number;
   readonly game: Game;
-  readonly version: versionEnum;
+  readonly versionType: versionEnum;
   readonly gameIterations: GameIteration[];
   readonly playableOn: systemEnum[];
   readonly controllerSupport: unsureBoolEnum;
   readonly localCoOp: unsureBoolEnum;
-  readonly versionYear?: number;
+  private readonly versionYear?: number;
+  readonly allDlcs?: DLC[]
 
-  constructor(id: number, game: Game, version: versionEnum, playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localCoOp: unsureBoolEnum, versionYear?: number) {
+  constructor(id: number, game: Game, versionType: versionEnum, playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localCoOp: unsureBoolEnum, versionYear?: number, allDlcs?: DLC[]) {
     this.id = id;
     this.game = game;
-    this.version = version;
+    this.versionType = versionType;
     this.playableOn = playableOn;
     this.controllerSupport = controllerSupport;
     this.localCoOp = localCoOp;
     this.gameIterations = [];
     this.versionYear = versionYear;
+    this.allDlcs = allDlcs;
+
+    allDlcs?.forEach(dlc => {
+      dlc.gameVersion = this;
+    })
+
+    gameVersions.push(this);
   }
 
   getPlayableOnTitles(): string {
@@ -177,8 +181,8 @@ export class GameVersion {
     this.gameIterations.push(gameIteration);
   }
 
-  getVersion(): string{
-    return versionEnum.toString(this.version);;
+  getVersionType(): string{
+    return versionEnum.toString(this.versionType);;
   }
 
   getVersionYear(): number{
@@ -188,37 +192,37 @@ export class GameVersion {
   }
 }
 
-export const gv_PC_warcraft3 = new GameVersion(1, g_warcraft3, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
-export const gv_PC_heroesOfMightAndMagic = new GameVersion(2, g_heroesOfMightAndMagic, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
-export const gv_PC_heroesOfMightAndMagic2 = new GameVersion(3, g_heroesOfMightAndMagic2, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
-export const gv_PC_heroesOfMightAndMagic3 = new GameVersion(4, g_heroesOfMightAndMagic3, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
-export const gv_PC_heroesOfMightAndMagic4 = new GameVersion(5, g_heroesOfMightAndMagic4, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
-export const gv_PC_halfLife2 = new GameVersion(6, g_halfLife2, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
-export const gv_PC_halfLife2Episode1 = new GameVersion(7, g_halfLife2Episode1, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
-export const gv_PC_halfLife2Episode2 = new GameVersion(8, g_halfLife2Episode2, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
-export const gv_PC_portal = new GameVersion(9, g_portal, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
-export const gv_PC_teamFortress2 = new GameVersion(10, g_teamFortress2, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.maybe, unsureBoolEnum.false);
-export const gv_3DS_metalGearSolid3 = new GameVersion(11, g_MetalGearSolid3, versionEnum.downsample, [systemEnum._3ds], unsureBoolEnum.na, unsureBoolEnum.false, 2012);
-export const gv_PS3_metalGearSolid2 = new GameVersion(12, g_MetalGearSolid2, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011);
-export const gv_PS3_metalGearSolid3 = new GameVersion(13, g_MetalGearSolid3, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011);
-export const gv_PS3_metalGearSolid4 = new GameVersion(14, g_MetalGearSolid4, versionEnum.original, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false);
+export const gv_PC_original_warcraft3 = new GameVersion(1, g_warcraft3, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
+export const gv_PC_original_heroesOfMightAndMagic = new GameVersion(2, g_heroesOfMightAndMagic, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
+export const gv_PC_original_heroesOfMightAndMagic2 = new GameVersion(3, g_heroesOfMightAndMagic2, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
+export const gv_PC_original_heroesOfMightAndMagic3 = new GameVersion(4, g_heroesOfMightAndMagic3, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
+export const gv_PC_original_heroesOfMightAndMagic4 = new GameVersion(5, g_heroesOfMightAndMagic4, versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false);
+export const gv_PC_original_halfLife2 = new GameVersion(6, g_halfLife2, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
+export const gv_PC_original_halfLife2Episode1 = new GameVersion(7, g_halfLife2Episode1, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
+export const gv_PC_original_halfLife2Episode2 = new GameVersion(8, g_halfLife2Episode2, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
+export const gv_PC_original_portal = new GameVersion(9, g_portal, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false);
+export const gv_PC_original_teamFortress2 = new GameVersion(10, g_teamFortress2, versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.maybe, unsureBoolEnum.false);
+export const gv_3DS_downsample_metalGearSolid3 = new GameVersion(11, g_MetalGearSolid3, versionEnum.downsample, [systemEnum._3ds], unsureBoolEnum.na, unsureBoolEnum.false, 2012);
+export const gv_PS3_remaster_metalGearSolid2 = new GameVersion(12, g_MetalGearSolid2, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011);
+export const gv_PS3_remaster_metalGearSolid3 = new GameVersion(13, g_MetalGearSolid3, versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011);
+export const gv_PS3_original_metalGearSolid4 = new GameVersion(14, g_MetalGearSolid4, versionEnum.original, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false);
 
-const gameVersions: GameVersion[] = [
-  gv_PC_warcraft3,
-  gv_PC_heroesOfMightAndMagic,
-  gv_PC_heroesOfMightAndMagic2,
-  gv_PC_heroesOfMightAndMagic3,
-  gv_PC_heroesOfMightAndMagic4,
-  gv_PC_halfLife2,
-  gv_PC_halfLife2Episode1,
-  gv_PC_halfLife2Episode2,
-  gv_PC_portal,
-  gv_PC_teamFortress2,
-  gv_3DS_metalGearSolid3,
-  gv_PS3_metalGearSolid2,
-  gv_PS3_metalGearSolid3,
-  gv_PS3_metalGearSolid4,
-];
+// const gameVersions: GameVersion[] = [
+//   gv_PC_original_warcraft3,
+//   gv_PC_original_heroesOfMightAndMagic,
+//   gv_PC_original_heroesOfMightAndMagic2,
+//   gv_PC_original_heroesOfMightAndMagic3,
+//   gv_PC_original_heroesOfMightAndMagic4,
+//   gv_PC_original_halfLife2,
+//   gv_PC_original_halfLife2Episode1,
+//   gv_PC_original_halfLife2Episode2,
+//   gv_PC_original_portal,
+//   gv_PC_original_teamFortress2,
+//   gv_3DS_downsample_metalGearSolid3,
+//   gv_PS3_remaster_metalGearSolid2,
+//   gv_PS3_remaster_metalGearSolid3,
+//   gv_PS3_original_metalGearSolid4,
+// ];
 
 gameVersions.forEach(gameVersion => {
   gameVersion.game.addGameVersion(gameVersion);

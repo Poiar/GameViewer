@@ -2,21 +2,23 @@ import { DLC } from './dlc';
 import { Collection } from './collection';
 import {
   GameVersion,
-  gv_3DS_metalGearSolid3,
-  gv_PC_halfLife2,
-  gv_PC_halfLife2Episode1,
-  gv_PC_halfLife2Episode2,
-  gv_PC_heroesOfMightAndMagic,
-  gv_PC_heroesOfMightAndMagic2,
-  gv_PC_heroesOfMightAndMagic3,
-  gv_PC_heroesOfMightAndMagic4,
-  gv_PC_portal,
-  gv_PC_teamFortress2,
-  gv_PC_warcraft3,
-  gv_PS3_metalGearSolid2,
-  gv_PS3_metalGearSolid3,
-  gv_PS3_metalGearSolid4,
+  gv_3DS_downsample_metalGearSolid3,
+  gv_PC_original_halfLife2,
+  gv_PC_original_halfLife2Episode1,
+  gv_PC_original_halfLife2Episode2,
+  gv_PC_original_heroesOfMightAndMagic,
+  gv_PC_original_heroesOfMightAndMagic2,
+  gv_PC_original_heroesOfMightAndMagic3,
+  gv_PC_original_heroesOfMightAndMagic4,
+  gv_PC_original_portal,
+  gv_PC_original_teamFortress2,
+  gv_PC_original_warcraft3,
+  gv_PS3_remaster_metalGearSolid2,
+  gv_PS3_remaster_metalGearSolid3,
+  gv_PS3_original_metalGearSolid4,
 } from './gameVersion';
+
+const gameIterations: GameIteration[] = [];
 
 export class GameIteration {
   readonly id: number;
@@ -29,6 +31,8 @@ export class GameIteration {
     this.gameVersion = gameVersion;
     this.dlcs = [];
     this.collections = [];
+
+    gameIterations.push(this);
   }
 
   /*  addDlc(dlc: DLC) {
@@ -44,77 +48,77 @@ export class GameIteration {
   }
 
   getVersion(): string {
-    return this.gameVersion.getVersion();
+    return this.gameVersion.getVersionType();
   }
 
 }
 
-export const gi_PC_warcraft3 = new GameIteration(1, gv_PC_warcraft3);
+export const gi_PC_warcraft3 = new GameIteration(1, gv_PC_original_warcraft3);
 export const gi_PC_heroesOfMightAndMagic = new GameIteration(
   2,
-  gv_PC_heroesOfMightAndMagic
+  gv_PC_original_heroesOfMightAndMagic
 );
 export const gi_PC_heroesOfMightAndMagic2 = new GameIteration(
   3,
-  gv_PC_heroesOfMightAndMagic2
+  gv_PC_original_heroesOfMightAndMagic2
 );
 export const gi_PC_heroesOfMightAndMagic3_1 = new GameIteration(
   4,
-  gv_PC_heroesOfMightAndMagic3
+  gv_PC_original_heroesOfMightAndMagic3
 );
 export const gi_PC_heroesOfMightAndMagic4 = new GameIteration(
   5,
-  gv_PC_heroesOfMightAndMagic4
+  gv_PC_original_heroesOfMightAndMagic4
 );
-export const gi_PC_halfLife2 = new GameIteration(6, gv_PC_halfLife2);
+export const gi_PC_halfLife2 = new GameIteration(6, gv_PC_original_halfLife2);
 export const gi_PC_halfLife2Episode1 = new GameIteration(
   7,
-  gv_PC_halfLife2Episode1
+  gv_PC_original_halfLife2Episode1
 );
 export const gi_PC_halfLife2Episode2 = new GameIteration(
   8,
-  gv_PC_halfLife2Episode2
+  gv_PC_original_halfLife2Episode2
 );
-export const gi_PC_portal = new GameIteration(9, gv_PC_portal);
-export const gi_PC_teamFortress2 = new GameIteration(10, gv_PC_teamFortress2);
+export const gi_PC_portal = new GameIteration(9, gv_PC_original_portal);
+export const gi_PC_teamFortress2 = new GameIteration(10, gv_PC_original_teamFortress2);
 export const gi_3DS_metalGearSolid3 = new GameIteration(
   11,
-  gv_3DS_metalGearSolid3
+  gv_3DS_downsample_metalGearSolid3
 );
 export const gi_PS3_metalGearSolid2 = new GameIteration(
   12,
-  gv_PS3_metalGearSolid2
+  gv_PS3_remaster_metalGearSolid2
 );
 export const gi_PS3_metalGearSolid3 = new GameIteration(
   13,
-  gv_PS3_metalGearSolid3
+  gv_PS3_remaster_metalGearSolid3
 );
 export const gi_PS3_metalGearSolid4 = new GameIteration(
   14,
-  gv_PS3_metalGearSolid4
+  gv_PS3_original_metalGearSolid4
 );
 export const gi_PC_heroesOfMightAndMagic3_2 = new GameIteration(
   15,
-  gv_PC_heroesOfMightAndMagic3
+  gv_PC_original_heroesOfMightAndMagic3
 );
 
-const gameIterations: GameIteration[] = [
-  gi_PC_warcraft3,
-  gi_PC_heroesOfMightAndMagic,
-  gi_PC_heroesOfMightAndMagic2,
-  gi_PC_heroesOfMightAndMagic3_1,
-  gi_PC_heroesOfMightAndMagic4,
-  gi_PC_halfLife2,
-  gi_PC_halfLife2Episode1,
-  gi_PC_halfLife2Episode2,
-  gi_PC_portal,
-  gi_PC_teamFortress2,
-  gi_3DS_metalGearSolid3,
-  gi_PS3_metalGearSolid2,
-  gi_PS3_metalGearSolid3,
-  gi_PS3_metalGearSolid4,
-  gi_PC_heroesOfMightAndMagic3_2,
-];
+// const gameIterations: GameIteration[] = [
+//   gi_PC_warcraft3,
+//   gi_PC_heroesOfMightAndMagic,
+//   gi_PC_heroesOfMightAndMagic2,
+//   gi_PC_heroesOfMightAndMagic3_1,
+//   gi_PC_heroesOfMightAndMagic4,
+//   gi_PC_halfLife2,
+//   gi_PC_halfLife2Episode1,
+//   gi_PC_halfLife2Episode2,
+//   gi_PC_portal,
+//   gi_PC_teamFortress2,
+//   gi_3DS_metalGearSolid3,
+//   gi_PS3_metalGearSolid2,
+//   gi_PS3_metalGearSolid3,
+//   gi_PS3_metalGearSolid4,
+//   gi_PC_heroesOfMightAndMagic3_2,
+// ];
 
 gameIterations.forEach((gameIteration) =>
   gameIteration.gameVersion.addGameIteration(gameIteration)

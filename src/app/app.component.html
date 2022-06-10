@@ -143,7 +143,7 @@
           href="https://angular.io/tutorial"
           >{{ getProvidersFromGameVersion(gameVersion) }} ({{
             gameVersion.getPlayableOnTitles()
-          }}) ({{ gameVersion.getVersion() }}
+          }}) ({{ gameVersion.getVersionType() }}
           {{ gameVersion.getVersionYear() }})</a
         >
       </button>
@@ -166,14 +166,16 @@
         }}</a>
       </button>
 
-      <div *ngIf="game.dlcs">
-        <div *ngFor="let dlc of game.dlcs">
+      <div *ngFor="let gameVersion of gameVersions">
+        <div *ngFor="let dlc of gameVersion.allDlcs">
           <button>
-            <a *ngIf="dlc">{{ dlc.title }}</a>
+            <a>{{ dlc.title }}</a>
           </button>
         </div>
       </div>
+
     </div>
+
   </div>
 
   <h1>Game iterations=>DLCs</h1>
@@ -185,7 +187,7 @@
         [title]="gameIteration.gameVersion.game.title + ' details'"
       >
         {{ gameIteration.gameVersion.game.title }} ({{
-          gameIteration.gameVersion.getVersion()
+          gameIteration.gameVersion.getVersionType()
         }}
         {{ gameIteration.gameVersion.getVersionYear() }})
       </a>

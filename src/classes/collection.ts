@@ -18,11 +18,11 @@ import {
 } from './gameIteration';
 import { GameVersion, unsureBoolEnum } from './gameVersion';
 import {
-  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
-  d_heroesOfMightAndMagic3_armageddonsBlade,
-  d_heroesOfMightAndMagic3_theShadowOfDeath,
-  d_heroesOfMightAndMagic4_theGatheringStorm,
-  d_heroesOfMightAndMagic4_windsOfWar,
+  d_PC_original_heroesOfMightAndMagic2_thePriceOfLoyalty,
+  d_PC_original_heroesOfMightAndMagic3_armageddonsBlade,
+  d_PC_original_heroesOfMightAndMagic3_theShadowOfDeath,
+  d_PC_original_heroesOfMightAndMagic4_theGatheringStorm,
+  d_PC_original_heroesOfMightAndMagic4_windsOfWar,
   DLC,
 } from './dlc';
 
@@ -71,6 +71,8 @@ export namespace providerEnum {
   }
 }
 
+export const collections: Collection[] = [];
+
 export class Collection {
   readonly id: number;
   readonly title: string;
@@ -101,15 +103,15 @@ export class Collection {
     this.blackLabel = blackLabel;
     this.releaseYear = releaseYear;
 
-    // if (dlcs) {
     dlcs?.forEach((dlc) => {
       this.gameIterations.forEach((gameIteration) => {
-        if (gameIteration.gameVersion.game === dlc.game) {
+        if (gameIteration.gameVersion === dlc.gameVersion) {
           gameIteration.dlcs.push(dlc);
         }
       });
     });
-    // }
+
+    collections.push(this);
   }
 
   getPlayableOnTitles(): string {
@@ -121,7 +123,7 @@ export class Collection {
 
   getVersions(): string {
     const gameVersionVersion: string[] = this.gameIterations.map(
-      (gameIteration) => gameIteration.gameVersion.getVersion()
+      (gameIteration) => gameIteration.gameVersion.getVersionType()
     );
     return [...new Set(gameVersionVersion)].join(', '); //unique
   }
@@ -157,11 +159,11 @@ const c_PC_none_HeroesOfMightAndMagicCollection = new Collection(
   unsureBoolEnum.true,
   2004,
   [
-    d_heroesOfMightAndMagic2_thePriceOfLoyalty,
-    d_heroesOfMightAndMagic3_armageddonsBlade,
-    d_heroesOfMightAndMagic3_theShadowOfDeath,
-    d_heroesOfMightAndMagic4_windsOfWar,
-    d_heroesOfMightAndMagic4_theGatheringStorm,
+    d_PC_original_heroesOfMightAndMagic2_thePriceOfLoyalty,
+    d_PC_original_heroesOfMightAndMagic3_armageddonsBlade,
+    d_PC_original_heroesOfMightAndMagic3_theShadowOfDeath,
+    d_PC_original_heroesOfMightAndMagic4_windsOfWar,
+    d_PC_original_heroesOfMightAndMagic4_theGatheringStorm,
   ]
 );
 
@@ -207,19 +209,19 @@ const c_PC_gog_HeroesOfMightAndMagic3Complete = new Collection(
   unsureBoolEnum.maybe,
   undefined,
   [
-    d_heroesOfMightAndMagic3_armageddonsBlade,
-    d_heroesOfMightAndMagic3_theShadowOfDeath,
+    d_PC_original_heroesOfMightAndMagic3_armageddonsBlade,
+    d_PC_original_heroesOfMightAndMagic3_theShadowOfDeath,
   ]
 );
 
-export const collections: Collection[] = [
-  c_PC_none_warcraft3,
-  c_PC_none_HeroesOfMightAndMagicCollection,
-  c_PC_steam_TheOrangeBox,
-  c_3DS_none_MetalGearSolid3SnakeEater3D,
-  c_PS3_none_MetalGearSolidTheLegacyCollection,
-  c_PC_gog_HeroesOfMightAndMagic3Complete,
-];
+// export const collections: Collection[] = [
+//   c_PC_none_warcraft3,
+//   c_PC_none_HeroesOfMightAndMagicCollection,
+//   c_PC_steam_TheOrangeBox,
+//   c_3DS_none_MetalGearSolid3SnakeEater3D,
+//   c_PS3_none_MetalGearSolidTheLegacyCollection,
+//   c_PC_gog_HeroesOfMightAndMagic3Complete,
+// ];
 
 collections.forEach((collection) =>
   collection.gameIterations.map((gameIteration) =>
