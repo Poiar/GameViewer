@@ -36,7 +36,4 @@ export const series: Series[] = [
   s_teamFortress,
 ]
 
-// export function getAllSeries():Series[]{
-//   return series;
-// }
-console.log("testing123", allSeries);
+console.log(allSeries);

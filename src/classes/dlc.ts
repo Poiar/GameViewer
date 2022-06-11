@@ -29,6 +29,4 @@ export const d_ageOfEmpires2_lordsOfTheWest = new Dlc("Lords of the West", 2021)
 export const d_ageOfEmpires2_dawnOfTheDukes = new Dlc("Dawn of the Dukes", 2021);
 export const d_ageOfEmpires2_dynastiesOfIndia = new Dlc("Dynasties of India", 2022);
 
-export function getAllDLCs():Dlc[] {
-  return allDlcs;
-}
+console.log(allDlcs);

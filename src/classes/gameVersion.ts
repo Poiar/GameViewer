@@ -16,6 +16,7 @@ import {
   Game,
 } from "./game";
 import {Collection} from "./collection";
+import {DlcVersion} from "./dlcVersion";
 
 export enum systemEnum {
   windows,
@@ -29,13 +30,13 @@ export enum systemEnum {
   ps4,
   ps5,
   psp,
-  psvita,
+  psVita,
   nes,
   snes,
   n64,
   gc,
   wii,
-  wiiu,
+  wiiU,
   switch,
   gb,
   gbc,
@@ -43,6 +44,9 @@ export enum systemEnum {
   ds,
   _3ds,
   android,
+  iOS,
+  linux,
+  macOs,
 }
 
 export namespace systemEnum {
@@ -70,7 +74,7 @@ export namespace systemEnum {
         return "PS5"
       case systemEnum.psp:
         return "PSP"
-      case systemEnum.psvita:
+      case systemEnum.psVita:
         return "PSVita"
       case systemEnum.nes:
         return "NES"
@@ -82,7 +86,7 @@ export namespace systemEnum {
         return "GC"
       case systemEnum.wii:
         return "Wii"
-      case systemEnum.wiiu:
+      case systemEnum.wiiU:
         return "WiiU"
       case systemEnum.switch:
         return "Switch"
@@ -98,6 +102,12 @@ export namespace systemEnum {
         return "3DS"
       case systemEnum.android:
         return "And"
+      case systemEnum.iOS:
+        return "iOS"
+      case systemEnum.linux:
+        return "Linux"
+      case systemEnum.macOs:
+        return "macOS"
     }
     throw "You called systemEnum.toString() with something that is unhandled - Throwing"
   }
@@ -111,17 +121,20 @@ export enum unsureBoolEnum {
 }
 
 enum versionEnum {
+  undefined,
   original,
   remaster,
   remake,
   downsample,
   demake,
-  findOut,
+  enhanced,
 }
 
 namespace versionEnum {
   export function toString(input: versionEnum): string {
     switch (input) {
+      case versionEnum.undefined:
+        return "Undefined"
       case versionEnum.original:
         return "Original"
       case versionEnum.remaster:
@@ -132,8 +145,8 @@ namespace versionEnum {
         return "Downsample"
       case versionEnum.demake:
         return "Downsample"
-      case versionEnum.findOut:
-        return "Find out"
+      case versionEnum.enhanced:
+        return "Enhanced"
     }
     throw "You called versionEnum.toString() with something that is unhandled - Throwing"
   }
@@ -149,6 +162,9 @@ export enum providerEnum {
   ubisoft,
   humbleBundle,
   rockstarSocialClub,
+  xboxLive,
+  psn,
+  nintendoEshop,
 }
 
 export namespace providerEnum {
@@ -170,8 +186,12 @@ export namespace providerEnum {
         return 'Ubisoft';
       case providerEnum.humbleBundle:
         return 'Humble';
-      case providerEnum.rockstarSocialClub:
-        return 'Rockstar';
+      case providerEnum.xboxLive:
+        return 'Xbox Live';
+      case providerEnum.psn:
+        return 'PSN';
+      case providerEnum.nintendoEshop:
+        return 'Nintendo eShop';
     }
     throw 'You called versionEnum.toString() with something that is unhandled - Throwing';
   }
@@ -190,6 +210,7 @@ export class GameVersion {
   readonly controllerSupport: unsureBoolEnum;
   readonly localCoOp: unsureBoolEnum;
   private readonly versionYear?: number;
+  readonly dlcVersionsThatThisCanUse: DlcVersion[];
 
   constructor(game: Game, edition: string, versionType: versionEnum, provider: providerEnum, playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localCoOp: unsureBoolEnum, versionYear?: number) {
     this.id = allGameVersions.length;
@@ -205,6 +226,7 @@ export class GameVersion {
     game.gameVersions.push(this);
 
     this.collections = [];
+    this.dlcVersionsThatThisCanUse = [];
 
     allGameVersions.push(this);
   }
@@ -250,10 +272,16 @@ export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(g_ageOfEmpires
 export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "HD Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2012);
 export const gv_PC_steam_remaster2_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "Definitive Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2017);
 
-export const gv_PC_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2005);
+export const gv_PC_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
 export const gv_PS2_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.ps2], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
-export const gv_Xbox_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.xbox], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2005);
+export const gv_Xbox_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.xbox], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
 
-export function getAllGameVersions(): GameVersion[] {
-  return allGameVersions;
-}
+export const gv_X360_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.physical, [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, 2007);
+export const gv_X360_digital_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, 2007);
+
+export const gv_PC_steam_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "Remastered", versionEnum.remaster, providerEnum.steam, [systemEnum.windows, systemEnum.linux, systemEnum.macOs], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+
+export const gv_PS4_digital_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.psn, [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+export const gv_PS4_physical_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "Limited Run #331", versionEnum.remaster, providerEnum.physical, [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+
+console.log(allGameVersions);

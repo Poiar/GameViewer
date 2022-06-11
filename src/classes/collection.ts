@@ -16,10 +16,15 @@ import {
   gv_PC_steam_original_teamFortress2,
   gv_PC_steam_remaster1_ageOfEmpires2,
   gv_PC_steam_remaster2_ageOfEmpires2,
+  gv_PC_steam_remastered_indigoProphecy,
   gv_PS2_physical_original_indigoProphecy,
   gv_PS3_physical_original_metalGearSolid4,
   gv_PS3_physical_remaster_metalGearSolid2,
-  gv_PS3_physical_remaster_metalGearSolid3, gv_Xbox_physical_original_indigoProphecy,
+  gv_PS3_physical_remaster_metalGearSolid3,
+  gv_PS4_digital_remastered_indigoProphecy, gv_PS4_physical_remastered_indigoProphecy,
+  gv_X360_digital_original_indigoProphecy,
+  gv_X360_physical_original_indigoProphecy,
+  gv_Xbox_physical_original_indigoProphecy,
   unsureBoolEnum
 } from './gameVersion';
 import {
@@ -117,24 +122,29 @@ const c_PC_physical_ageOfEmpires2HdEdition = new Collection('Age of Empires 2: A
 const c_PC_physical_ageOfEmpires2HdEditionTheConquerors = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Conquerors', [], [dv_PC_steam_remaster1_ageOfEmpires2_theConquerors], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2HdEditionTheForgotten = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Forgotten', [], [dv_PC_steam_remaster1_ageOfEmpires2_theForgotten], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2HdEditionTheAfricanKingdoms = new Collection('Age of Empires 2: Age of Kings (HD Edition): The African Kingdoms', [], [dv_PC_steam_remaster1_ageOfEmpires2_theAfricanKingdoms], mediaEnum.na, undefined);
-const c_PC_physical_ageOfEmpires2HdEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (HD Edition) Rise of the Rajas', [], [dv_PC_steam_remaster1_ageOfEmpires1_riseOfTheRajas], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2HdEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (HD Edition): Rise of the Rajas', [], [dv_PC_steam_remaster1_ageOfEmpires1_riseOfTheRajas], mediaEnum.na, undefined);
 
 const c_PC_physical_ageOfEmpires2DefinitiveEdition = new Collection('Age of Empires 2: Age of Kings (Definitive Edition)', [gv_PC_steam_remaster2_ageOfEmpires2], [], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2DefinitiveEditionTheConquerors = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): The Conquerors', [], [dv_PC_steam_remaster2_ageOfEmpires2_theConquerors], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2DefinitiveEditionTheForgotten = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): The Forgotten', [], [dv_PC_steam_remaster2_ageOfEmpires2_theForgotten], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2DefinitiveEditionTheAfricanKingdoms = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): The African Kingdoms', [], [dv_PC_steam_remaster2_ageOfEmpires2_theAfricanKingdoms], mediaEnum.na, undefined);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (Definitive Edition) Rise of the Rajas', [], [dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Rise of the Rajas', [], [dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2DefinitiveEditionLordsOfTheWest = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Lords of the West', [], [dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2DefinitiveEditionDawnOfTheDukes = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Dawn of the Dukes', [], [dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes], mediaEnum.na, undefined);
 const c_PC_physical_ageOfEmpires2DefinitiveEditionDynastiesOfIndia = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Dynasties of India', [], [dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia], mediaEnum.na, undefined);
 
 
-const c_PC_physical_IndigoProphecy = new Collection('Indigo Prophecy', [gv_PC_physical_original_indigoProphecy], [], mediaEnum.na, 2005);
-const c_PS2_physical_IndigoProphecy = new Collection('Indigo Prophecy', [gv_PS2_physical_original_indigoProphecy], [], mediaEnum.na, undefined);
-const c_Xbox_physical_IndigoProphecy = new Collection('Indigo Prophecy', [gv_Xbox_physical_original_indigoProphecy], [], mediaEnum.na, undefined);
+const c_PC_physical_indigoProphecy = new Collection('Indigo Prophecy', [gv_PC_physical_original_indigoProphecy], [], mediaEnum.dvd, 2005);
+const c_PS2_physical_indigoProphecy = new Collection('Indigo Prophecy', [gv_PS2_physical_original_indigoProphecy], [], mediaEnum.dvd, 2005);
+const c_Xbox_physical_indigoProphecy = new Collection('Indigo Prophecy', [gv_Xbox_physical_original_indigoProphecy], [], mediaEnum.dvd, 2005);
+const c_X360_physical_indigoProphecy = new Collection('Indigo Prophecy', [gv_X360_physical_original_indigoProphecy], [], mediaEnum.dvd, 2007);
+const c_X360_digital_indigoProphecy = new Collection('Indigo Prophecy', [gv_X360_digital_original_indigoProphecy], [], mediaEnum.digital, 2007);
+const c_PC_steam_fahrenheitIndigoProphecyRemastered = new Collection('Fahrenheit: Indigo Prophecy Remastered', [gv_PC_steam_remastered_indigoProphecy], [], mediaEnum.digital, 2015);
 
-// "Indigo Prophecy"
-// "Fahrenheit"
-// "Fahrenheit: Indigo Prophecy Remastered"
+const c_PS4_digital_indigoProphecy = new Collection('Indigo Prophecy', [gv_PS4_digital_remastered_indigoProphecy], [], mediaEnum.digital, 2015);
+const c_PS4_physical_indigoProphecy = new Collection('Indigo Prophecy', [gv_PS4_physical_remastered_indigoProphecy], [], mediaEnum.digital, 2020);
 
-console.log("testing456", allCollections);
+
+//Red Dead Redemption
+
+console.log(allCollections);

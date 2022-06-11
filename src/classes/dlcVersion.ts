@@ -11,29 +11,17 @@ import {
   d_heroesOfMightAndMagic4_windsOfWar,
   Dlc
 } from "./dlc";
-import {allCollections, Collection} from "./collection";
+import {Collection} from "./collection";
 import {GameVersion,
-  gv_PC_physical_original_warcraft3,
-  gv_PC_physical_original_heroesOfMightAndMagic,
   gv_PC_physical_original_heroesOfMightAndMagic2,
   gv_PC_physical_original_heroesOfMightAndMagic3,
   gv_PC_gog_original_heroesOfMightAndMagic3,
   gv_PC_physical_original_heroesOfMightAndMagic4,
-  gv_PC_steam_original_halfLife2,
-  gv_PC_steam_original_halfLife2Episode1,
-  gv_PC_steam_original_halfLife2Episode2,
-  gv_PC_steam_original_portal,
-  gv_PC_steam_original_teamFortress2,
-  gv_3DS_physical_downsample_metalGearSolid3,
-  gv_PS3_physical_remaster_metalGearSolid2,
-  gv_PS3_physical_remaster_metalGearSolid3,
-  gv_PS3_physical_original_metalGearSolid4,
   gv_PC_steam_original_ageOfEmpires2,
   gv_PC_steam_remaster1_ageOfEmpires2,
   gv_PC_steam_remaster2_ageOfEmpires2
 } from "./gameVersion";
-import {allSeries} from "./series";
-import {Game} from "./game";
+
 
 export const allDlcVersions: DlcVersion[] = [];
 
@@ -46,6 +34,7 @@ export class DlcVersion {
   constructor(gameVersionsThisCanBeUsedOn: GameVersion[], dlc: Dlc) {
     this.id = allDlcVersions.length;
     this.gameVersionsThisCanBeUsedOn = gameVersionsThisCanBeUsedOn;
+    gameVersionsThisCanBeUsedOn.forEach(gameVersion => gameVersion.dlcVersionsThatThisCanUse.push(this))
 
     this.dlc = dlc;
     dlc.dlcVersions.push(this);
@@ -66,15 +55,6 @@ export class DlcVersion {
     return this.gameVersionsThisCanBeUsedOn[0]
   }
 
-  // hasGameVersion(): boolean {
-  //   if(this.gameVersion){ return true; }
-  //   return false;
-  // }
-
-  // Does the same as the above
-  // hasGameVersion(): boolean {
-  //   return !!this.gameVersion;
-  // }
 }
 
 export const dv_PC_physical_original_heroesOfMightAndMagic2_thePriceOfLoyalty = new DlcVersion([gv_PC_physical_original_heroesOfMightAndMagic2], d_heroesOfMightAndMagic2_thePriceOfLoyalty);
@@ -97,3 +77,4 @@ export const dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest = new DlcVersion
 export const dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes = new DlcVersion([gv_PC_steam_remaster2_ageOfEmpires2], d_ageOfEmpires2_dawnOfTheDukes);
 export const dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia = new DlcVersion([gv_PC_steam_remaster2_ageOfEmpires2], d_ageOfEmpires2_dynastiesOfIndia);
 
+console.log(allDlcVersions);

@@ -10,8 +10,9 @@ import {
   s_heroesOfMightAndMagic,
   s_halfLife,
   s_portal,
-  s_teamFortress, s_ageOfEmpires,
+  s_teamFortress, s_ageOfEmpires, allSeries,
 } from "./series";
+import {allDlcs, Dlc} from "./dlc";
 
 enum genreEnum {
   undefined,
@@ -50,6 +51,22 @@ export class Game extends Content{
   addGameVersion(gameVersion: GameVersion) {
     this.gameVersions.push(gameVersion);
   }
+
+  getAllDlcForThisGame(): Dlc[] {
+    const allDlcForThisGameVersion: Dlc[] = [];
+
+    this.gameVersions.forEach(gameVersion => {
+      allDlcs.forEach(dlc => {
+        dlc.dlcVersions.forEach(dlcVersion => {
+          if(dlcVersion.gameVersionsThisCanBeUsedOn.includes(gameVersion)){
+            allDlcForThisGameVersion.push(dlc);
+          }
+        })
+      })
+    })
+
+    return [...new Set(allDlcForThisGameVersion)]
+  }
 }
 
 export const g_warcraft3 = new Game("Warcraft 3: Reign of Chaos", genreEnum.rts, 2002, s_warcraft, []);
@@ -67,10 +84,11 @@ export const g_metalGearSolid2 = new Game("Metal Gear Solid 2: Sons of Liberty",
 export const g_metalGearSolid3 = new Game("Metal Gear Solid 3: Snake Eater", genreEnum.stealth, 2004, s_metalGearSolid, []);
 export const g_metalGearSolid4 = new Game("Metal Gear Solid 4: Guns of the Patriots", genreEnum.stealth, 2008, s_metalGearSolid, []);
 export const g_ageOfEmpires2 = new Game("Age of Empires II: The Age of Kings", genreEnum.rts, 1999, s_ageOfEmpires, []);
-export const g_indigoProphecy = new Game("Indigo Prophecy", genreEnum.undefined, 1999, s_ageOfEmpires, ["Fahrenheit"]);
+export const g_indigoProphecy = new Game("Indigo Prophecy", genreEnum.undefined, 1999, s_none, ["Fahrenheit"]);
 
+console.log(allGames);
 
-export function getAllSeries(): Series[] {
-  return [...new Set(allGames.map(game => game.series))]; //Unique
-}
+// export function getAllSeries(): Series[] {
+//   return [...new Set(allGames.map(game => game.series))]; //Unique
+// }
 

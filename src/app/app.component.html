@@ -108,109 +108,80 @@
     </div>
   </div>
 
-<!--  <h1>Collections=>Stand alone DLC</h1>-->
 
-<!--  <div *ngFor="let collection of collections">-->
-<!--    <div *ngIf="!collection.hasGameIterations()">-->
-<!--      <div *ngFor="let dlc of collection.dlcAddedByThisCollection"></div>-->
-<!--      &lt;!&ndash;        <h3>-->
-<!--          <a [title]="collection.title + ' details'">-->
-<!--            {{ collection.title }} ({{ collection.getVersions() }}) ({{-->
-<!--              collection.getPlayableOnTitles()-->
-<!--            }})-->
-<!--          </a>-->
-<!--        </h3>&ndash;&gt;-->
+  <h1>Games=>Game versions</h1>
 
-<!--      <div-->
-<!--        class="card-container"-->
-<!--        *ngFor="let gameIteration of collection.gameIterations"-->
-<!--      >-->
-<!--        <button class="card card-small" (click)="selection.value = 'component'">-->
-<!--          <a-->
-<!--            *ngIf="gameIteration.gameVersion.game.title"-->
-<!--            href="https://angular.io/tutorial"-->
-<!--          >-->
-<!--            {{ gameIteration.gameVersion.game.title }} ({{-->
-<!--              gameIteration.gameVersion.getPlayableOnTitles()-->
-<!--            }})-->
-<!--          </a>-->
-<!--        </button>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div *ngFor="let game of games">
+    <h3>
+      <a [title]="game.title + ' details'">
+        {{ game.title }}
+      </a>
+    </h3>
 
-<!--  &lt;!&ndash;      <div *ngIf="gameIteration.dlcs">&ndash;&gt;-->
-<!--  &lt;!&ndash;        <div *ngFor="let dlc of gameIteration.dlcs">&ndash;&gt;-->
-<!--  &lt;!&ndash;          <button>&ndash;&gt;-->
-<!--  &lt;!&ndash;            <a *ngIf="dlc">{{ dlc.title }}</a>&ndash;&gt;-->
-<!--  &lt;!&ndash;          </button>&ndash;&gt;-->
-<!--  &lt;!&ndash;        </div>&ndash;&gt;-->
-<!--  &lt;!&ndash;      </div>&ndash;&gt;-->
+    <div class="card-container" *ngFor="let gameVersion of game.gameVersions">
+      <button class="card card-small" (click)="selection.value = 'component'">
+        <a
+          *ngIf="gameVersion.getPlayableOnTitles()"
+          href="https://angular.io/tutorial"
+          >{{ gameVersion.getProvider() }} ({{
+            gameVersion.getPlayableOnTitles()
+          }}) ({{ gameVersion.getVersionType() }}
+          {{ gameVersion.getVersionYear() }})</a
+        >
+      </button>
+    </div>
+  </div>
 
-<!--  <h1>Games=>Game versions</h1>-->
+  <h1>Series=>Games</h1>
 
-<!--  <div *ngFor="let game of games">-->
-<!--    <h3>-->
-<!--      <a [title]="game.title + ' details'">-->
-<!--        {{ game.title }}-->
-<!--      </a>-->
-<!--    </h3>-->
+  <div *ngFor="let aSeries of series">
+    <h3>
+      <a [title]="aSeries.title + ' details'">
+        {{ aSeries.title }}
+      </a>
+    </h3>
 
-<!--    <div class="card-container" *ngFor="let gameVersion of game.gameVersions">-->
-<!--      <button class="card card-small" (click)="selection.value = 'component'">-->
-<!--        <a-->
-<!--          *ngIf="gameVersion.getPlayableOnTitles()"-->
-<!--          href="https://angular.io/tutorial"-->
-<!--          >{{ gameVersion.getProviders() }} ({{-->
-<!--            gameVersion.getPlayableOnTitles()-->
-<!--          }}) ({{ gameVersion.getVersionType() }}-->
-<!--          {{ gameVersion.getVersionYear() }})</a-->
-<!--        >-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </div>-->
+    <div class="card-container" *ngFor="let game of aSeries.games">
+      <button class="card " (click)="selection.value = 'component'">
+        <a *ngIf="game.title" href="https://angular.io/tutorial">{{
+          game.title
+        }}</a>
+      </button>
+      <div *ngFor="let dlc of game.getAllDlcForThisGame()">
+        <button class="card card-small" (click)="selection.value = 'component'">
 
-<!--  <h1>Series=>Game versions=>DLCs</h1>-->
+          <a [title]="dlc.title + ' details'">
+            {{ dlc.title }}
+          </a>
 
-<!--  <div *ngFor="let aSeries of series">-->
-<!--    <h3>-->
-<!--      <a [title]="aSeries.title + ' details'">-->
-<!--        {{ aSeries.title }}-->
-<!--      </a>-->
-<!--    </h3>-->
+        </button>
+      </div>
+    </div>
+  </div>
 
-<!--    <div class="card-container" *ngFor="let game of aSeries.games">-->
-<!--      <button class="card card-small" (click)="selection.value = 'component'">-->
-<!--        <a *ngIf="game.title" href="https://angular.io/tutorial">{{-->
-<!--          game.title-->
-<!--        }}</a>-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </div>-->
+  <h1>GameVersions=>DlcVersions</h1>
 
-<!--  <h1>Game iterations=>DLCs</h1>-->
+  <div *ngFor="let gameVersion of gameVersions">
+    <h3>
+      <a
+        *ngIf="gameVersion.dlcVersionsThatThisCanUse.length > 0"
+        [title]="gameVersion.game.title + ' details'"
+      >
+        {{ gameVersion.game.title }} ({{
+        gameVersion.getVersionType()
+        }}
+        {{ gameVersion.getVersionYear() }})
+      </a>
+    </h3>
 
-<!--  <div *ngFor="let gameIteration of gameIterations">-->
-<!--    <h3>-->
-<!--      <a-->
-<!--        *ngIf="gameIteration.dlcs.length > 0"-->
-<!--        [title]="gameIteration.gameVersion.game.title + ' details'"-->
-<!--      >-->
-<!--        {{ gameIteration.gameVersion.game.title }} ({{-->
-<!--          gameIteration.gameVersion.getVersionType()-->
-<!--        }}-->
-<!--        {{ gameIteration.gameVersion.getVersionYear() }})-->
-<!--      </a>-->
-<!--    </h3>-->
-
-<!--    <div class="card-container" *ngFor="let dlc of gameIteration.dlcs">-->
-<!--      <button class="card card-small" (click)="selection.value = 'component'">-->
-<!--        <a *ngIf="dlc.title" href="https://angular.io/tutorial"-->
-<!--          >{{ dlc.title }} ({{ dlc.firstRelease }})</a-->
-<!--        >-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </div>-->
+    <div class="card-container" *ngFor="let dlcVersion of gameVersion.dlcVersionsThatThisCanUse">
+      <button class="card card-small" (click)="selection.value = 'component'">
+        <a *ngIf="dlcVersion.dlc.title" href="https://angular.io/tutorial"
+          >{{ dlcVersion.dlc.title }} ({{ dlcVersion.dlc.firstRelease }})</a
+        >
+      </button>
+    </div>
+  </div>
 
   <!-- Highlight Card -->
   <div class="card highlight-card card-small">
