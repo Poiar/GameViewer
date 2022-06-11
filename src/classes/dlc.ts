@@ -2,6 +2,7 @@ import {
   Content
 } from "./content";
 import {DlcVersion} from "./dlcVersion";
+import {gv_X360_physical_original_redDeadRedemptionUndeadNightmare} from "./gameVersion";
 
 export const allDlcs: Dlc[] = [];
 
@@ -28,5 +29,6 @@ export const d_ageOfEmpires2_riseOfTheRajas = new Dlc("Rise of the Rajas", 2016)
 export const d_ageOfEmpires2_lordsOfTheWest = new Dlc("Lords of the West", 2021);
 export const d_ageOfEmpires2_dawnOfTheDukes = new Dlc("Dawn of the Dukes", 2021);
 export const d_ageOfEmpires2_dynastiesOfIndia = new Dlc("Dynasties of India", 2022);
+export const d_redDeadRedemption_UndeadNightmare = new Dlc("Undead Nightmare", 2010);
 
 console.log(allDlcs);

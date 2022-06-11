@@ -8,18 +8,21 @@ import {
   d_heroesOfMightAndMagic3_armageddonsBlade,
   d_heroesOfMightAndMagic3_theShadowOfDeath,
   d_heroesOfMightAndMagic4_theGatheringStorm,
-  d_heroesOfMightAndMagic4_windsOfWar,
+  d_heroesOfMightAndMagic4_windsOfWar, d_redDeadRedemption_UndeadNightmare,
   Dlc
 } from "./dlc";
 import {Collection} from "./collection";
-import {GameVersion,
+import {
+  GameVersion,
   gv_PC_physical_original_heroesOfMightAndMagic2,
   gv_PC_physical_original_heroesOfMightAndMagic3,
   gv_PC_gog_original_heroesOfMightAndMagic3,
   gv_PC_physical_original_heroesOfMightAndMagic4,
   gv_PC_steam_original_ageOfEmpires2,
   gv_PC_steam_remaster1_ageOfEmpires2,
-  gv_PC_steam_remaster2_ageOfEmpires2
+  gv_PC_steam_remaster2_ageOfEmpires2,
+  gv_X360_physical_original_redDeadRedemption,
+  gv_X360_physical_original_redDeadRedemptionUndeadNightmare
 } from "./gameVersion";
 
 
@@ -76,5 +79,6 @@ export const dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas = new DlcVersion
 export const dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest = new DlcVersion([gv_PC_steam_remaster2_ageOfEmpires2], d_ageOfEmpires2_lordsOfTheWest);
 export const dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes = new DlcVersion([gv_PC_steam_remaster2_ageOfEmpires2], d_ageOfEmpires2_dawnOfTheDukes);
 export const dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia = new DlcVersion([gv_PC_steam_remaster2_ageOfEmpires2], d_ageOfEmpires2_dynastiesOfIndia);
+export const dv_X360_physical_original_redDeadRedemption_UndeadNightmare = new DlcVersion([gv_X360_physical_original_redDeadRedemption], d_redDeadRedemption_UndeadNightmare);
 
 console.log(allDlcVersions);

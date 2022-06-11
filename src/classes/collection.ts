@@ -28,7 +28,6 @@ import {
   gv_X360_physical_original_redDeadRedemption,
   gv_X360_physical_original_redDeadRedemptionUndeadNightmare,
   gv_Xbox_physical_original_indigoProphecy,
-  unsureBoolEnum
 } from './gameVersion';
 import {
   DlcVersion,
