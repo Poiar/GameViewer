@@ -1,12 +1,12 @@
 import {
-  g_AgeOfEmpires2,
+  g_ageOfEmpires2,
   g_halfLife2,
   g_halfLife2Episode1,
   g_halfLife2Episode2,
   g_heroesOfMightAndMagic,
   g_heroesOfMightAndMagic2,
   g_heroesOfMightAndMagic3,
-  g_heroesOfMightAndMagic4,
+  g_heroesOfMightAndMagic4, g_indigoProphecy,
   g_metalGearSolid2,
   g_metalGearSolid3,
   g_metalGearSolid4,
@@ -15,20 +15,7 @@ import {
   g_warcraft3,
   Game,
 } from "./game";
-import {GameIteration} from "./gameIteration";
-import {
-  d_ageOfEmpires2_dawnOfTheDukes, d_ageOfEmpires2_dynastiesOfIndia,
-  d_ageOfEmpires2_lordsOfTheWest,
-  d_ageOfEmpires2_riseOfTheRajas,
-  d_ageOfEmpires2_theAfricanKingdoms,
-  d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten,
-  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
-  d_heroesOfMightAndMagic3_armageddonsBlade,
-  d_heroesOfMightAndMagic3_theShadowOfDeath,
-  d_heroesOfMightAndMagic4_theGatheringStorm,
-  d_heroesOfMightAndMagic4_windsOfWar,
-  Dlc
-} from "./dlc";
+import {Collection} from "./collection";
 
 export enum systemEnum {
   windows,
@@ -117,10 +104,10 @@ export namespace systemEnum {
 }
 
 export enum unsureBoolEnum {
-  true,
-  false,
+  yes,
+  no,
   maybe,
-  na,
+  notApplicable,
 }
 
 enum versionEnum {
@@ -152,6 +139,44 @@ namespace versionEnum {
   }
 }
 
+export enum providerEnum {
+  physical,
+  steam,
+  epic,
+  gog,
+  origin,
+  origin2,
+  ubisoft,
+  humbleBundle,
+  rockstarSocialClub,
+}
+
+export namespace providerEnum {
+  export function toString(input: providerEnum): string {
+    switch (input) {
+      case providerEnum.physical:
+        return 'Physical';
+      case providerEnum.steam:
+        return 'Steam';
+      case providerEnum.epic:
+        return 'Epic';
+      case providerEnum.gog:
+        return 'GOG';
+      case providerEnum.origin:
+        return 'Origin';
+      case providerEnum.origin2:
+        return 'Origin Alt';
+      case providerEnum.ubisoft:
+        return 'Ubisoft';
+      case providerEnum.humbleBundle:
+        return 'Humble';
+      case providerEnum.rockstarSocialClub:
+        return 'Rockstar';
+    }
+    throw 'You called versionEnum.toString() with something that is unhandled - Throwing';
+  }
+}
+
 export const allGameVersions: GameVersion[] = [];
 
 export class GameVersion {
@@ -159,43 +184,38 @@ export class GameVersion {
   readonly game: Game;
   readonly edition: string;
   readonly versionType: versionEnum;
-  gameIterations: GameIteration[];
+  readonly provider: providerEnum;
+  readonly collections: Collection[];
   readonly playableOn: systemEnum[];
   readonly controllerSupport: unsureBoolEnum;
   readonly localCoOp: unsureBoolEnum;
   private readonly versionYear?: number;
-  readonly allDlcs?: Dlc[]
 
-  constructor(game: Game, edition: string, versionType: versionEnum, playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localCoOp: unsureBoolEnum, versionYear?: number, allDlcs?: Dlc[]) {
+  constructor(game: Game, edition: string, versionType: versionEnum, provider: providerEnum, playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localCoOp: unsureBoolEnum, versionYear?: number) {
     this.id = allGameVersions.length;
-    this.game = game;
     this.edition = edition;
     this.versionType = versionType;
+    this.provider = provider;
     this.playableOn = playableOn;
     this.controllerSupport = controllerSupport;
     this.localCoOp = localCoOp;
     this.versionYear = versionYear;
 
-    this.allDlcs = allDlcs;
-    allDlcs?.forEach(dlc => dlc.gameVersions.push(this));
+    this.game = game;
+    game.gameVersions.push(this);
 
-    this.gameIterations = [];
+    this.collections = [];
 
     allGameVersions.push(this);
   }
 
-  getProviders(): string{
-    const providers: string[] = this.gameIterations.map(gameIteration => gameIteration.getProvider());
-    return providers.join(', ');
+  getProvider(): string {
+    return providerEnum.toString(this.provider);
   }
 
   getPlayableOnTitles(): string {
     const playableOnTitles: string[] = this.playableOn.map(playableOn => systemEnum.toString(playableOn)); //deviceEnum[device]
     return playableOnTitles.join(', ');
-  }
-
-  addGameIteration(gameIteration: GameIteration) {
-    this.gameIterations.push(gameIteration);
   }
 
   getVersionType(): string{
@@ -207,29 +227,32 @@ export class GameVersion {
     else if(this.game.firstRelease){ return this.game.firstRelease }
     else { return 9999 }
   }
+
+
 }
 
-export const gv_PC_original_warcraft3 = new GameVersion(g_warcraft3, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_heroesOfMightAndMagic = new GameVersion(g_heroesOfMightAndMagic, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_heroesOfMightAndMagic2 = new GameVersion(g_heroesOfMightAndMagic2, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false, undefined, [d_heroesOfMightAndMagic2_thePriceOfLoyalty]);
-export const gv_PC_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false, undefined, [d_heroesOfMightAndMagic3_armageddonsBlade, d_heroesOfMightAndMagic3_theShadowOfDeath]);
-export const gv_PC_original_heroesOfMightAndMagic4 = new GameVersion(g_heroesOfMightAndMagic4, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.false, unsureBoolEnum.false, undefined, [d_heroesOfMightAndMagic4_windsOfWar, d_heroesOfMightAndMagic4_theGatheringStorm]);
-export const gv_PC_original_halfLife2 = new GameVersion(g_halfLife2, "", versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_halfLife2Episode1 = new GameVersion(g_halfLife2Episode1, "", versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_halfLife2Episode2 = new GameVersion(g_halfLife2Episode2, "", versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_portal = new GameVersion(g_portal, "", versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.true, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_teamFortress2 = new GameVersion(g_teamFortress2, "", versionEnum.original, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.maybe, unsureBoolEnum.false, undefined, []);
-export const gv_3DS_downsample_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.downsample, [systemEnum._3ds], unsureBoolEnum.na, unsureBoolEnum.false, 2012, []);
-export const gv_PS3_remaster_metalGearSolid2 = new GameVersion(g_metalGearSolid2, "", versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011, []);
-export const gv_PS3_remaster_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011, []);
-export const gv_PS3_original_metalGearSolid4 = new GameVersion(g_metalGearSolid4, "", versionEnum.original, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, undefined, []);
-export const gv_PC_original_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, undefined, [d_ageOfEmpires2_theConquerors]);
-export const gv_PC_remaster1_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "HD Edition", versionEnum.remaster, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, 2012, [d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten, d_ageOfEmpires2_theAfricanKingdoms, d_ageOfEmpires2_riseOfTheRajas]);
-export const gv_PC_remaster2_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "Definitive Edition", versionEnum.remaster, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, 2017, [d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten, d_ageOfEmpires2_theAfricanKingdoms, d_ageOfEmpires2_riseOfTheRajas, d_ageOfEmpires2_lordsOfTheWest, d_ageOfEmpires2_dawnOfTheDukes, d_ageOfEmpires2_dynastiesOfIndia]);
+export const gv_PC_physical_original_warcraft3 = new GameVersion(g_warcraft3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic = new GameVersion(g_heroesOfMightAndMagic, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic2 = new GameVersion(g_heroesOfMightAndMagic2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_gog_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, providerEnum.gog, [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic4 = new GameVersion(g_heroesOfMightAndMagic4, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_halfLife2 = new GameVersion(g_halfLife2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_halfLife2Episode1 = new GameVersion(g_halfLife2Episode1, "", versionEnum.original, providerEnum.steam, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_halfLife2Episode2 = new GameVersion(g_halfLife2Episode2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_portal = new GameVersion(g_portal, "", versionEnum.original, providerEnum.steam, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_teamFortress2 = new GameVersion(g_teamFortress2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows, systemEnum.sd], unsureBoolEnum.maybe, unsureBoolEnum.no, undefined);
+export const gv_3DS_physical_downsample_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.downsample, providerEnum.physical, [systemEnum._3ds], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2012);
+export const gv_PS3_physical_remaster_metalGearSolid2 = new GameVersion(g_metalGearSolid2, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2011);
+export const gv_PS3_physical_remaster_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2011);
+export const gv_PS3_physical_original_metalGearSolid4 = new GameVersion(g_metalGearSolid4, "", versionEnum.original, providerEnum.physical, [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "HD Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2012);
+export const gv_PC_steam_remaster2_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "Definitive Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2017);
 
-allGameVersions.forEach(gameVersion => {
-  gameVersion.game.addGameVersion(gameVersion);
-});
+export const gv_PC_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2005);
+export const gv_PS2_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.ps2], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
+export const gv_Xbox_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.xbox], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2005);
 
 export function getAllGameVersions(): GameVersion[] {
   return allGameVersions;

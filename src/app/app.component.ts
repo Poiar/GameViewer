@@ -4,7 +4,6 @@ import {allCollections, Collection} from "../classes/collection";
 import {allGames, Game} from "../classes/game";
 import {GameVersion, allGameVersions} from "../classes/gameVersion";
 import {allSeries, Series} from "../classes/series";
-import {allGameIterations, GameIteration} from "../classes/gameIteration";
 
 @Component({
   selector: 'app-root',
@@ -17,7 +16,7 @@ export class AppComponent {
   collections:Collection[] = allCollections;
   games:Game[] = allGames;
   series:Series[] = allSeries;
-  gameIterations:GameIteration[] = allGameIterations;
+  // gameIterations:GameIteration[] = allGameIterations;
   gameVersions:GameVersion[] = allGameVersions;
 
   // getProvidersFromGameIteration(gameIteration: GameIteration): string{

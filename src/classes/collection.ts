@@ -1,38 +1,48 @@
 import {
-  GameIteration,
-  gi_PC_original_warcraft3_physical,
-  gi_PC_original_heroesOfMightAndMagic_physical,
-  gi_PC_original_heroesOfMightAndMagic2_physical,
-  gi_PC_original_heroesOfMightAndMagic3_physical,
-  gi_PC_original_heroesOfMightAndMagic4_physical,
-  gi_PC_original_halfLife2_steam,
-  gi_PC_original_halfLife2Episode1_steam,
-  gi_PC_original_halfLife2Episode2_steam,
-  gi_PC_original_portal_steam,
-  gi_PC_original_teamFortress2_steam,
-  gi_3DS_downsample_metalGearSolid3_physical,
-  gi_PS3_remaster_metalGearSolid2_physical,
-  gi_PS3_remaster_metalGearSolid3_physical,
-  gi_PS3_original_metalGearSolid4_physical,
-  gi_PC_original_heroesOfMightAndMagic3_gog,
-  gi_PC_original_ageOfEmpires2_physical,
-  gi_PC_remaster1_ageOfEmpires2_steam,
-  gi_PC_remaster2_ageOfEmpires2_steam,
-} from './gameIteration';
-import { GameVersion, unsureBoolEnum } from './gameVersion';
+  GameVersion,
+  gv_3DS_physical_downsample_metalGearSolid3,
+  gv_PC_gog_original_heroesOfMightAndMagic3,
+  gv_PC_physical_original_heroesOfMightAndMagic,
+  gv_PC_physical_original_heroesOfMightAndMagic2,
+  gv_PC_physical_original_heroesOfMightAndMagic3,
+  gv_PC_physical_original_heroesOfMightAndMagic4,
+  gv_PC_physical_original_indigoProphecy,
+  gv_PC_physical_original_warcraft3,
+  gv_PC_steam_original_ageOfEmpires2,
+  gv_PC_steam_original_halfLife2,
+  gv_PC_steam_original_halfLife2Episode1,
+  gv_PC_steam_original_halfLife2Episode2,
+  gv_PC_steam_original_portal,
+  gv_PC_steam_original_teamFortress2,
+  gv_PC_steam_remaster1_ageOfEmpires2,
+  gv_PC_steam_remaster2_ageOfEmpires2,
+  gv_PS2_physical_original_indigoProphecy,
+  gv_PS3_physical_original_metalGearSolid4,
+  gv_PS3_physical_remaster_metalGearSolid2,
+  gv_PS3_physical_remaster_metalGearSolid3, gv_Xbox_physical_original_indigoProphecy,
+  unsureBoolEnum
+} from './gameVersion';
 import {
-  d_ageOfEmpires2_dawnOfTheDukes, d_ageOfEmpires2_dynastiesOfIndia,
-  d_ageOfEmpires2_lordsOfTheWest,
-  d_ageOfEmpires2_riseOfTheRajas,
-  d_ageOfEmpires2_theAfricanKingdoms,
-  d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten,
-  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
-  d_heroesOfMightAndMagic3_armageddonsBlade,
-  d_heroesOfMightAndMagic3_theShadowOfDeath,
-  d_heroesOfMightAndMagic4_theGatheringStorm,
-  d_heroesOfMightAndMagic4_windsOfWar,
-  Dlc
-} from "./dlc";
+  DlcVersion,
+  dv_PC_gog_original_heroesOfMightAndMagic3_armageddonsBlade,
+  dv_PC_gog_original_heroesOfMightAndMagic3_theShadowOfDeath,
+  dv_PC_physical_original_ageOfEmpires2_theConquerors,
+  dv_PC_physical_original_heroesOfMightAndMagic2_thePriceOfLoyalty,
+  dv_PC_physical_original_heroesOfMightAndMagic3_armageddonsBlade,
+  dv_PC_physical_original_heroesOfMightAndMagic3_theShadowOfDeath,
+  dv_PC_physical_original_heroesOfMightAndMagic4_theGatheringStorm,
+  dv_PC_physical_original_heroesOfMightAndMagic4_windsOfWar,
+  dv_PC_steam_remaster1_ageOfEmpires1_riseOfTheRajas,
+  dv_PC_steam_remaster1_ageOfEmpires2_theAfricanKingdoms,
+  dv_PC_steam_remaster1_ageOfEmpires2_theConquerors,
+  dv_PC_steam_remaster1_ageOfEmpires2_theForgotten,
+  dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes, dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia,
+  dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest,
+  dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas,
+  dv_PC_steam_remaster2_ageOfEmpires2_theAfricanKingdoms,
+  dv_PC_steam_remaster2_ageOfEmpires2_theConquerors,
+  dv_PC_steam_remaster2_ageOfEmpires2_theForgotten
+} from "./dlcVersion";
 
 enum mediaEnum {
   na,
@@ -46,98 +56,85 @@ export const allCollections: Collection[] = [];
 export class Collection {
   readonly id: number;
   readonly title: string;
-  readonly gameIterations: GameIteration[];
+  readonly gameVersions: GameVersion[];
   readonly media: mediaEnum;
-  // readonly provider: providerEnum;
-  readonly blackLabel: unsureBoolEnum;
   readonly releaseYear?: number;
-  readonly dlcAddedByThisCollection: Dlc[];
+  readonly dlcVersions: DlcVersion[];
 
   constructor(
-    title: string, gameIterations: GameIteration[], media: mediaEnum, blackLabel: unsureBoolEnum, releaseYear?: number, dlc?: Dlc[], dlcOnly?: boolean
+    title: string, gameVersions: GameVersion[], dlcVersions: DlcVersion[], media: mediaEnum, releaseYear?: number
   ) {
     this.id = allCollections.length;
     this.title = title;
     this.media = media;
-    this.blackLabel = blackLabel;
     this.releaseYear = releaseYear;
 
-    if(dlcOnly) {
-      this.gameIterations = []
-    }
-    else{
-      this.gameIterations = gameIterations;
-      gameIterations.forEach(gameIteration => gameIteration.collections.push(this));
+    this.gameVersions = gameVersions;
+    gameVersions.forEach(gameIteration => gameIteration.collections.push(this));
 
-     }
-
-    this.dlcAddedByThisCollection = [];
-
-    dlc?.forEach(dlc => {
-      this.gameIterations.forEach(gameIteration => {
-        if(dlc.gameVersions.includes(gameIteration.gameVersion)){
-          gameIteration.dlcs.push(dlc);
-          dlc.gameVersions.push(gameIteration.gameVersion);
-
-          this.dlcAddedByThisCollection.push(dlc)
-        }
-      });
-    });
+    this.dlcVersions = dlcVersions;
+    dlcVersions.forEach(dlcVersion => dlcVersion.collections.push(this));
 
     allCollections.push(this);
   }
 
   getPlayableOnTitles(): string {
-    const systemsTitles: string[] = this.gameIterations.map((gameIteration) =>
-      gameIteration.gameVersion.getPlayableOnTitles()
-    );
-    return [...new Set(systemsTitles)].join(', '); //unique
+    const playableOnTitles: string[] = this.gameVersions.map( gameVersion => gameVersion.getPlayableOnTitles() );
+
+    this.dlcVersions.forEach( dlcVersion => {
+      dlcVersion.gameVersionsThisCanBeUsedOn.forEach(gameVersion => {
+        playableOnTitles.push(gameVersion.getPlayableOnTitles())
+      });
+    });
+
+    return [...new Set(playableOnTitles)].join(', '); //unique
   }
 
-  getVersions(): string {
-    const gameVersionVersion: string[] = this.gameIterations.map(
-      (gameIteration) => gameIteration.gameVersion.getVersionType()
-    );
-    return [...new Set(gameVersionVersion)].join(', '); //unique
-  }
+  getVersionTypes(): string {
+    const versionTypes: string[] = this.gameVersions.map( gameVersion => gameVersion.getVersionType() );
 
-  getGameVersions(): GameVersion[] {
-    return this.gameIterations.map(
-      (gameIteration) => gameIteration.gameVersion
-    );
-  }
+    this.dlcVersions.forEach( dlcVersion => {
+      dlcVersion.gameVersionsThisCanBeUsedOn.forEach(gameVersion => {
+        versionTypes.push(gameVersion.getVersionType())
+      });
+    });
 
-  hasGameIterations(): boolean {
-    if(this.gameIterations.length > 0){ return true }
-    else{ return false }
+    return [...new Set(versionTypes)].join(', '); //unique
   }
 }
 
-const c_PC_none_warcraft3 = new Collection('Warcraft 3: Reign of Chaos', [gi_PC_original_warcraft3_physical], mediaEnum.cd, unsureBoolEnum.true, 2002,[]);
-const c_PC_none_HeroesOfMightAndMagicCollection = new Collection('Heroes of Might and Magic Collection', [gi_PC_original_heroesOfMightAndMagic_physical, gi_PC_original_heroesOfMightAndMagic2_physical, gi_PC_original_heroesOfMightAndMagic3_physical, gi_PC_original_heroesOfMightAndMagic4_physical,], mediaEnum.dvd, unsureBoolEnum.true, 2004, [d_heroesOfMightAndMagic2_thePriceOfLoyalty, d_heroesOfMightAndMagic3_armageddonsBlade, d_heroesOfMightAndMagic3_theShadowOfDeath, d_heroesOfMightAndMagic4_windsOfWar, d_heroesOfMightAndMagic4_theGatheringStorm]);
-const c_PC_steam_TheOrangeBox = new Collection('The Orange Box', [gi_PC_original_halfLife2_steam, gi_PC_original_halfLife2Episode1_steam, gi_PC_original_halfLife2Episode2_steam, gi_PC_original_portal_steam, gi_PC_original_teamFortress2_steam,], mediaEnum.digital, unsureBoolEnum.na, 2007);
-const c_3DS_none_MetalGearSolid3SnakeEater3D = new Collection('Metal Gear Solid: Snake Eater 3D', [gi_3DS_downsample_metalGearSolid3_physical], mediaEnum.na, unsureBoolEnum.true, 2012);
-const c_PS3_none_MetalGearSolidTheLegacyCollection = new Collection('Metal Gear Solid: The Legacy Collection', [gi_PS3_remaster_metalGearSolid2_physical, gi_PS3_remaster_metalGearSolid3_physical, gi_PS3_original_metalGearSolid4_physical], mediaEnum.na, unsureBoolEnum.true, 2011);
-const c_PC_gog_HeroesOfMightAndMagic3Complete = new Collection('Heroes of Might and Magic 3: Complete', [gi_PC_original_heroesOfMightAndMagic3_gog], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_heroesOfMightAndMagic3_armageddonsBlade, d_heroesOfMightAndMagic3_theShadowOfDeath,]);
-const c_PC_physical_ageOfEmpires2 = new Collection('Age of Empires 2: Age of Kings', [gi_PC_original_ageOfEmpires2_physical], mediaEnum.na, unsureBoolEnum.maybe, undefined, []);
-const c_PC_physical_ageOfEmpires2TheConquerors = new Collection('Age of Empires 2: Age of Kings: The Conquerors', [gi_PC_original_ageOfEmpires2_physical], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theConquerors],true);
+const c_PC_none_warcraft3 = new Collection('Warcraft 3: Reign of Chaos', [gv_PC_physical_original_warcraft3], [], mediaEnum.cd, 2002);
+const c_PC_none_HeroesOfMightAndMagicCollection = new Collection('Heroes of Might and Magic Collection', [gv_PC_physical_original_heroesOfMightAndMagic, gv_PC_physical_original_heroesOfMightAndMagic2, gv_PC_physical_original_heroesOfMightAndMagic3, gv_PC_physical_original_heroesOfMightAndMagic4], [dv_PC_physical_original_heroesOfMightAndMagic2_thePriceOfLoyalty, dv_PC_physical_original_heroesOfMightAndMagic3_armageddonsBlade, dv_PC_physical_original_heroesOfMightAndMagic3_theShadowOfDeath, dv_PC_physical_original_heroesOfMightAndMagic4_theGatheringStorm, dv_PC_physical_original_heroesOfMightAndMagic4_windsOfWar], mediaEnum.dvd, 2004);
+const c_PC_steam_TheOrangeBox = new Collection('The Orange Box', [gv_PC_steam_original_halfLife2, gv_PC_steam_original_halfLife2Episode1, gv_PC_steam_original_halfLife2Episode2, gv_PC_steam_original_portal, gv_PC_steam_original_teamFortress2], [], mediaEnum.digital, 2007);
+const c_3DS_none_MetalGearSolid3SnakeEater3D = new Collection('Metal Gear Solid: Snake Eater 3D', [gv_3DS_physical_downsample_metalGearSolid3], [], mediaEnum.na, 2012);
+const c_PS3_none_MetalGearSolidTheLegacyCollection = new Collection('Metal Gear Solid: The Legacy Collection', [gv_PS3_physical_remaster_metalGearSolid2, gv_PS3_physical_remaster_metalGearSolid3, gv_PS3_physical_original_metalGearSolid4], [], mediaEnum.na, 2011);
+const c_PC_gog_HeroesOfMightAndMagic3Complete = new Collection('Heroes of Might and Magic 3: Complete', [gv_PC_gog_original_heroesOfMightAndMagic3], [dv_PC_gog_original_heroesOfMightAndMagic3_armageddonsBlade, dv_PC_gog_original_heroesOfMightAndMagic3_theShadowOfDeath], mediaEnum.na, undefined);
 
-const c_PC_physical_ageOfEmpires2HdEdition = new Collection('Age of Empires 2: Age of Kings (HD Edition)', [gi_PC_remaster1_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, []);
-const c_PC_physical_ageOfEmpires2HdEditionTheConquerors = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Conquerors', [gi_PC_remaster1_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theConquerors],true);
-const c_PC_physical_ageOfEmpires2HdEditionTheForgotten = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Forgotten', [gi_PC_remaster1_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theForgotten],true);
-const c_PC_physical_ageOfEmpires2HdEditionTheAfricanKingdoms = new Collection('Age of Empires 2: Age of Kings (HD Edition): The African Kingdoms', [gi_PC_remaster1_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theAfricanKingdoms],true);
-const c_PC_physical_ageOfEmpires2HdEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (HD Edition) Rise of the Rajas', [gi_PC_remaster1_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_riseOfTheRajas],true);
+const c_PC_physical_ageOfEmpires2 = new Collection('Age of Empires 2: Age of Kings', [gv_PC_steam_original_ageOfEmpires2], [], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2TheConquerors = new Collection('Age of Empires 2: Age of Kings: The Conquerors', [], [dv_PC_physical_original_ageOfEmpires2_theConquerors], mediaEnum.na, undefined);
 
-const c_PC_physical_ageOfEmpires2DefinitiveEdition = new Collection('Age of Empires 2: Age of Kings (Definitive Edition)', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, []);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionTheConquerors = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Conquerors', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theConquerors],true);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionTheForgotten = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Forgotten', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theForgotten],true);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionTheAfricanKingdoms = new Collection('Age of Empires 2: Age of Kings (HD Edition): The African Kingdoms', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_theAfricanKingdoms],true);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (HD Edition) Rise of the Rajas', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_riseOfTheRajas],true);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionLordsOfTheWest = new Collection('Age of Empires 2: Age of Kings (HD Edition): Lords of the West', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_lordsOfTheWest],true);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionDawnOfTheDukes = new Collection('Age of Empires 2: Age of Kings (HD Edition): Dawn of the Dukes', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_dawnOfTheDukes],true);
-const c_PC_physical_ageOfEmpires2DefinitiveEditionDynastiesOfIndia = new Collection('Age of Empires 2: Age of Kings (HD Edition): Dynasties of India', [gi_PC_remaster2_ageOfEmpires2_steam], mediaEnum.na, unsureBoolEnum.maybe, undefined, [d_ageOfEmpires2_dynastiesOfIndia],true);
+const c_PC_physical_ageOfEmpires2HdEdition = new Collection('Age of Empires 2: Age of Kings (HD Edition)', [gv_PC_steam_remaster1_ageOfEmpires2], [], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2HdEditionTheConquerors = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Conquerors', [], [dv_PC_steam_remaster1_ageOfEmpires2_theConquerors], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2HdEditionTheForgotten = new Collection('Age of Empires 2: Age of Kings (HD Edition): The Forgotten', [], [dv_PC_steam_remaster1_ageOfEmpires2_theForgotten], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2HdEditionTheAfricanKingdoms = new Collection('Age of Empires 2: Age of Kings (HD Edition): The African Kingdoms', [], [dv_PC_steam_remaster1_ageOfEmpires2_theAfricanKingdoms], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2HdEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (HD Edition) Rise of the Rajas', [], [dv_PC_steam_remaster1_ageOfEmpires1_riseOfTheRajas], mediaEnum.na, undefined);
+
+const c_PC_physical_ageOfEmpires2DefinitiveEdition = new Collection('Age of Empires 2: Age of Kings (Definitive Edition)', [gv_PC_steam_remaster2_ageOfEmpires2], [], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionTheConquerors = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): The Conquerors', [], [dv_PC_steam_remaster2_ageOfEmpires2_theConquerors], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionTheForgotten = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): The Forgotten', [], [dv_PC_steam_remaster2_ageOfEmpires2_theForgotten], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionTheAfricanKingdoms = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): The African Kingdoms', [], [dv_PC_steam_remaster2_ageOfEmpires2_theAfricanKingdoms], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionRiseOfTheRajas = new Collection('Age of Empires 2: Age of Kings (Definitive Edition) Rise of the Rajas', [], [dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionLordsOfTheWest = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Lords of the West', [], [dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionDawnOfTheDukes = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Dawn of the Dukes', [], [dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes], mediaEnum.na, undefined);
+const c_PC_physical_ageOfEmpires2DefinitiveEditionDynastiesOfIndia = new Collection('Age of Empires 2: Age of Kings (Definitive Edition): Dynasties of India', [], [dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia], mediaEnum.na, undefined);
 
 
-export function getAllCollections(): Collection[] {
-  return allCollections;
-}
+const c_PC_physical_IndigoProphecy = new Collection('Indigo Prophecy', [gv_PC_physical_original_indigoProphecy], [], mediaEnum.na, 2005);
+const c_PS2_physical_IndigoProphecy = new Collection('Indigo Prophecy', [gv_PS2_physical_original_indigoProphecy], [], mediaEnum.na, undefined);
+const c_Xbox_physical_IndigoProphecy = new Collection('Indigo Prophecy', [gv_Xbox_physical_original_indigoProphecy], [], mediaEnum.na, undefined);
+
+// "Indigo Prophecy"
+// "Fahrenheit"
+// "Fahrenheit: Indigo Prophecy Remastered"
+
+console.log("testing456", allCollections);
