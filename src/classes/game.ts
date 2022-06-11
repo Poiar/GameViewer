@@ -36,10 +36,10 @@ export class Game extends Content{
     super(allGames.length, title, firstRelease);
     this.genre = genre;
 
-    this.series = series;
-    series.addGame(this);
-
     this.gameVersions = [];
+
+    this.series = series;
+    series.games.push(this);
 
     allGames.push(this);
   }

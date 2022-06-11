@@ -184,6 +184,11 @@ export class GameVersion {
     allGameVersions.push(this);
   }
 
+  getProviders(): string{
+    const providers: string[] = this.gameIterations.map(gameIteration => gameIteration.getProvider());
+    return providers.join(', ');
+  }
+
   getPlayableOnTitles(): string {
     const playableOnTitles: string[] = this.playableOn.map(playableOn => systemEnum.toString(playableOn)); //deviceEnum[device]
     return playableOnTitles.join(', ');
@@ -219,8 +224,8 @@ export const gv_PS3_remaster_metalGearSolid2 = new GameVersion(g_metalGearSolid2
 export const gv_PS3_remaster_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.remaster, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, 2011, []);
 export const gv_PS3_original_metalGearSolid4 = new GameVersion(g_metalGearSolid4, "", versionEnum.original, [systemEnum.ps3], unsureBoolEnum.na, unsureBoolEnum.false, undefined, []);
 export const gv_PC_original_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "", versionEnum.original, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, undefined, [d_ageOfEmpires2_theConquerors]);
-export const gv_PC_remaster1_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "HD Edition", versionEnum.original, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, 2012, [d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten, d_ageOfEmpires2_theAfricanKingdoms, d_ageOfEmpires2_riseOfTheRajas]);
-export const gv_PC_remaster2_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "Definitive Edition", versionEnum.original, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, 2017, [d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten, d_ageOfEmpires2_theAfricanKingdoms, d_ageOfEmpires2_riseOfTheRajas, d_ageOfEmpires2_lordsOfTheWest, d_ageOfEmpires2_dawnOfTheDukes, d_ageOfEmpires2_dynastiesOfIndia]);
+export const gv_PC_remaster1_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "HD Edition", versionEnum.remaster, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, 2012, [d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten, d_ageOfEmpires2_theAfricanKingdoms, d_ageOfEmpires2_riseOfTheRajas]);
+export const gv_PC_remaster2_ageOfEmpires2 = new GameVersion(g_AgeOfEmpires2, "Definitive Edition", versionEnum.remaster, [systemEnum.windows], unsureBoolEnum.na, unsureBoolEnum.false, 2017, [d_ageOfEmpires2_theConquerors, d_ageOfEmpires2_theForgotten, d_ageOfEmpires2_theAfricanKingdoms, d_ageOfEmpires2_riseOfTheRajas, d_ageOfEmpires2_lordsOfTheWest, d_ageOfEmpires2_dawnOfTheDukes, d_ageOfEmpires2_dynastiesOfIndia]);
 
 allGameVersions.forEach(gameVersion => {
   gameVersion.game.addGameVersion(gameVersion);

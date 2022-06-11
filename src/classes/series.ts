@@ -1,5 +1,7 @@
 import {Game} from "./game";
 
+export const allSeries: Series[] = [];
+
 export class Series {
   readonly id: number;
   readonly title: string;
@@ -9,11 +11,10 @@ export class Series {
     this.id = id;
     this.title = title;
     this.games = [];
+
+    allSeries.push(this);
   }
 
-  addGame(game: Game) {
-    this.games.push(game);
-  }
 }
 
 export const s_none = new Series(0, "None");
@@ -23,7 +24,7 @@ export const s_heroesOfMightAndMagic = new Series(2, "Heroes of Might And Magic"
 export const s_halfLife = new Series(3, "Half-Life");
 export const s_portal = new Series(4, "Portal");
 export const s_teamFortress = new Series(5, "Team Fortress");
-export const s_ageOfEmpires = new Series(5, "Team Fortress");
+export const s_ageOfEmpires = new Series(5, "Age of Empires");
 
 export const series: Series[] = [
   s_none,
@@ -35,7 +36,7 @@ export const series: Series[] = [
   s_teamFortress,
 ]
 
-export function getAllSeries():Series[]{
-  return series;
-}
-console.log("testing123",getAllSeries());
+// export function getAllSeries():Series[]{
+//   return series;
+// }
+console.log("testing123", allSeries);

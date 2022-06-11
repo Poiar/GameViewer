@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 import {allCollections, Collection} from "../classes/collection";
-import {allGames, Game, getAllSeries} from "../classes/game";
+import {allGames, Game} from "../classes/game";
 import {GameVersion, allGameVersions} from "../classes/gameVersion";
-import {Series} from "../classes/series";
-import {GameIteration, getAllGameIterations} from "../classes/gameIteration";
+import {allSeries, Series} from "../classes/series";
+import {allGameIterations, GameIteration} from "../classes/gameIteration";
 
 @Component({
   selector: 'app-root',
@@ -16,8 +16,8 @@ export class AppComponent {
 
   collections:Collection[] = allCollections;
   games:Game[] = allGames;
-  series:Series[] = getAllSeries();
-  gameIterations:GameIteration[] = getAllGameIterations();
+  series:Series[] = allSeries;
+  gameIterations:GameIteration[] = allGameIterations;
   gameVersions:GameVersion[] = allGameVersions;
 
   // getProvidersFromGameIteration(gameIteration: GameIteration): string{
@@ -25,9 +25,6 @@ export class AppComponent {
   //   return providers.join(', ');
   // }
 
-  getProvidersFromGameVersion(gameVersion: GameVersion): string{
-    const providers: string[] = gameVersion.gameIterations.map(gameIteration => gameIteration.getProvider());
-    return providers.join(', ');
-  }
+
 
 }

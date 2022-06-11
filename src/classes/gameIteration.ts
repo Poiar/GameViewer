@@ -57,7 +57,7 @@ export namespace providerEnum {
 }
 
 
-const allGameIterations: GameIteration[] = [];
+export const allGameIterations: GameIteration[] = [];
 
 export class GameIteration {
   readonly id: number;
@@ -113,6 +113,6 @@ export const gi_PC_original_ageOfEmpires2_physical = new GameIteration(gv_PC_ori
 export const gi_PC_remaster1_ageOfEmpires2_steam = new GameIteration(gv_PC_remaster1_ageOfEmpires2, providerEnum.steam);
 export const gi_PC_remaster2_ageOfEmpires2_steam = new GameIteration(gv_PC_remaster2_ageOfEmpires2, providerEnum.steam);
 
-export function getAllGameIterations(): GameIteration[] {
-  return allGameIterations;
-}
+// export function getAllGameIterations(): GameIteration[] {
+//   return allGameIterations;
+// }
