@@ -14,7 +14,7 @@ import {
 } from "./series";
 import {allDlcs, Dlc} from "./dlc";
 
-enum genreEnum {
+export enum genreEnum {
   undefined,
   rts,
   rpg,
@@ -26,6 +26,36 @@ enum genreEnum {
   stealth,
   tbs,
   openWorld,
+}
+
+export namespace genreEnum {
+  export function toString(input: genreEnum): string {
+    switch (input) {
+      case genreEnum.undefined:
+        return 'Undefined';
+      case genreEnum.rts:
+        return 'RTS';
+      case genreEnum.rpg:
+        return 'RPG';
+      case genreEnum.jrpg:
+        return 'JRPG';
+      case genreEnum.karting:
+        return 'Karting';
+      case genreEnum.platformer2d:
+        return '2D Platformer';
+      case genreEnum.platformer3d:
+        return '3D Platformer';
+      case genreEnum.fps:
+        return 'FPS';
+      case genreEnum.stealth:
+        return 'Stealth';
+      case genreEnum.tbs:
+        return 'TBS';
+      case genreEnum.openWorld:
+        return 'Open World';
+    }
+    throw 'You called versionEnum.toString() with something that is unhandled - Throwing';
+  }
 }
 
 export const allGames: Game[] = [];
@@ -67,6 +97,10 @@ export class Game extends Content{
     })
 
     return [...new Set(allDlcForThisGameVersion)]
+  }
+
+  getGenre(): string {
+    return genreEnum.toString(this.genre);
   }
 }
 

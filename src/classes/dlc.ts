@@ -2,7 +2,6 @@ import {
   Content
 } from "./content";
 import {DlcVersion} from "./dlcVersion";
-import {gv_X360_physical_original_redDeadRedemptionUndeadNightmare} from "./gameVersion";
 
 export const allDlcs: Dlc[] = [];
 

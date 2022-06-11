@@ -1,0 +1,58 @@
+<p>game-ui works!</p>
+
+<div>
+  <h3>
+    {{ firstGame.title }}
+  </h3>
+
+  <div>
+    First release: {{ firstGame.firstRelease }}
+  </div>
+
+  <div>
+    Genre: {{ firstGame.getGenre() }}
+  </div>
+
+  <div>
+    Game versions:
+    <ul *ngFor="let gameVersion of firstGame.gameVersions">
+      <button type="button" (click)="onSelect(gameVersion)">
+        {{ gameVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
+      </button>
+    </ul>
+  </div>
+
+  <div *ngIf="selectedGameVersion">
+    <h2>{{ selectedGameVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details</h2>
+    <div>ID: {{ selectedGameVersion.id }}</div>
+    <div>Collection: {{ selectedGameVersion.getCollections() }}</div>
+    <div>Year: {{ selectedGameVersion.getVersionYear() }}</div>
+    <div>Edition: {{ selectedGameVersion.edition }}</div>
+    <div>Version type: {{ selectedGameVersion.getVersionType() }}</div>
+    <div>Provider: {{ selectedGameVersion.getProvider() }}</div>
+    <div>Playable on: {{ selectedGameVersion.getPlayableOnTitles() }}</div>
+    <div>Local Co-Op: {{ selectedGameVersion.getLocalCoOp() }}</div>
+
+<!--    this.id = allGameVersions.length;-->
+<!--    this.edition = edition;-->
+<!--    this.versionType = versionType;-->
+<!--    this.provider = provider;-->
+<!--    this.playableOn = playableOn;-->
+<!--    this.controllerSupport = controllerSupport;-->
+<!--    this.localCoOp = localCoOp;-->
+<!--    this.versionYear = versionYear;-->
+
+
+
+<!--    <div>-->
+<!--      <label for="hero-name">selectedGameVersion name: </label>-->
+<!--      <input id="hero-name" [(ngModel)]="selectedGameVersion.getVersionType()" placeholder="name">-->
+<!--    </div>-->
+  </div>
+
+<!--  genre: genreEnum;-->
+<!--  gameVersions: GameVersion[];-->
+<!--  series: Series;-->
+<!--  alternativeTitles: string[];-->
+</div>
+

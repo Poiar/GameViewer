@@ -123,6 +123,23 @@ export enum unsureBoolEnum {
   notApplicable,
 }
 
+export namespace unsureBoolEnum {
+  export function toString(input: unsureBoolEnum): string {
+    switch (input) {
+      case unsureBoolEnum.yes:
+        return "Yes"
+      case unsureBoolEnum.no:
+        return "No"
+      case unsureBoolEnum.maybe:
+        return "Maybe"
+      case unsureBoolEnum.notApplicable:
+        return "Not applicable"
+
+    }
+    throw "You called unsureBoolEnum.toString() with something that is unhandled - Throwing"
+  }
+}
+
 enum versionEnum {
   undefined,
   original,
@@ -248,14 +265,22 @@ export class GameVersion {
     // return [...new Set(playableOnTitles)].join(', '); //unique
   }
 
-  getVersionType(): string{
+  getVersionType(): string {
     return versionEnum.toString(this.versionType);
   }
 
-  getVersionYear(): number{
+  getVersionYear(): number {
     if (this.versionYear) { return this.versionYear }
     else if(this.game.firstRelease){ return this.game.firstRelease }
     else { return 9999 }
+  }
+
+  getCollections(): string {
+    return this.collections.map(collection => collection.title).join();
+  }
+
+  getLocalCoOp(): string {
+    return unsureBoolEnum.toString(this.localCoOp);
   }
 
 }

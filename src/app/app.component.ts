@@ -16,14 +16,5 @@ export class AppComponent {
   collections:Collection[] = allCollections;
   games:Game[] = allGames;
   series:Series[] = allSeries;
-  // gameIterations:GameIteration[] = allGameIterations;
   gameVersions:GameVersion[] = allGameVersions;
-
-  // getProvidersFromGameIteration(gameIteration: GameIteration): string{
-  //   const providers: string[] = gameIteration.collections.map(collection => providerEnum.toString(collection.provider));
-  //   return providers.join(', ');
-  // }
-
-
-
 }
