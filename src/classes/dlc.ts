@@ -1,17 +1,17 @@
 import {
   Content
 } from "./content";
-import {DlcVersion} from "./dlcVersion";
+import {GameVersion} from "./gameVersion";
 
 
 export const allDlcs: Dlc[] = [];
 
 export class Dlc extends Content{
-  dlcVersions: DlcVersion[];
+  gameVersions: GameVersion[];
 
   constructor(title: string, firstRelease: number) {
     super(allDlcs.length, title, firstRelease);
-    this.dlcVersions = [];
+    this.gameVersions = [];
 
     allDlcs.push(this);
   }

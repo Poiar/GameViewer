@@ -35,8 +35,10 @@ export class Game extends Content{
   constructor(title: string, genre: genreEnum, firstRelease: number, series: Series) {
     super(allGames.length, title, firstRelease);
     this.genre = genre;
+
     this.series = series;
     series.addGame(this);
+
     this.gameVersions = [];
 
     allGames.push(this);
