@@ -10,7 +10,7 @@ import {
   g_metalGearSolid2,
   g_metalGearSolid3,
   g_metalGearSolid4,
-  g_portal,
+  g_portal, g_redDeadRedemption, g_RedDeadRedemptionUndeadNightmare,
   g_teamFortress2,
   g_warcraft3,
   Game,
@@ -23,6 +23,7 @@ export enum systemEnum {
   sd,
   xbox,
   x360,
+  xone,
   xsx,
   ps,
   ps2,
@@ -60,6 +61,8 @@ export namespace systemEnum {
         return "Xbox"
       case systemEnum.x360:
         return "X360"
+      case systemEnum.xone:
+        return "XONE"
       case systemEnum.xsx:
         return "XSX"
       case systemEnum.ps:
@@ -235,13 +238,18 @@ export class GameVersion {
     return providerEnum.toString(this.provider);
   }
 
+  getPlayableOn(): string[] {
+    const playableOn: string[] = this.playableOn.map(playableOn => systemEnum.toString(playableOn)); //deviceEnum[device]
+    return playableOn;
+  }
+
   getPlayableOnTitles(): string {
-    const playableOnTitles: string[] = this.playableOn.map(playableOn => systemEnum.toString(playableOn)); //deviceEnum[device]
-    return playableOnTitles.join(', ');
+    return this.getPlayableOn().join(', ');
+    // return [...new Set(playableOnTitles)].join(', '); //unique
   }
 
   getVersionType(): string{
-    return versionEnum.toString(this.versionType);;
+    return versionEnum.toString(this.versionType);
   }
 
   getVersionYear(): number{
@@ -249,7 +257,6 @@ export class GameVersion {
     else if(this.game.firstRelease){ return this.game.firstRelease }
     else { return 9999 }
   }
-
 
 }
 
@@ -271,17 +278,16 @@ export const gv_PS3_physical_original_metalGearSolid4 = new GameVersion(g_metalG
 export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, undefined);
 export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "HD Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2012);
 export const gv_PC_steam_remaster2_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "Definitive Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2017);
-
 export const gv_PC_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
 export const gv_PS2_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.ps2], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
 export const gv_Xbox_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.xbox], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
-
 export const gv_X360_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.physical, [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, 2007);
 export const gv_X360_digital_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, 2007);
-
 export const gv_PC_steam_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "Remastered", versionEnum.remaster, providerEnum.steam, [systemEnum.windows, systemEnum.linux, systemEnum.macOs], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-
 export const gv_PS4_digital_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.psn, [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-export const gv_PS4_physical_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "Limited Run #331", versionEnum.remaster, providerEnum.physical, [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+export const gv_PS4_physical_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+
+export const gv_X360_physical_original_redDeadRedemption = new GameVersion(g_redDeadRedemption, "", versionEnum.original, providerEnum.physical, [systemEnum.x360, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2010);
+export const gv_X360_physical_original_redDeadRedemptionUndeadNightmare = new GameVersion(g_RedDeadRedemptionUndeadNightmare, "", versionEnum.original, providerEnum.physical, [systemEnum.x360, systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2010);
 
 console.log(allGameVersions);

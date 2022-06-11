@@ -10,7 +10,7 @@ import {
   s_heroesOfMightAndMagic,
   s_halfLife,
   s_portal,
-  s_teamFortress, s_ageOfEmpires, allSeries,
+  s_teamFortress, s_ageOfEmpires, allSeries, s_redDead,
 } from "./series";
 import {allDlcs, Dlc} from "./dlc";
 
@@ -25,6 +25,7 @@ enum genreEnum {
   fps,
   stealth,
   tbs,
+  openWorld,
 }
 
 export const allGames: Game[] = [];
@@ -85,6 +86,8 @@ export const g_metalGearSolid3 = new Game("Metal Gear Solid 3: Snake Eater", gen
 export const g_metalGearSolid4 = new Game("Metal Gear Solid 4: Guns of the Patriots", genreEnum.stealth, 2008, s_metalGearSolid, []);
 export const g_ageOfEmpires2 = new Game("Age of Empires II: The Age of Kings", genreEnum.rts, 1999, s_ageOfEmpires, []);
 export const g_indigoProphecy = new Game("Indigo Prophecy", genreEnum.undefined, 1999, s_none, ["Fahrenheit"]);
+export const g_redDeadRedemption = new Game("Red Dead Redemption", genreEnum.openWorld, 2010, s_redDead, []);
+export const g_RedDeadRedemptionUndeadNightmare = new Game("Red Dead Redemption: Undead Nightmare", genreEnum.openWorld, 2010, s_redDead, []);
 
 console.log(allGames);
 

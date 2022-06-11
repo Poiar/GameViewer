@@ -47,8 +47,8 @@ export class DlcVersion {
   getPlayableOnTitles(): string {
     const playableOnTitles: string[] = this.gameVersionsThisCanBeUsedOn.map(gameVersion => gameVersion.getVersionType());
 
-    // return [...new Set(playableOnTitles)].join(', '); //unique
-    return playableOnTitles.join(', ');
+    return [...new Set(playableOnTitles)].join(', '); //unique
+    // return playableOnTitles.join(', ');
   }
 
   getFirstGameVersion(): GameVersion {

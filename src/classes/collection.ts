@@ -21,9 +21,12 @@ import {
   gv_PS3_physical_original_metalGearSolid4,
   gv_PS3_physical_remaster_metalGearSolid2,
   gv_PS3_physical_remaster_metalGearSolid3,
-  gv_PS4_digital_remastered_indigoProphecy, gv_PS4_physical_remastered_indigoProphecy,
+  gv_PS4_digital_remastered_indigoProphecy,
+  gv_PS4_physical_remastered_indigoProphecy,
   gv_X360_digital_original_indigoProphecy,
   gv_X360_physical_original_indigoProphecy,
+  gv_X360_physical_original_redDeadRedemption,
+  gv_X360_physical_original_redDeadRedemptionUndeadNightmare,
   gv_Xbox_physical_original_indigoProphecy,
   unsureBoolEnum
 } from './gameVersion';
@@ -84,15 +87,17 @@ export class Collection {
   }
 
   getPlayableOnTitles(): string {
-    const playableOnTitles: string[] = this.gameVersions.map( gameVersion => gameVersion.getPlayableOnTitles() );
+    const playableOnList: string[] = [];
+
+    this.gameVersions.forEach( gameVersion => gameVersion.getPlayableOn().forEach(playableOn => playableOnList.push(playableOn)) );
 
     this.dlcVersions.forEach( dlcVersion => {
       dlcVersion.gameVersionsThisCanBeUsedOn.forEach(gameVersion => {
-        playableOnTitles.push(gameVersion.getPlayableOnTitles())
+        gameVersion.getPlayableOn().forEach(playableOn => playableOnList.push(playableOn))
       });
     });
 
-    return [...new Set(playableOnTitles)].join(', '); //unique
+    return [...new Set(playableOnList)].join(', '); //unique
   }
 
   getVersionTypes(): string {
@@ -142,9 +147,9 @@ const c_X360_digital_indigoProphecy = new Collection('Indigo Prophecy', [gv_X360
 const c_PC_steam_fahrenheitIndigoProphecyRemastered = new Collection('Fahrenheit: Indigo Prophecy Remastered', [gv_PC_steam_remastered_indigoProphecy], [], mediaEnum.digital, 2015);
 
 const c_PS4_digital_indigoProphecy = new Collection('Indigo Prophecy', [gv_PS4_digital_remastered_indigoProphecy], [], mediaEnum.digital, 2015);
-const c_PS4_physical_indigoProphecy = new Collection('Indigo Prophecy', [gv_PS4_physical_remastered_indigoProphecy], [], mediaEnum.digital, 2020);
+const c_PS4_physical_indigoProphecy = new Collection('Indigo Prophecy: Limited Run #331', [gv_PS4_physical_remastered_indigoProphecy], [], mediaEnum.digital, 2020);
 
+const c_X360_physical_redDeadRedemptionGameOfTheYearEdition = new Collection('Red Dead Redemption: Game of the Year Edition', [gv_X360_physical_original_redDeadRedemption, gv_X360_physical_original_redDeadRedemptionUndeadNightmare], [], mediaEnum.na, 2011);
 
-//Red Dead Redemption
 
 console.log(allCollections);

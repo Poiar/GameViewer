@@ -7,33 +7,23 @@ export class Series {
   readonly title: string;
   games: Game[];
 
-  constructor(id: number, title: string) {
-    this.id = id;
+  constructor(title: string) {
+    this.id = allSeries.length;
     this.title = title;
     this.games = [];
 
     allSeries.push(this);
   }
-
 }
 
-export const s_none = new Series(0, "None");
-export const s_warcraft = new Series(1, "Warcraft");
-export const s_metalGearSolid = new Series(1, "Metal Gear Solid");
-export const s_heroesOfMightAndMagic = new Series(2, "Heroes of Might And Magic");
-export const s_halfLife = new Series(3, "Half-Life");
-export const s_portal = new Series(4, "Portal");
-export const s_teamFortress = new Series(5, "Team Fortress");
-export const s_ageOfEmpires = new Series(5, "Age of Empires");
-
-export const series: Series[] = [
-  s_none,
-  s_warcraft,
-  s_metalGearSolid,
-  s_heroesOfMightAndMagic,
-  s_halfLife,
-  s_portal,
-  s_teamFortress,
-]
+export const s_none = new Series("None");
+export const s_warcraft = new Series("Warcraft");
+export const s_metalGearSolid = new Series("Metal Gear Solid");
+export const s_heroesOfMightAndMagic = new Series("Heroes of Might And Magic");
+export const s_halfLife = new Series("Half-Life");
+export const s_portal = new Series("Portal");
+export const s_teamFortress = new Series("Team Fortress");
+export const s_ageOfEmpires = new Series("Age of Empires");
+export const s_redDead = new Series("Red Dead");
 
 console.log(allSeries);
