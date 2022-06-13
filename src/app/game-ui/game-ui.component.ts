@@ -20,6 +20,5 @@ export class GameUIComponent implements OnInit {
 
   onSelect(gameVersion: GameVersion): void {
     this.selectedGameVersion = gameVersion;
-    // console.log("aasdas")
   }
 }

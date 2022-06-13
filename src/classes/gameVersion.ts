@@ -236,11 +236,11 @@ export class GameVersion {
   readonly playableOn: systemEnum[];
   readonly controllerSupport: unsureBoolEnum; //Change to input methods
   readonly localMultiPlayer: unsureBoolEnum;
-  // readonly onlineMultiPlayer: unsureBoolEnum; //comment in
+  readonly onlineMultiPlayer: unsureBoolEnum; //comment in
   private readonly versionYear?: number;
   readonly dlcVersionsThatThisCanUse: DlcVersion[];
 
-  constructor(game: Game, edition: string, versionType: versionEnum, provider: providerEnum, intendedFor: systemEnum[], playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localMultiPlayer: unsureBoolEnum, versionYear?: number) {
+  constructor(game: Game, edition: string, versionType: versionEnum, provider: providerEnum, intendedFor: systemEnum[], playableOn: systemEnum[], controllerSupport: unsureBoolEnum, localMultiPlayer: unsureBoolEnum, onlineMultiPlayer: unsureBoolEnum, versionYear?: number) {
     this.id = allGameVersions.length;
     this.edition = edition;
     this.versionType = versionType;
@@ -249,7 +249,7 @@ export class GameVersion {
     this.playableOn = playableOn;
     this.controllerSupport = controllerSupport;
     this.localMultiPlayer = localMultiPlayer;
-    // this.onlineMultiPlayer = onlineMultiPlayer;
+    this.onlineMultiPlayer = onlineMultiPlayer;
     this.versionYear = versionYear;
 
     this.game = game;
@@ -275,6 +275,16 @@ export class GameVersion {
     // return [...new Set(playableOnTitles)].join(', '); //unique
   }
 
+  getIntendedFor(): string[] {
+    const intendedFor: string[] = this.intendedFor.map(playableOn => systemEnum.toString(playableOn)); //deviceEnum[device]
+    return intendedFor;
+  }
+
+  getIntendedForTitles(): string {
+    return this.getIntendedFor().join(', ');
+    // return [...new Set(playableOnTitles)].join(', '); //unique
+  }
+
   getVersionType(): string {
     return versionEnum.toString(this.versionType);
   }
@@ -295,49 +305,48 @@ export class GameVersion {
 
 }
 
-export const gv_PC_physical_original_warcraft3 = new GameVersion(g_warcraft3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
-export const gv_PC_physical_original_heroesOfMightAndMagic = new GameVersion(g_heroesOfMightAndMagic, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
-export const gv_PC_physical_original_heroesOfMightAndMagic2 = new GameVersion(g_heroesOfMightAndMagic2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
-export const gv_PC_physical_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
-export const gv_PC_gog_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
-export const gv_PC_physical_original_heroesOfMightAndMagic4 = new GameVersion(g_heroesOfMightAndMagic4, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_original_halfLife2 = new GameVersion(g_halfLife2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_original_halfLife2Episode1 = new GameVersion(g_halfLife2Episode1, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_original_halfLife2Episode2 = new GameVersion(g_halfLife2Episode2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_original_portal = new GameVersion(g_portal, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_original_teamFortress2 = new GameVersion(g_teamFortress2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.maybe, unsureBoolEnum.no, undefined);
-export const gv_3DS_physical_downsample_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.downsample, providerEnum.physical, [systemEnum._3ds], [systemEnum._3ds], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2012);
-export const gv_PS3_physical_remaster_metalGearSolid2 = new GameVersion(g_metalGearSolid2, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps3], [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2011);
-export const gv_PS3_physical_remaster_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps3], [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2011);
-export const gv_PS3_physical_original_metalGearSolid4 = new GameVersion(g_metalGearSolid4, "", versionEnum.original, providerEnum.physical, [systemEnum.ps3], [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, undefined);
-export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "HD Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2012);
-export const gv_PC_steam_remaster2_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "Definitive Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, 2017);
-export const gv_PC_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
-export const gv_PS2_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.ps2], [systemEnum.ps2], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
-export const gv_Xbox_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.xbox], [systemEnum.xbox], unsureBoolEnum.yes, unsureBoolEnum.no, 2005);
-export const gv_X360_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.physical, [systemEnum.x360], [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, 2007);
-export const gv_X360_digital_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.x360], [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, 2007);
-export const gv_PC_steam_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "Remastered", versionEnum.remaster, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.linux, systemEnum.macOs], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-export const gv_PS4_digital_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.psn, [systemEnum.ps4], [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-export const gv_PS4_physical_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps4], [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-export const gv_X360_physical_original_redDeadRedemption = new GameVersion(g_redDeadRedemption, "", versionEnum.original, providerEnum.physical, [systemEnum.x360], [systemEnum.x360, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2010);
-export const gv_X360_physical_original_redDeadRedemptionUndeadNightmare = new GameVersion(g_redDeadRedemptionUndeadNightmare, "", versionEnum.original, providerEnum.physical, [systemEnum.x360], [systemEnum.x360, systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2010);
+export const gv_PC_physical_original_warcraft3 = new GameVersion(g_warcraft3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic = new GameVersion(g_heroesOfMightAndMagic, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic2 = new GameVersion(g_heroesOfMightAndMagic2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_gog_original_heroesOfMightAndMagic3 = new GameVersion(g_heroesOfMightAndMagic3, "", versionEnum.original, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_physical_original_heroesOfMightAndMagic4 = new GameVersion(g_heroesOfMightAndMagic4, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_halfLife2 = new GameVersion(g_halfLife2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_halfLife2Episode1 = new GameVersion(g_halfLife2Episode1, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_halfLife2Episode2 = new GameVersion(g_halfLife2Episode2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_portal = new GameVersion(g_portal, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_teamFortress2 = new GameVersion(g_teamFortress2, "", versionEnum.original, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.sd], unsureBoolEnum.maybe, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_3DS_physical_downsample_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.downsample, providerEnum.physical, [systemEnum._3ds], [systemEnum._3ds], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, 2012);
+export const gv_PS3_physical_remaster_metalGearSolid2 = new GameVersion(g_metalGearSolid2, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps3], [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, 2011);
+export const gv_PS3_physical_remaster_metalGearSolid3 = new GameVersion(g_metalGearSolid3, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps3], [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, 2011);
+export const gv_PS3_physical_original_metalGearSolid4 = new GameVersion(g_metalGearSolid4, "", versionEnum.original, providerEnum.physical, [systemEnum.ps3], [systemEnum.ps3], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
+export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "HD Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, 2012);
+export const gv_PC_steam_remaster2_ageOfEmpires2 = new GameVersion(g_ageOfEmpires2, "Definitive Edition", versionEnum.remaster, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.notApplicable, unsureBoolEnum.no, unsureBoolEnum.no, 2017);
+export const gv_PC_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2005);
+export const gv_PS2_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.ps2], [systemEnum.ps2], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2005);
+export const gv_Xbox_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.original, providerEnum.physical, [systemEnum.xbox], [systemEnum.xbox], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2005);
+export const gv_X360_physical_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.physical, [systemEnum.x360], [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2007);
+export const gv_X360_digital_original_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.x360], [systemEnum.x360], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2007);
+export const gv_PC_steam_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "Remastered", versionEnum.remaster, providerEnum.steam, [systemEnum.windows], [systemEnum.windows, systemEnum.linux, systemEnum.macOs], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
+export const gv_PS4_digital_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.psn, [systemEnum.ps4], [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
+export const gv_PS4_physical_remastered_indigoProphecy = new GameVersion(g_indigoProphecy, "", versionEnum.remaster, providerEnum.physical, [systemEnum.ps4], [systemEnum.ps4, systemEnum.ps5], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
+export const gv_X360_physical_original_redDeadRedemption = new GameVersion(g_redDeadRedemption, "", versionEnum.original, providerEnum.physical, [systemEnum.x360], [systemEnum.x360, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2010);
+export const gv_X360_physical_original_redDeadRedemptionUndeadNightmare = new GameVersion(g_redDeadRedemptionUndeadNightmare, "", versionEnum.original, providerEnum.physical, [systemEnum.x360], [systemEnum.x360, systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2010);
 
+export const gv_XONE_physical_original_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.original, providerEnum.physical, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
+export const gv_XONE_digital_original_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.original, providerEnum.xboxLive, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
 
-export const gv_XONE_physical_original_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.original, providerEnum.physical, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-export const gv_XONE_digital_original_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.original, providerEnum.xboxLive, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+export const gv_XSX_physical_enhanced_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2022);
+export const gv_XSX_digital_enhanced_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2022);
 
-export const gv_XSX_physical_enhanced_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2022);
-export const gv_XSX_digital_enhanced_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, 2022);
+export const gv_XONE_physical_original_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.original, providerEnum.physical, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
+export const gv_XONE_digital_original_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.original, providerEnum.xboxLive, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2015);
 
-export const gv_XONE_physical_original_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.original, providerEnum.physical, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
-export const gv_XONE_digital_original_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.original, providerEnum.xboxLive, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, 2015);
+export const gv_XSX_physical_enhanced_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.enhanced, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2022);
+export const gv_XSX_digital_enhanced_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.enhanced, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2022);
 
-export const gv_XSX_physical_enhanced_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.original, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, 2022);
-export const gv_XSX_digital_enhanced_theWitcher3Goty = new GameVersion(g_theWitcher3, "Game of the Year", versionEnum.original, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, 2022);
-
-export const gv_PC_gog_enhanced_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, 2022);
-export const gv_PC_gog_enhanced_theWitcher3Goty = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, 2022);
+export const gv_PC_gog_enhanced_theWitcher3 = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2022);
+export const gv_PC_gog_enhanced_theWitcher3Goty = new GameVersion(g_theWitcher3, "", versionEnum.enhanced, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no, 2022);
 
 console.log({allGameVersions});
