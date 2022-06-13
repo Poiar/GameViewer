@@ -28,6 +28,13 @@ import {
   gv_X360_physical_original_redDeadRedemption,
   gv_X360_physical_original_redDeadRedemptionUndeadNightmare,
   gv_Xbox_physical_original_indigoProphecy,
+  gv_XONE_digital_original_theWitcher3,
+  gv_XONE_digital_original_theWitcher3Goty,
+  gv_XONE_physical_original_theWitcher3,
+  gv_XONE_physical_original_theWitcher3Goty,
+  gv_XSX_digital_enhanced_theWitcher3, gv_XSX_digital_enhanced_theWitcher3Goty,
+  gv_XSX_physical_enhanced_theWitcher3,
+  gv_XSX_physical_enhanced_theWitcher3Goty,
 } from './gameVersion';
 import {
   DlcVersion,
@@ -43,12 +50,17 @@ import {
   dv_PC_steam_remaster1_ageOfEmpires2_theAfricanKingdoms,
   dv_PC_steam_remaster1_ageOfEmpires2_theConquerors,
   dv_PC_steam_remaster1_ageOfEmpires2_theForgotten,
-  dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes, dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia,
+  dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes,
+  dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia,
   dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest,
   dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas,
   dv_PC_steam_remaster2_ageOfEmpires2_theAfricanKingdoms,
   dv_PC_steam_remaster2_ageOfEmpires2_theConquerors,
-  dv_PC_steam_remaster2_ageOfEmpires2_theForgotten
+  dv_PC_steam_remaster2_ageOfEmpires2_theForgotten,
+  dv_XONE_original_theWitcher3goty_bloodAndWine,
+  dv_XONE_original_theWitcher3goty_heartsOfStone,
+  dv_XSX_Enhanced_theWitcher3goty_bloodAndWine,
+  dv_XSX_Enhanced_theWitcher3goty_heartsOfStone,
 } from "./dlcVersion";
 
 enum mediaEnum {
@@ -150,5 +162,14 @@ const c_PS4_physical_indigoProphecy = new Collection('Indigo Prophecy: Limited R
 
 const c_X360_physical_redDeadRedemptionGameOfTheYearEdition = new Collection('Red Dead Redemption: Game of the Year Edition', [gv_X360_physical_original_redDeadRedemption, gv_X360_physical_original_redDeadRedemptionUndeadNightmare], [], mediaEnum.na, 2011);
 
+const c_XONE_physical_TheWitcher3 = new Collection('The Witcher 3: Wild Hunt', [gv_XONE_physical_original_theWitcher3, gv_XSX_physical_enhanced_theWitcher3], [], mediaEnum.na, 2015);
+const c_XONE_digital_TheWitcher3 = new Collection('The Witcher 3: Wild Hunt', [gv_XONE_digital_original_theWitcher3, gv_XSX_digital_enhanced_theWitcher3], [], mediaEnum.na, 2015);
 
-console.log(allCollections);
+const c_XONEXSX_physical_TheWitcher3goty = new Collection('The Witcher 3: Wild Hunt - Game of the Year Edition', [gv_XONE_physical_original_theWitcher3Goty, gv_XSX_physical_enhanced_theWitcher3Goty], [dv_XSX_Enhanced_theWitcher3goty_heartsOfStone, dv_XSX_Enhanced_theWitcher3goty_bloodAndWine, dv_XONE_original_theWitcher3goty_heartsOfStone, dv_XONE_original_theWitcher3goty_bloodAndWine], mediaEnum.na, 2016);
+const c_XONEXSXXSS_digital_TheWitcher3goty = new Collection('The Witcher 3: Wild Hunt - Game of the Year Edition', [gv_XONE_digital_original_theWitcher3Goty, gv_XSX_digital_enhanced_theWitcher3Goty], [dv_XSX_Enhanced_theWitcher3goty_heartsOfStone, dv_XSX_Enhanced_theWitcher3goty_bloodAndWine, dv_XONE_original_theWitcher3goty_heartsOfStone, dv_XONE_original_theWitcher3goty_bloodAndWine], mediaEnum.na, 2016);
+
+const c_PS4PS5_physical_TheWitcher3 = new Collection('The Witcher 3: Wild Hunt', [], [], mediaEnum.na, 2015);
+const c_PS4PS5PS5D_digital_TheWitcher3 = new Collection('The Witcher 3: Wild Hunt', [], [], mediaEnum.na, 2015);
+
+
+console.log({allCollections});

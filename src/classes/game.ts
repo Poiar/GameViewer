@@ -10,7 +10,7 @@ import {
   s_heroesOfMightAndMagic,
   s_halfLife,
   s_portal,
-  s_teamFortress, s_ageOfEmpires, allSeries, s_redDead,
+  s_teamFortress, s_ageOfEmpires, allSeries, s_redDead, s_theWitcher,
 } from "./series";
 import {allDlcs, Dlc} from "./dlc";
 
@@ -121,9 +121,10 @@ export const g_metalGearSolid4 = new Game("Metal Gear Solid 4: Guns of the Patri
 export const g_ageOfEmpires2 = new Game("Age of Empires II: The Age of Kings", genreEnum.rts, 1999, s_ageOfEmpires, []);
 export const g_indigoProphecy = new Game("Indigo Prophecy", genreEnum.undefined, 1999, s_none, ["Fahrenheit"]);
 export const g_redDeadRedemption = new Game("Red Dead Redemption", genreEnum.openWorld, 2010, s_redDead, []);
-export const g_RedDeadRedemptionUndeadNightmare = new Game("Red Dead Redemption: Undead Nightmare", genreEnum.openWorld, 2010, s_redDead, []);
+export const g_redDeadRedemptionUndeadNightmare = new Game("Red Dead Redemption: Undead Nightmare", genreEnum.openWorld, 2010, s_redDead, []);
+export const g_theWitcher3 = new Game("The Witcher 3: Wild Hunt", genreEnum.openWorld, 2015, s_theWitcher, []);
 
-console.log(allGames);
+console.log({allGames});
 
 // export function getAllSeries(): Series[] {
 //   return [...new Set(allGames.map(game => game.series))]; //Unique
