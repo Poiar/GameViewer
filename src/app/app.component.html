@@ -170,7 +170,7 @@
         *ngIf="gameVersion.dlcVersionsThatThisCanUse.length > 0"
         [title]="gameVersion.game.title + ' details'"
       >
-        {{ gameVersion.game.title }} ({{gameVersion.getIntendedForTitles()}} {{gameVersion.getProvider()}}) ({{gameVersion.getVersionType()}} {{ gameVersion.getVersionYear()}})
+        {{ gameVersion.game.title }} ({{gameVersion.getIntendedForTitles()}} - {{gameVersion.getProvider()}}) ({{gameVersion.getVersionType()}} {{ gameVersion.getVersionYear()}})
       </a>
     </h3>
 

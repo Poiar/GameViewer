@@ -299,10 +299,13 @@ export class GameVersion {
     return this.collections.map(collection => collection.title).join();
   }
 
-  getLocalCoOp(): string {
+  getLocalMultiplayer(): string {
     return unsureBoolEnum.toString(this.localMultiPlayer);
   }
 
+  getOnlineMultiplayer(): string {
+    return unsureBoolEnum.toString(this.onlineMultiPlayer);
+  }
 }
 
 export const gv_PC_physical_original_warcraft3 = new GameVersion(g_warcraft3, "", versionEnum.original, providerEnum.physical, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.no, unsureBoolEnum.no, unsureBoolEnum.no, undefined);
