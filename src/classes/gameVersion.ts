@@ -25,7 +25,6 @@ import {
   sv_enhanced2018_redDeadRedemption, sv_enhanced2018_redDeadRedemptionUndeadNightmare,
   sv_enhanced_indigoProphecy,
   sv_enhanced_theWitcher3,
-  sv_enhanced_theWitcher3Goty,
   sv_original_ageOfEmpires2,
   sv_original_halfLife2,
   sv_original_halfLife2Episode1,
@@ -41,7 +40,6 @@ import {
   sv_original_redDeadRedemptionUndeadNightmare,
   sv_original_teamFortress2,
   sv_original_theWitcher3,
-  sv_original_theWitcher3Goty,
   sv_original_warcraft3,
   sv_remaster2012_ageOfEmpires2,
   sv_remaster2017_ageOfEmpires2,
@@ -337,13 +335,13 @@ export const gv_XONE_digital_original_theWitcher3 = new GameVersion(sv_original_
 export const gv_XSX_physical_enhanced_theWitcher3 = new GameVersion(sv_enhanced_theWitcher3, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
 export const gv_XSX_digital_enhanced_theWitcher3 = new GameVersion(sv_enhanced_theWitcher3, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
 
-export const gv_XONE_physical_original_theWitcher3Goty = new GameVersion(sv_original_theWitcher3Goty, providerEnum.physical, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
-export const gv_XONE_digital_original_theWitcher3Goty = new GameVersion(sv_original_theWitcher3Goty, providerEnum.xboxLive, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
+export const gv_XONE_physical_original_theWitcher3Goty = new GameVersion(sv_original_theWitcher3, providerEnum.physical, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
+export const gv_XONE_digital_original_theWitcher3Goty = new GameVersion(sv_original_theWitcher3, providerEnum.xboxLive, [systemEnum.xone], [systemEnum.xone, systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
 
-export const gv_XSX_physical_enhanced_theWitcher3Goty = new GameVersion(sv_enhanced_theWitcher3Goty, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
-export const gv_XSX_digital_enhanced_theWitcher3Goty = new GameVersion(sv_enhanced_theWitcher3Goty, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
+export const gv_XSX_physical_enhanced_theWitcher3Goty = new GameVersion(sv_enhanced_theWitcher3, providerEnum.physical, [systemEnum.xsx], [systemEnum.xsx], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
+export const gv_XSX_digital_enhanced_theWitcher3Goty = new GameVersion(sv_enhanced_theWitcher3, providerEnum.xboxLive, [systemEnum.xsx, systemEnum.xss], [systemEnum.xsx, systemEnum.xss], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
 
 export const gv_PC_gog_enhanced_theWitcher3 = new GameVersion(sv_enhanced_theWitcher3, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
-export const gv_PC_gog_enhanced_theWitcher3Goty = new GameVersion(sv_enhanced_theWitcher3Goty, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
+export const gv_PC_gog_enhanced_theWitcher3Goty = new GameVersion(sv_enhanced_theWitcher3, providerEnum.gog, [systemEnum.windows], [systemEnum.windows], unsureBoolEnum.yes, unsureBoolEnum.no, unsureBoolEnum.no);
 
 console.log({allGameVersions});

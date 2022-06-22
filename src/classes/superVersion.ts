@@ -118,8 +118,6 @@ export const sv_enhanced2016_redDeadRedemptionUndeadNightmare = new SuperVersion
 export const sv_enhanced2018_redDeadRedemptionUndeadNightmare = new SuperVersion(g_redDeadRedemptionUndeadNightmare,versionEnum.enhanced, "", 2018);
 
 export const sv_original_theWitcher3 = new SuperVersion(g_theWitcher3,versionEnum.original, "", 2015);
-export const sv_original_theWitcher3Goty = new SuperVersion(g_theWitcher3,versionEnum.original, "Game of the Year", 2015);
 export const sv_enhanced_theWitcher3 = new SuperVersion(g_theWitcher3,versionEnum.enhanced, "", 2022);
-export const sv_enhanced_theWitcher3Goty = new SuperVersion(g_theWitcher3,versionEnum.enhanced, "Game of the Year", 2022);
 
 console.log({allSuperVersions});
