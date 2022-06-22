@@ -78,21 +78,18 @@
         </a>
       </h3>
 
-      <div
-        class="card-container"
-        *ngFor="let gameVersion of collection.gameVersions"
-      >
+    <div class="card-container" *ngFor="let gameVersion of collection.gameVersions">
         <button class="card card-small" (click)="selection.value = 'component'">
           <a
-            *ngIf="gameVersion.game.title"
+            *ngIf="gameVersion.superVersion.game.title"
             href="https://angular.io/tutorial"
           >
-            {{ gameVersion.game.title }} ({{ gameVersion.getVersionType() }}) ({{
+            {{ gameVersion.superVersion.game.title }} ({{ gameVersion.superVersion.getVersionType() }}) ({{
               gameVersion.getPlayableOnTitles()
             }})
           </a>
         </button>
-      </div>
+    </div>
 
     <div
       class="card-container"
@@ -103,7 +100,7 @@
           *ngIf="dlcVersion.dlc.title"
           href="https://angular.io/tutorial"
         >
-          {{ dlcVersion.getFirstGameVersion().game.title }}: {{ dlcVersion.dlc.title }} ({{
+          {{ dlcVersion.getFirstGameVersion().superVersion.game.title }}: {{ dlcVersion.dlc.title }} ({{
           dlcVersion.getPlayableOnTitles()
           }}) (DLC)
         </a>
@@ -112,7 +109,32 @@
   </div>
 
 
-  <h1>Games=>Game versions</h1>
+<!--  <h1>Games=>Super versions => Game versions</h1>-->
+
+<!--  <div *ngFor="let game of games">-->
+<!--    <h3>-->
+<!--      <a [title]="game.title + ' details'">-->
+<!--        {{ game.title }}-->
+<!--      </a>-->
+<!--    </h3>-->
+
+<!--    <div class="card-container" *ngFor="let superVersion of game.superVersions">-->
+<!--      <div class="card-container" *ngFor="let gameVersion of superVersion.gameVersions">-->
+<!--        <button class="card card-small" (click)="selection.value = 'component'">-->
+<!--          <a-->
+<!--            *ngIf="gameVersion.getPlayableOnTitles()"-->
+<!--            href="https://angular.io/tutorial"-->
+<!--            >{{ gameVersion.getProvider() }} ({{-->
+<!--              gameVersion.getPlayableOnTitles()-->
+<!--            }}) ({{ superVersion.getVersionType() }}-->
+<!--            {{ superVersion.getVersionYear() }})</a-->
+<!--          >-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <h1>Games=>Super versions</h1>
 
   <div *ngFor="let game of games">
     <h3>
@@ -121,17 +143,13 @@
       </a>
     </h3>
 
-    <div class="card-container" *ngFor="let gameVersion of game.gameVersions">
-      <button class="card card-small" (click)="selection.value = 'component'">
-        <a
-          *ngIf="gameVersion.getPlayableOnTitles()"
-          href="https://angular.io/tutorial"
-          >{{ gameVersion.getProvider() }} ({{
-            gameVersion.getPlayableOnTitles()
-          }}) ({{ gameVersion.getVersionType() }}
-          {{ gameVersion.getVersionYear() }})</a
-        >
-      </button>
+    <div class="card-container" *ngFor="let superVersion of game.superVersions">
+        <button class="card card-small" (click)="selection.value = 'component'">
+          <a  href="https://angular.io/tutorial"
+          >{{superVersion.getVersionType()}} {{superVersion.getVersionYear()}}</a>
+<!--          {{ gameVersion.getProvider() }} ({{gameVersion.getPlayableOnTitles()}})-->
+<!--          *ngIf="gameVersion.getPlayableOnTitles()"-->
+        </button>
     </div>
   </div>
 
@@ -168,9 +186,9 @@
     <h3>
       <a
         *ngIf="gameVersion.dlcVersionsThatThisCanUse.length > 0"
-        [title]="gameVersion.game.title + ' details'"
+        [title]="gameVersion.superVersion.game.title + ' details'"
       >
-        {{ gameVersion.game.title }} ({{gameVersion.getIntendedForTitles()}} - {{gameVersion.getProvider()}}) ({{gameVersion.getVersionType()}} {{ gameVersion.getVersionYear()}})
+        {{ gameVersion.superVersion.game.title }} ({{gameVersion.getIntendedForTitles()}} - {{gameVersion.getProvider()}}) ({{gameVersion.superVersion.getVersionType()}} {{ gameVersion.superVersion.getVersionYear()}})
       </a>
     </h3>
 

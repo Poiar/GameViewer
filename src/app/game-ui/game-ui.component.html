@@ -15,20 +15,22 @@
 
   <div>
     Game versions:
-    <ul *ngFor="let gameVersion of firstGame.gameVersions">
+    <ul *ngFor="let superVersion of firstGame.superVersions">
+      <ul *ngFor="let gameVersion of superVersion.gameVersions">
       <button type="button" (click)="onSelect(gameVersion)">
-        {{ gameVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
+        {{ superVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
       </button>
+      </ul>
     </ul>
   </div>
 
   <div *ngIf="selectedGameVersion">
-    <h2>{{ selectedGameVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details</h2>
+    <h2>{{ selectedGameVersion.superVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details</h2>
     <div>ID: {{ selectedGameVersion.id }}</div>
     <div>Collection: {{ selectedGameVersion.getCollections() }}</div>
-    <div>Year: {{ selectedGameVersion.getVersionYear() }}</div>
-    <div>Edition: {{ selectedGameVersion.edition }}</div>
-    <div>Version type: {{ selectedGameVersion.getVersionType() }}</div>
+    <div>Year: {{ selectedGameVersion.superVersion.getVersionYear() }}</div>
+    <div>Edition: {{ selectedGameVersion.superVersion.versionName }}</div>
+    <div>Version type: {{ selectedGameVersion.superVersion.getVersionType() }}</div>
     <div>Provider: {{ selectedGameVersion.getProvider() }}</div>
     <div>Playable on: {{ selectedGameVersion.getPlayableOnTitles() }}</div>
     <div>Local Co-Op: {{ selectedGameVersion.getLocalMultiplayer() }}</div>

@@ -1,7 +1,6 @@
 import {
   Content
 } from "./content";
-import {GameVersion} from "./gameVersion";
 import {
   Series,
   s_none,
@@ -10,9 +9,10 @@ import {
   s_heroesOfMightAndMagic,
   s_halfLife,
   s_portal,
-  s_teamFortress, s_ageOfEmpires, allSeries, s_redDead, s_theWitcher,
+  s_teamFortress, s_ageOfEmpires, s_redDead, s_theWitcher,
 } from "./series";
 import {allDlcs, Dlc} from "./dlc";
+import { SuperVersion } from "./superVersion";
 
 export enum genreEnum {
   undefined,
@@ -62,7 +62,7 @@ export const allGames: Game[] = [];
 
 export class Game extends Content{
   readonly genre: genreEnum;
-  readonly gameVersions: GameVersion[];
+  readonly superVersions: SuperVersion[];
   readonly series: Series;
   readonly alternativeTitles: string[];
 
@@ -71,7 +71,7 @@ export class Game extends Content{
     this.genre = genre;
     this.alternativeTitles = alternativeTitles;
 
-    this.gameVersions = [];
+    this.superVersions = [];
 
     this.series = series;
     series.games.push(this);
@@ -79,22 +79,37 @@ export class Game extends Content{
     allGames.push(this);
   }
 
-  addGameVersion(gameVersion: GameVersion) {
-    this.gameVersions.push(gameVersion);
+  addGameVersion(superVersion: SuperVersion) {
+    this.superVersions.push(superVersion);
   }
 
   getAllDlcForThisGame(): Dlc[] {
     const allDlcForThisGameVersion: Dlc[] = [];
 
-    this.gameVersions.forEach(gameVersion => {
-      allDlcs.forEach(dlc => {
-        dlc.dlcVersions.forEach(dlcVersion => {
-          if(dlcVersion.gameVersionsThisCanBeUsedOn.includes(gameVersion)){
-            allDlcForThisGameVersion.push(dlc);
-          }
+
+    this.superVersions.forEach(superVersion => {
+      superVersion.gameVersions.forEach(gameVersion => {
+        allDlcs.forEach(dlc => {
+          dlc.dlcVersions.forEach(dlcVersion => {
+            if(dlcVersion.gameVersionsThisCanBeUsedOn.includes(gameVersion)){
+              allDlcForThisGameVersion.push(dlc);
+            }
+          })
         })
       })
-    })
+      }
+    )
+
+
+    // this.gameVersions.forEach(gameVersion => {
+    //   allDlcs.forEach(dlc => {
+    //     dlc.dlcVersions.forEach(dlcVersion => {
+    //       if(dlcVersion.gameVersionsThisCanBeUsedOn.includes(gameVersion)){
+    //         allDlcForThisGameVersion.push(dlc);
+    //       }
+    //     })
+    //   })
+    // })
 
     return [...new Set(allDlcForThisGameVersion)]
   }
