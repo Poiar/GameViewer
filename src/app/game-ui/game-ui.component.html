@@ -2,20 +2,20 @@
 
 <div>
   <h3>
-    {{ firstGame.title }}
+    {{ aGame.title }}
   </h3>
 
   <div>
-    First release: {{ firstGame.firstRelease }}
+    First release: {{ aGame.firstRelease }}
   </div>
 
   <div>
-    Genre: {{ firstGame.getGenre() }}
+    Genre: {{ aGame.getGenre() }}
   </div>
 
   <div>
-    Game versions:
-    <ul *ngFor="let superVersion of firstGame.superVersions">
+    <h2>Game versions:</h2>
+    <ul *ngFor="let superVersion of aGame.superVersions">
       <ul *ngFor="let gameVersion of superVersion.gameVersions">
       <button type="button" (click)="onSelect(gameVersion)">
         {{ superVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})

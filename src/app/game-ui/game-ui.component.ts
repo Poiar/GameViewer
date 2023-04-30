@@ -9,7 +9,7 @@ import {GameVersion} from "../../classes/gameVersion";
 })
 export class GameUIComponent implements OnInit {
   games:Game[] = allGames;
-  firstGame:Game = this.games[14];
+  aGame:Game = this.games[14];
 
   constructor() { }
 
