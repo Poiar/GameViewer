@@ -63,26 +63,26 @@
   </a>
 </div>
 
-<div class="content" role="main">
+<div cy-data="app-1000" class="content" role="main">
 
-  <app-game-ui></app-game-ui>
+  <app-game-ui cy-data="app-2000"></app-game-ui>
 
-  <h1>Collections=>GameVersions and DlcVersions</h1>
+  <h1 cy-data="app-3000">Collections=>GameVersions and DlcVersions</h1>
 
-  <div *ngFor="let collection of collections">
-      <h3>
-        <a [title]="collection.title + ' details'">
+  <div cy-data="app-4000" *ngFor="let collection of collections">
+      <h3 cy-data="app-5000">
+        <a cy-data="app-6000" [title]="collection.title + ' details'">
           {{ collection.title }} ({{ collection.getVersionTypes() }}) ({{
             collection.getPlayableOnTitles()
           }})
         </a>
       </h3>
 
-    <div class="card-container" *ngFor="let gameVersion of collection.gameVersions">
-        <button class="card card-small" (click)="selection.value = 'component'">
-          <a
+    <div cy-data="app-7000" class="card-container" *ngFor="let gameVersion of collection.gameVersions">
+        <button cy-data="app-8000" class="card card-small" (click)="selection.value = 'component'">
+          <a cy-data="app-9000"
             *ngIf="gameVersion.superVersion.game.title"
-            href="https://angular.io/tutorial"
+             href="https://angular.io/tutorial"
           >
             {{ gameVersion.superVersion.game.title }} ({{ gameVersion.superVersion.getVersionType() }}) ({{
               gameVersion.getPlayableOnTitles()
@@ -91,12 +91,12 @@
         </button>
     </div>
 
-    <div
+    <div cy-data="app-9000"
       class="card-container"
       *ngFor="let dlcVersion of collection.dlcVersions"
     >
-      <button class="card card-small" (click)="selection.value = 'component'">
-        <a
+      <button cy-data="app-10000" class="card card-small" (click)="selection.value = 'component'">
+        <a cy-data="app-11000"
           *ngIf="dlcVersion.dlc.title"
           href="https://angular.io/tutorial"
         >
@@ -134,18 +134,18 @@
 <!--    </div>-->
 <!--  </div>-->
 
-  <h1>Games=>Super versions</h1>
+  <h1 cy-data="app-100">Games=>Super versions</h1>
 
-  <div *ngFor="let game of games">
-    <h3>
-      <a [title]="game.title + ' details'">
+  <div cy-data="app-200" *ngFor="let game of games">
+    <h3 cy-data="app-300">
+      <a cy-data="app-400" [title]="game.title + ' details'">
         {{ game.title }}
       </a>
     </h3>
 
-    <div class="card-container" *ngFor="let superVersion of game.superVersions">
-        <button class="card card-small" (click)="selection.value = 'component'">
-          <a  href="https://angular.io/tutorial"
+    <div cy-data="app-500" class="card-container" *ngFor="let superVersion of game.superVersions">
+        <button cy-data="app-600" class="card card-small" (click)="selection.value = 'component'">
+          <a cy-data="app-700" href="https://angular.io/tutorial"
           >{{superVersion.getVersionType()}} {{superVersion.getVersionYear()}}</a>
 <!--          {{ gameVersion.getProvider() }} ({{gameVersion.getPlayableOnTitles()}})-->
 <!--          *ngIf="gameVersion.getPlayableOnTitles()"-->
@@ -155,23 +155,23 @@
 
   <h1>Series=>Games</h1>
 
-  <div *ngFor="let aSeries of series">
-    <h3>
-      <a [title]="aSeries.title + ' details'">
+  <div cy-data="app-800" *ngFor="let aSeries of series">
+    <h3 cy-data="app-900">
+      <a cy-data="app-1000" [title]="aSeries.title + ' details'">
         {{ aSeries.title }}
       </a>
     </h3>
 
-    <div class="card-container" *ngFor="let game of aSeries.games">
-      <button class="card " (click)="selection.value = 'component'">
-        <a *ngIf="game.title" href="https://angular.io/tutorial">{{
+    <div cy-data="app-1100" class="card-container" *ngFor="let game of aSeries.games">
+      <button cy-data="app-1200" class="card " (click)="selection.value = 'component'">
+        <a cy-data="app-1300" *ngIf="game.title" href="https://angular.io/tutorial">{{
           game.title
         }}</a>
       </button>
-      <div *ngFor="let dlc of game.getAllDlcForThisGame()">
-        <button class="card card-small" (click)="selection.value = 'component'">
+      <div cy-data="app-1400" *ngFor="let dlc of game.getAllDlcForThisGame()">
+        <button cy-data="app-1500" class="card card-small" (click)="selection.value = 'component'">
 
-          <a [title]="dlc.title + ' details'">
+          <a cy-data="app-1600" [title]="dlc.title + ' details'">
             {{ dlc.title }}
           </a>
 
@@ -180,11 +180,11 @@
     </div>
   </div>
 
-  <h1>GameVersions=>DlcVersions</h1>
+  <h1 cy-data="app-1700">GameVersions=>DlcVersions</h1>
 
-  <div *ngFor="let gameVersion of gameVersions">
-    <h3>
-      <a
+  <div cy-data="app-1800" *ngFor="let gameVersion of gameVersions">
+    <h3 cy-data="app-1900">
+      <a cy-data="app-2000"
         *ngIf="gameVersion.dlcVersionsThatThisCanUse.length > 0"
         [title]="gameVersion.superVersion.game.title + ' details'"
       >
@@ -192,9 +192,9 @@
       </a>
     </h3>
 
-    <div class="card-container" *ngFor="let dlcVersion of gameVersion.dlcVersionsThatThisCanUse">
-      <button class="card card-small" (click)="selection.value = 'component'">
-        <a *ngIf="dlcVersion.dlc.title" href="https://angular.io/tutorial"
+    <div cy-data="app-2100" class="card-container" *ngFor="let dlcVersion of gameVersion.dlcVersionsThatThisCanUse">
+      <button cy-data="app-2200" class="card card-small" (click)="selection.value = 'component'">
+        <a cy-data="app-2300" *ngIf="dlcVersion.dlc.title" href="https://angular.io/tutorial"
           >{{ dlcVersion.dlc.title }} ({{ dlcVersion.dlc.firstRelease }})</a
         >
       </button>
@@ -202,8 +202,8 @@
   </div>
 
   <!-- Highlight Card -->
-  <div class="card highlight-card card-small">
-    <svg
+  <div cy-data="app-2400" class="card highlight-card card-small">
+    <svg cy-data="app-2500"
       id="rocket"
       xmlns="http://www.w3.org/2000/svg"
       width="101.678"

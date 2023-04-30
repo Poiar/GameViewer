@@ -1,39 +1,39 @@
-<p>game-ui works!</p>
+<p cy-data="game-ui-1000">game-ui works!</p>
 
-<div>
-  <h3>
+<div cy-data="game-ui-2000">
+  <h3 cy-data="game-ui-3000">
     {{ aGame.title }}
   </h3>
 
-  <div>
+  <div cy-data="game-ui-4000">
     First release: {{ aGame.firstRelease }}
   </div>
 
-  <div>
+  <div cy-data="game-ui-5000">
     Genre: {{ aGame.getGenre() }}
   </div>
 
-  <div>
-    <h2>Game versions:</h2>
-    <ul *ngFor="let superVersion of aGame.superVersions">
-      <ul *ngFor="let gameVersion of superVersion.gameVersions">
-      <button type="button" (click)="onSelect(gameVersion)">
+  <div cy-data="game-ui-6000">
+    <h2 cy-data="game-ui-7000">Game versions:</h2>
+    <ul cy-data="game-ui-8000" *ngFor="let superVersion of aGame.superVersions">
+      <ul cy-data="game-ui-9000" *ngFor="let gameVersion of superVersion.gameVersions">
+      <button cy-data="game-ui-10000" type="button" (click)="onSelect(gameVersion)">
         {{ superVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
       </button>
       </ul>
     </ul>
   </div>
 
-  <div *ngIf="selectedGameVersion">
-    <h2>{{ selectedGameVersion.superVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details</h2>
-    <div>ID: {{ selectedGameVersion.id }}</div>
-    <div>Collection: {{ selectedGameVersion.getCollections() }}</div>
-    <div>Year: {{ selectedGameVersion.superVersion.getVersionYear() }}</div>
-    <div>Edition: {{ selectedGameVersion.superVersion.versionName }}</div>
-    <div>Version type: {{ selectedGameVersion.superVersion.getVersionType() }}</div>
-    <div>Provider: {{ selectedGameVersion.getProvider() }}</div>
-    <div>Playable on: {{ selectedGameVersion.getPlayableOnTitles() }}</div>
-    <div>Local Co-Op: {{ selectedGameVersion.getLocalMultiplayer() }}</div>
+  <div cy-data="game-ui-11000" *ngIf="selectedGameVersion">
+    <h2 cy-data="game-ui-12000">{{ selectedGameVersion.superVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details</h2>
+    <div cy-data="game-ui-13000">ID: {{ selectedGameVersion.id }}</div>
+    <div cy-data="game-ui-14000">Collection: {{ selectedGameVersion.getCollections() }}</div>
+    <div cy-data="game-ui-15000">Year: {{ selectedGameVersion.superVersion.getVersionYear() }}</div>
+    <div cy-data="game-ui-16000">Edition: {{ selectedGameVersion.superVersion.versionName }}</div>
+    <div cy-data="game-ui-17000">Version type: {{ selectedGameVersion.superVersion.getVersionType() }}</div>
+    <div cy-data="game-ui-18000">Provider: {{ selectedGameVersion.getProvider() }}</div>
+    <div cy-data="game-ui-19000">Playable on: {{ selectedGameVersion.getPlayableOnTitles() }}</div>
+    <div cy-data="game-ui-20000">Local Co-Op: {{ selectedGameVersion.getLocalMultiplayer() }}</div>
   </div>
 </div>
 
