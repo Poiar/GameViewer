@@ -82,13 +82,14 @@
         <button cy-data="app-8000" class="card card-small" (click)="selection.value = 'component'">
           <a cy-data="app-9000"
             *ngIf="gameVersion.superVersion.game.title"
-             href="https://angular.io/tutorial"
+             (click)="openModal(gameVersion)"
           >
             {{ gameVersion.superVersion.game.title }} ({{ gameVersion.superVersion.getVersionType() }}) ({{
               gameVersion.getPlayableOnTitles()
             }})
           </a>
         </button>
+      <app-game-modal></app-game-modal>
     </div>
 
     <div cy-data="app-9000"

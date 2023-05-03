@@ -1,1 +1,7 @@
-<p>game-modal works!</p>
+<p>game-modal works! Current game version {{ currentGameVersion.superVersion.game.title }} {{ isModalOpen }}</p>
+<div class="modal" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <p>This is the modal content.</p>
+  </div>
+</div>
