@@ -174,7 +174,7 @@ export const g_metalGearSolid4 = new Game(
   [],
 );
 export const g_ageOfEmpires2 = new Game("Age of Empires II: The Age of Kings", genreEnum.rts, 1999, s_ageOfEmpires, []);
-export const g_indigoProphecy = new Game("Indigo Prophecy", genreEnum.undefined, 1999, s_none, ["Fahrenheit"]);
+export const g_indigoProphecy = new Game("Indigo Prophecy", genreEnum.undefined, 2005, s_none, ["Fahrenheit"]);
 export const g_redDeadRedemption = new Game("Red Dead Redemption", genreEnum.openWorld, 2010, s_redDead, []);
 export const g_redDeadRedemptionUndeadNightmare = new Game(
   "Red Dead Redemption: Undead Nightmare",

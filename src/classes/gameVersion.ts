@@ -224,7 +224,7 @@ export namespace providerEnum {
       case providerEnum.nintendoEshop:
         return "Nintendo eShop";
     }
-    throw "You called) with something that is unhandled - Throwing";
+    throw "You called providerEnum.toString() with something that is unhandled - Throwing";
   }
 }
 
