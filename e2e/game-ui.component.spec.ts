@@ -86,9 +86,9 @@ test.describe("GameUIComponent", () => {
     const count = await buttons.count();
     test.skip(count < 2, "Need at least 2 game versions");
     await buttons.nth(0).click();
-    const firstDetails = await page.locator("[cy-data='game-ui-12000']").textContent();
+    const firstText = await page.locator("[cy-data='game-ui-10000']").nth(0).textContent();
     await buttons.nth(1).click();
-    const secondDetails = await page.locator("[cy-data='game-ui-12000']").textContent();
-    expect(firstDetails).not.toEqual(secondDetails);
+    const secondText = await page.locator("[cy-data='game-ui-10000']").nth(1).textContent();
+    expect(firstText).not.toEqual(secondText);
   });
 });

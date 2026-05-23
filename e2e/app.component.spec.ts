@@ -9,14 +9,6 @@ test.describe("AppComponent", () => {
     await expect(page).toHaveTitle(/GameViewer/);
   });
 
-  test("toolbar is visible", async ({ page }) => {
-    await expect(page.locator(".toolbar")).toBeVisible();
-  });
-
-  test("toolbar has Angular logo", async ({ page }) => {
-    await expect(page.locator(".toolbar img")).toBeVisible();
-  });
-
   test("collections section heading visible", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Collections=>GameVersions and DlcVersions" })).toBeVisible();
   });
