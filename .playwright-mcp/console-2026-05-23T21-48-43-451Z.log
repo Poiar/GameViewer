@@ -1,0 +1,9 @@
+[  407883ms] [INFO] [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled. @ http://localhost:4200/polyfills.js:2114
+[  407995ms] [LOG] {allSeries: Array(10)} @ http://localhost:4200/main.js:1697
+[  407998ms] [LOG] {allDlcs: Array(15)} @ http://localhost:4200/main.js:1054
+[  407999ms] [LOG] {allGames: Array(19)} @ http://localhost:4200/main.js:1309
+[  407999ms] [LOG] {allSuperVersions: Array(28)} @ http://localhost:4200/main.js:1835
+[  407999ms] [LOG] {allGameVersions: Array(42)} @ http://localhost:4200/main.js:1648
+[  408000ms] [LOG] {allDlcVersions: Array(28)} @ http://localhost:4200/main.js:1157
+[  408000ms] [LOG] {allCollections: Array(35)} @ http://localhost:4200/main.js:944
+[  408087ms] [LOG] Angular is running in development mode. @ http://localhost:4200/vendor.js:21033
