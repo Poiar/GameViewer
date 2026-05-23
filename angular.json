@@ -66,12 +66,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "gameViewer:build"
+          },
           "configurations": {
             "production": {
-              "browserTarget": "gameViewer:build:production"
+              "buildTarget": "gameViewer:build:production"
             },
             "development": {
-              "browserTarget": "gameViewer:build:development"
+              "buildTarget": "gameViewer:build:development"
             }
           },
           "defaultConfiguration": "development"

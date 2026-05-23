@@ -4,6 +4,7 @@ import {GameVersion} from "../../classes/gameVersion";
 
 @Component({
   selector: 'app-game-ui',
+  standalone: false,
   templateUrl: './game-ui.component.html',
   styleUrls: ['./game-ui.component.css']
 })
