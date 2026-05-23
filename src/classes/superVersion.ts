@@ -45,7 +45,7 @@ namespace versionEnum {
       case versionEnum.downsample:
         return "Downsample";
       case versionEnum.demake:
-        return "Downsample";
+        return "Demake";
       case versionEnum.enhanced:
         return "Enhanced";
     }
