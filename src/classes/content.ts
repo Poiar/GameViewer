@@ -1,4 +1,3 @@
-
 export abstract class Content {
   readonly id: number;
   readonly title: string;
