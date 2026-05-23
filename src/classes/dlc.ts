@@ -1,7 +1,5 @@
-import {
-  Content
-} from "./content";
-import {DlcVersion} from "./dlcVersion";
+import { Content } from "./content";
+import { DlcVersion } from "./dlcVersion";
 
 export const allDlcs: Dlc[] = [];
 
@@ -16,20 +14,20 @@ namespace dlcTypeEnum {
   export function toString(input: dlcTypeEnum): string {
     switch (input) {
       case dlcTypeEnum.undefined:
-        return "Undefined"
+        return "Undefined";
       case dlcTypeEnum.expansion:
-        return "Expansion"
+        return "Expansion";
       case dlcTypeEnum.contentPack:
-        return "Content pack"
+        return "Content pack";
       case dlcTypeEnum.extras:
-        return "Extras"
+        return "Extras";
       default:
-        throw `You called dlcTypeEnum.toString() with \'${input}\' which is unhandled - Throwing`
+        throw `You called dlcTypeEnum.toString() with \'${input}\' which is unhandled - Throwing`;
     }
   }
 }
 
-export class Dlc extends Content{
+export class Dlc extends Content {
   dlcVersions: DlcVersion[];
   dlcType: dlcTypeEnum;
 
@@ -63,5 +61,4 @@ export const d_redDeadRedemption_UndeadNightmare = new Dlc("Undead Nightmare", 2
 export const d_theWitcher3_heartsOfStone = new Dlc("Hearts of Stone", 2015, dlcTypeEnum.expansion);
 export const d_theWitcher3_bloodAndWine = new Dlc("Blood and Wine", 2016, dlcTypeEnum.expansion);
 
-
-console.log({allDlcs});
+console.log({ allDlcs });

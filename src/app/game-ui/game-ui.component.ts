@@ -1,21 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import {allGames, Game} from "../../classes/game";
-import {GameVersion} from "../../classes/gameVersion";
+import { Component, OnInit } from "@angular/core";
+import { allGames, Game } from "../../classes/game";
+import { GameVersion } from "../../classes/gameVersion";
 
 @Component({
-  selector: 'app-game-ui',
+  selector: "app-game-ui",
   standalone: false,
-  templateUrl: './game-ui.component.html',
-  styleUrls: ['./game-ui.component.css']
+  templateUrl: "./game-ui.component.html",
+  styleUrls: ["./game-ui.component.css"],
 })
 export class GameUIComponent implements OnInit {
-  games:Game[] = allGames;
-  aGame:Game = this.games[14];
+  games: Game[] = allGames;
+  aGame: Game = this.games[14];
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   selectedGameVersion?: GameVersion;
 

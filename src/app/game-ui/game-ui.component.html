@@ -5,27 +5,25 @@
     {{ aGame.title }}
   </h3>
 
-  <div cy-data="game-ui-4000">
-    First release: {{ aGame.firstRelease }}
-  </div>
+  <div cy-data="game-ui-4000">First release: {{ aGame.firstRelease }}</div>
 
-  <div cy-data="game-ui-5000">
-    Genre: {{ aGame.getGenre() }}
-  </div>
+  <div cy-data="game-ui-5000">Genre: {{ aGame.getGenre() }}</div>
 
   <div cy-data="game-ui-6000">
     <h2 cy-data="game-ui-7000">Game versions:</h2>
     <ul cy-data="game-ui-8000" *ngFor="let superVersion of aGame.superVersions">
       <ul cy-data="game-ui-9000" *ngFor="let gameVersion of superVersion.gameVersions">
-      <button cy-data="game-ui-10000" type="button" (click)="onSelect(gameVersion)">
-        {{ superVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
-      </button>
+        <button cy-data="game-ui-10000" type="button" (click)="onSelect(gameVersion)">
+          {{ superVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
+        </button>
       </ul>
     </ul>
   </div>
 
   <div cy-data="game-ui-11000" *ngIf="selectedGameVersion">
-    <h2 cy-data="game-ui-12000">{{ selectedGameVersion.superVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details</h2>
+    <h2 cy-data="game-ui-12000">
+      {{ selectedGameVersion.superVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }}) Details
+    </h2>
     <div cy-data="game-ui-13000">ID: {{ selectedGameVersion.id }}</div>
     <div cy-data="game-ui-14000">Collection: {{ selectedGameVersion.getCollections() }}</div>
     <div cy-data="game-ui-15000">Year: {{ selectedGameVersion.superVersion.getVersionYear() }}</div>
@@ -36,4 +34,3 @@
     <div cy-data="game-ui-20000">Local Co-Op: {{ selectedGameVersion.getLocalMultiplayer() }}</div>
   </div>
 </div>
-

@@ -1,0 +1,7 @@
+dist/
+node_modules/
+coverage/
+*.js
+*.mjs
+eslint.config.mjs
+prettier.config.mjs
