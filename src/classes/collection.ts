@@ -135,7 +135,7 @@ export class Collection {
   }
 }
 
-const c_PC_none_warcraft3 = new Collection(
+export const c_PC_none_warcraft3 = new Collection(
   "Warcraft 3: Reign of Chaos",
   [gv_PC_physical_original_warcraft3],
   [],
