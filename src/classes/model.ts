@@ -66,7 +66,7 @@ export namespace genreEnum {
       case genreEnum.openWorld:
         return "Open World";
     }
-    throw "You called versionEnum.toString() with something that is unhandled - Throwing";
+    throw new Error("You called genreEnum.toString() with something that is unhandled - Throwing");
   }
 }
 
@@ -179,7 +179,7 @@ export class SuperVersion {
   }
 
   getVersionYear(): number {
-    if (this.versionYear) {
+    if (this.versionYear !== undefined) {
       return this.versionYear;
     } else if (this.game.firstRelease) {
       return this.game.firstRelease;
@@ -353,6 +353,8 @@ export namespace providerEnum {
         return "Ubisoft";
       case providerEnum.humbleBundle:
         return "Humble";
+      case providerEnum.rockstarSocialClub:
+        return "Rockstar Social Club";
       case providerEnum.xboxLive:
         return "Xbox Live";
       case providerEnum.psn:
@@ -437,6 +439,10 @@ export class GameVersion {
   getOnlineMultiplayer(): string {
     return unsureBoolEnum.toString(this.onlineMultiPlayer);
   }
+
+  getControllerSupport(): string {
+    return unsureBoolEnum.toString(this.controllerSupport);
+  }
 }
 
 export const allDlcs: Dlc[] = [];
@@ -506,14 +512,17 @@ export class DlcVersion {
   }
 
   getPlayableOnTitles(): string {
-    const playableOnTitles: string[] = this.gameVersionsThisCanBeUsedOn.map((gameVersion) =>
-      gameVersion.superVersion.getVersionType(),
-    );
-
-    return [...new Set(playableOnTitles)].join(", ");
+    const playableOnList: string[] = [];
+    this.gameVersionsThisCanBeUsedOn.forEach((gameVersion) => {
+      gameVersion.getPlayableOn().forEach((playableOn) => playableOnList.push(playableOn));
+    });
+    return [...new Set(playableOnList)].join(", ");
   }
 
   getFirstGameVersion(): GameVersion {
+    if (this.gameVersionsThisCanBeUsedOn.length === 0) {
+      throw new Error("DlcVersion has no associated GameVersions");
+    }
     return this.gameVersionsThisCanBeUsedOn[0];
   }
 }
@@ -523,6 +532,25 @@ export enum mediaEnum {
   digital,
   dvd,
   cd,
+  bluRay,
+}
+
+export namespace mediaEnum {
+  export function toString(input: mediaEnum): string {
+    switch (input) {
+      case mediaEnum.na:
+        return "N/A";
+      case mediaEnum.digital:
+        return "Digital";
+      case mediaEnum.dvd:
+        return "DVD";
+      case mediaEnum.cd:
+        return "CD";
+      case mediaEnum.bluRay:
+        return "Blu-ray";
+    }
+    throw new Error("You called mediaEnum.toString() with something that is unhandled - Throwing");
+  }
 }
 
 export const allCollections: Collection[] = [];
@@ -585,15 +613,4 @@ export class Collection {
   }
 }
 
-// Re-export all instances from data files
-export * from "./seriesData";
-export * from "./gameData";
-export * from "./superVersionData";
-export * from "./dlcData";
-export * from "./dlcVersionData";
-export * from "./gameVersionData";
-export * from "./collectionData";
-export * from "./ownedInstance";
-export * from "./ownedInstanceData";
-export * from "./ownedInstance";
-export * from "./ownedInstanceData";
+// Data instances are loaded via side-effect imports in main.ts
