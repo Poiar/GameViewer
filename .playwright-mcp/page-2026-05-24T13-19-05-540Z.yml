@@ -1,0 +1,1464 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: 🎮
+        - generic [ref=e8]: Game Catalog
+      - navigation [ref=e9]:
+        - link "Explore" [ref=e10] [cursor=pointer]:
+          - /url: "#explorer"
+        - link "Collections" [ref=e11] [cursor=pointer]:
+          - /url: "#collections"
+        - link "Games" [ref=e12] [cursor=pointer]:
+          - /url: "#games"
+        - link "Series" [ref=e13] [cursor=pointer]:
+          - /url: "#series"
+        - link "Inventory" [ref=e14] [cursor=pointer]:
+          - /url: "#inventory"
+        - link "Versions" [ref=e15] [cursor=pointer]:
+          - /url: "#versions"
+      - generic [ref=e16]:
+        - generic [ref=e17]: 19 games
+        - generic [ref=e18]: 10 series
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Game Explorer" [level=2] [ref=e22]
+        - paragraph [ref=e23]: Search, sort, and compare game versions across platforms
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - heading "Games" [level=3] [ref=e28]
+            - generic [ref=e29]: "19"
+          - generic [ref=e30]:
+            - generic [ref=e31]: 🔍
+            - textbox "Search by title, series, alias..." [ref=e32]
+          - generic [ref=e33]:
+            - button "All" [active] [ref=e34] [cursor=pointer]
+            - button "FPS" [ref=e35] [cursor=pointer]
+            - button "Open World" [ref=e36] [cursor=pointer]
+            - button "RPG" [ref=e37] [cursor=pointer]
+            - button "RTS" [ref=e38] [cursor=pointer]
+            - button "Stealth" [ref=e39] [cursor=pointer]
+            - button "Undefined" [ref=e40] [cursor=pointer]
+          - generic [ref=e41]:
+            - generic [ref=e42]: "Sort:"
+            - button "Name ↑" [ref=e43] [cursor=pointer]
+            - button "Year" [ref=e44] [cursor=pointer]
+            - button "Genre" [ref=e45] [cursor=pointer]
+          - generic [ref=e46]:
+            - 'button "Age of Empires II: The Age of Kings 1999" [ref=e1564] [cursor=pointer]':
+              - generic [ref=e1565]: "Age of Empires II: The Age of Kings"
+              - generic [ref=e1566]: "1999"
+            - button "Half-Life 2 2004" [ref=e1567] [cursor=pointer]:
+              - generic [ref=e1568]: Half-Life 2
+              - generic [ref=e1569]: "2004"
+            - 'button "Half-Life 2: Episode One 2006" [ref=e1570] [cursor=pointer]':
+              - generic [ref=e1571]: "Half-Life 2: Episode One"
+              - generic [ref=e1572]: "2006"
+            - 'button "Half-Life 2: Episode Two 2007" [ref=e1573] [cursor=pointer]':
+              - generic [ref=e1574]: "Half-Life 2: Episode Two"
+              - generic [ref=e1575]: "2007"
+            - button "Heroes of Might and Magic 1995" [ref=e1552] [cursor=pointer]:
+              - generic [ref=e1553]: Heroes of Might and Magic
+              - generic [ref=e1554]: "1995"
+            - button "Heroes of Might and Magic 2 1996" [ref=e1555] [cursor=pointer]:
+              - generic [ref=e1556]: Heroes of Might and Magic 2
+              - generic [ref=e1557]: "1996"
+            - button "Heroes of Might and Magic 3 1999" [ref=e1558] [cursor=pointer]:
+              - generic [ref=e1559]: Heroes of Might and Magic 3
+              - generic [ref=e1560]: "1999"
+            - button "Heroes of Might and Magic 4 2002" [ref=e1561] [cursor=pointer]:
+              - generic [ref=e1562]: Heroes of Might and Magic 4
+              - generic [ref=e1563]: "2002"
+            - button "Indigo Prophecy 2005" [ref=e1576] [cursor=pointer]:
+              - generic [ref=e1577]: Indigo Prophecy
+              - generic [ref=e1578]: "2005"
+            - button "Metal Gear Solid 1998" [ref=e1579] [cursor=pointer]:
+              - generic [ref=e1580]: Metal Gear Solid
+              - generic [ref=e1581]: "1998"
+            - 'button "Metal Gear Solid 2: Sons of Liberty 2001" [ref=e1582] [cursor=pointer]':
+              - generic [ref=e1583]: "Metal Gear Solid 2: Sons of Liberty"
+              - generic [ref=e1584]: "2001"
+            - 'button "Metal Gear Solid 3: Snake Eater 2004" [ref=e1585] [cursor=pointer]':
+              - generic [ref=e1586]: "Metal Gear Solid 3: Snake Eater"
+              - generic [ref=e1587]: "2004"
+            - 'button "Metal Gear Solid 4: Guns of the Patriots 2008" [ref=e1588] [cursor=pointer]':
+              - generic [ref=e1589]: "Metal Gear Solid 4: Guns of the Patriots"
+              - generic [ref=e1590]: "2008"
+            - button "Portal 2007" [ref=e1591] [cursor=pointer]:
+              - generic [ref=e1592]: Portal
+              - generic [ref=e1593]: "2007"
+            - button "Red Dead Redemption 2010" [ref=e1594] [cursor=pointer]:
+              - generic [ref=e1595]: Red Dead Redemption
+              - generic [ref=e1596]: "2010"
+            - 'button "Red Dead Redemption: Undead Nightmare 2010" [ref=e1597] [cursor=pointer]':
+              - generic [ref=e1598]: "Red Dead Redemption: Undead Nightmare"
+              - generic [ref=e1599]: "2010"
+            - button "Team Fortress 2 2007" [ref=e1600] [cursor=pointer]:
+              - generic [ref=e1601]: Team Fortress 2
+              - generic [ref=e1602]: "2007"
+            - 'button "The Witcher 3: Wild Hunt 2015" [ref=e1603] [cursor=pointer]':
+              - generic [ref=e1604]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e1605]: "2015"
+            - 'button "Warcraft 3: Reign of Chaos 2002" [ref=e1606] [cursor=pointer]':
+              - generic [ref=e1607]: "Warcraft 3: Reign of Chaos"
+              - generic [ref=e1608]: "2002"
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - img "Half-Life 2" [ref=e1503]
+            - generic [ref=e108]:
+              - heading "Half-Life 2" [level=2] [ref=e1504]
+              - generic [ref=e111]:
+                - generic [ref=e112]: FPS
+                - generic [ref=e113]: "2004"
+              - paragraph [ref=e114]: "Series: Half-Life"
+          - generic [ref=e115]:
+            - heading "Available Versions" [level=4] [ref=e116]
+            - button "Original Win, SD Steam ⊞" [ref=e1505] [cursor=pointer]:
+              - generic [ref=e1506]: Original
+              - generic [ref=e1507]: Win, SD
+              - generic [ref=e1508]: Steam
+              - generic [ref=e1509]: ⊞
+          - generic [ref=e1510]:
+            - generic [ref=e1511]:
+              - heading "Version Details" [level=4] [ref=e1512]
+              - generic [ref=e1513]: Original
+            - generic [ref=e1514]:
+              - generic [ref=e1515]:
+                - term [ref=e1516]: Game
+                - definition [ref=e1517]: Half-Life 2
+              - generic [ref=e1518]:
+                - term [ref=e1519]: Version
+                - definition [ref=e1520]: Original
+              - generic [ref=e1521]:
+                - term [ref=e1522]: Year
+                - definition [ref=e1523]: "2004"
+              - generic [ref=e1524]:
+                - term [ref=e1525]: Genre
+                - definition [ref=e1526]: FPS
+              - generic [ref=e1527]:
+                - term [ref=e1528]: Provider
+                - definition [ref=e1529]: Steam
+              - generic [ref=e1530]:
+                - term [ref=e1531]: Platforms
+                - definition [ref=e1532]: Win, SD
+              - generic [ref=e1533]:
+                - term [ref=e1534]: Intended For
+                - definition [ref=e1535]: Win
+              - generic [ref=e1536]:
+                - term [ref=e1537]: Local Co-Op
+                - definition [ref=e1538]: "No"
+              - generic [ref=e1539]:
+                - term [ref=e1540]: Online Multi
+                - definition [ref=e1541]: "No"
+              - generic [ref=e1542]:
+                - term [ref=e1543]: Controller
+                - definition [ref=e1544]: "Yes"
+              - generic [ref=e1545]:
+                - term [ref=e1546]: Collections
+                - definition [ref=e1547]: None
+              - generic [ref=e1548]:
+                - term [ref=e1549]: ID
+                - definition [ref=e1550]: "6"
+    - generic [ref=e123]:
+      - generic [ref=e124]:
+        - heading "Collections" [level=2] [ref=e125]
+        - paragraph [ref=e126]: Grouped releases across platforms
+      - generic [ref=e127]:
+        - article [ref=e128]:
+          - generic [ref=e129]:
+            - generic [ref=e130]: 📦
+            - generic [ref=e131]:
+              - 'heading "Warcraft 3: Reign of Chaos" [level=3] [ref=e132]'
+              - generic [ref=e133]:
+                - generic [ref=e134]: Original
+                - generic [ref=e135]: "2002"
+          - generic [ref=e136]:
+            - generic [ref=e137]: "Platforms:"
+            - generic [ref=e138]: Win
+          - generic [ref=e140]:
+            - generic [ref=e141]: "Warcraft 3: Reign of Chaos"
+            - generic [ref=e142]: Original · Win
+        - article [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]: 📦
+            - generic [ref=e146]:
+              - heading "Heroes of Might and Magic Collection" [level=3] [ref=e147]
+              - generic [ref=e148]:
+                - generic [ref=e149]: Original
+                - generic [ref=e150]: "2004"
+          - generic [ref=e151]:
+            - generic [ref=e152]: "Platforms:"
+            - generic [ref=e153]: Win
+          - generic [ref=e154]:
+            - generic [ref=e155]:
+              - generic [ref=e156]: Heroes of Might and Magic
+              - generic [ref=e157]: Original · Win
+            - generic [ref=e158]:
+              - generic [ref=e159]: Heroes of Might and Magic 2
+              - generic [ref=e160]: Original · Win
+            - generic [ref=e161]:
+              - generic [ref=e162]: Heroes of Might and Magic 3
+              - generic [ref=e163]: Original · Win
+            - generic [ref=e164]:
+              - generic [ref=e165]: Heroes of Might and Magic 4
+              - generic [ref=e166]: Original · Win
+            - generic [ref=e167]:
+              - generic [ref=e168]: "DLC: The Price of Loyalty"
+              - generic [ref=e169]: Original
+            - generic [ref=e170]:
+              - generic [ref=e171]: "DLC: Armageddon's Blade"
+              - generic [ref=e172]: Original
+            - generic [ref=e173]:
+              - generic [ref=e174]: "DLC: The Shadow of Death"
+              - generic [ref=e175]: Original
+            - generic [ref=e176]:
+              - generic [ref=e177]: "DLC: The Gathering Storm"
+              - generic [ref=e178]: Original
+            - generic [ref=e179]:
+              - generic [ref=e180]: "DLC: Winds of War"
+              - generic [ref=e181]: Original
+        - article [ref=e182]:
+          - generic [ref=e183]:
+            - generic [ref=e184]: 📦
+            - generic [ref=e185]:
+              - 'heading "Metal Gear Solid: Snake Eater 3D" [level=3] [ref=e186]'
+              - generic [ref=e187]:
+                - generic [ref=e188]: Downsample
+                - generic [ref=e189]: "2012"
+          - generic [ref=e190]:
+            - generic [ref=e191]: "Platforms:"
+            - generic [ref=e192]: 3DS
+          - generic [ref=e194]:
+            - generic [ref=e195]: "Metal Gear Solid 3: Snake Eater"
+            - generic [ref=e196]: Downsample · 3DS
+        - article [ref=e197]:
+          - generic [ref=e198]:
+            - generic [ref=e199]: 📦
+            - generic [ref=e200]:
+              - 'heading "Metal Gear Solid: The Legacy Collection" [level=3] [ref=e201]'
+              - generic [ref=e202]:
+                - generic [ref=e203]: Remaster, Original
+                - generic [ref=e204]: "2011"
+          - generic [ref=e205]:
+            - generic [ref=e206]: "Platforms:"
+            - generic [ref=e207]: PS3
+          - generic [ref=e208]:
+            - generic [ref=e209]:
+              - generic [ref=e210]: "Metal Gear Solid 2: Sons of Liberty"
+              - generic [ref=e211]: Remaster · PS3
+            - generic [ref=e212]:
+              - generic [ref=e213]: "Metal Gear Solid 3: Snake Eater"
+              - generic [ref=e214]: Remaster · PS3
+            - generic [ref=e215]:
+              - generic [ref=e216]: "Metal Gear Solid 4: Guns of the Patriots"
+              - generic [ref=e217]: Original · PS3
+        - article [ref=e218]:
+          - generic [ref=e219]:
+            - generic [ref=e220]: 📦
+            - generic [ref=e221]:
+              - 'heading "Heroes of Might and Magic 3: Complete" [level=3] [ref=e222]'
+              - generic [ref=e223]:
+                - generic [ref=e224]: Original
+                - generic [ref=e225]: "1999"
+          - generic [ref=e226]:
+            - generic [ref=e227]: "Platforms:"
+            - generic [ref=e228]: Win
+          - generic [ref=e229]:
+            - generic [ref=e230]:
+              - generic [ref=e231]: Heroes of Might and Magic 3
+              - generic [ref=e232]: Original · Win
+            - generic [ref=e233]:
+              - generic [ref=e234]: "DLC: Armageddon's Blade"
+              - generic [ref=e235]: Original
+            - generic [ref=e236]:
+              - generic [ref=e237]: "DLC: The Shadow of Death"
+              - generic [ref=e238]: Original
+        - article [ref=e239]:
+          - generic [ref=e240]:
+            - generic [ref=e241]: 📦
+            - generic [ref=e242]:
+              - 'heading "Age of Empires 2: Age of Kings" [level=3] [ref=e243]'
+              - generic [ref=e244]:
+                - generic [ref=e245]: Original
+                - generic [ref=e246]: "1999"
+          - generic [ref=e247]:
+            - generic [ref=e248]: "Platforms:"
+            - generic [ref=e249]: Win
+          - generic [ref=e251]:
+            - generic [ref=e252]: "Age of Empires II: The Age of Kings"
+            - generic [ref=e253]: Original · Win
+        - article [ref=e254]:
+          - generic [ref=e255]:
+            - generic [ref=e256]: 📦
+            - generic [ref=e257]:
+              - 'heading "Age of Empires 2: Age of Kings: The Conquerors" [level=3] [ref=e258]'
+              - generic [ref=e259]:
+                - generic [ref=e260]: Original
+                - generic [ref=e261]: "2000"
+          - generic [ref=e262]:
+            - generic [ref=e263]: "Platforms:"
+            - generic [ref=e264]: Win
+          - generic [ref=e266]:
+            - generic [ref=e267]: "DLC: The Conquerors"
+            - generic [ref=e268]: Original
+        - article [ref=e269]:
+          - generic [ref=e270]:
+            - generic [ref=e271]: 📦
+            - generic [ref=e272]:
+              - 'heading "Age of Empires 2: Age of Kings (HD Edition)" [level=3] [ref=e273]'
+              - generic [ref=e274]:
+                - generic [ref=e275]: Remaster
+                - generic [ref=e276]: "2012"
+          - generic [ref=e277]:
+            - generic [ref=e278]: "Platforms:"
+            - generic [ref=e279]: Win
+          - generic [ref=e281]:
+            - generic [ref=e282]: "Age of Empires II: The Age of Kings"
+            - generic [ref=e283]: Remaster · Win
+        - article [ref=e284]:
+          - generic [ref=e285]:
+            - generic [ref=e286]: 📦
+            - generic [ref=e287]:
+              - 'heading "Age of Empires 2: Age of Kings (HD Edition): The Conquerors" [level=3] [ref=e288]'
+              - generic [ref=e289]:
+                - generic [ref=e290]: Remaster
+                - generic [ref=e291]: "2013"
+          - generic [ref=e292]:
+            - generic [ref=e293]: "Platforms:"
+            - generic [ref=e294]: Win
+          - generic [ref=e296]:
+            - generic [ref=e297]: "DLC: The Conquerors"
+            - generic [ref=e298]: Remaster
+        - article [ref=e299]:
+          - generic [ref=e300]:
+            - generic [ref=e301]: 📦
+            - generic [ref=e302]:
+              - 'heading "Age of Empires 2: Age of Kings (HD Edition): The Forgotten" [level=3] [ref=e303]'
+              - generic [ref=e304]:
+                - generic [ref=e305]: Remaster
+                - generic [ref=e306]: "2013"
+          - generic [ref=e307]:
+            - generic [ref=e308]: "Platforms:"
+            - generic [ref=e309]: Win
+          - generic [ref=e311]:
+            - generic [ref=e312]: "DLC: The Forgotten"
+            - generic [ref=e313]: Remaster
+        - article [ref=e314]:
+          - generic [ref=e315]:
+            - generic [ref=e316]: 📦
+            - generic [ref=e317]:
+              - 'heading "Age of Empires 2: Age of Kings (HD Edition): The African Kingdoms" [level=3] [ref=e318]'
+              - generic [ref=e319]:
+                - generic [ref=e320]: Remaster
+                - generic [ref=e321]: "2015"
+          - generic [ref=e322]:
+            - generic [ref=e323]: "Platforms:"
+            - generic [ref=e324]: Win
+          - generic [ref=e326]:
+            - generic [ref=e327]: "DLC: The African Kingdoms"
+            - generic [ref=e328]: Remaster
+        - article [ref=e329]:
+          - generic [ref=e330]:
+            - generic [ref=e331]: 📦
+            - generic [ref=e332]:
+              - 'heading "Age of Empires 2: Age of Kings (HD Edition): Rise of the Rajas" [level=3] [ref=e333]'
+              - generic [ref=e334]:
+                - generic [ref=e335]: Remaster
+                - generic [ref=e336]: "2016"
+          - generic [ref=e337]:
+            - generic [ref=e338]: "Platforms:"
+            - generic [ref=e339]: Win
+          - generic [ref=e341]:
+            - generic [ref=e342]: "DLC: Rise of the Rajas"
+            - generic [ref=e343]: Remaster
+        - article [ref=e344]:
+          - generic [ref=e345]:
+            - generic [ref=e346]: 📦
+            - generic [ref=e347]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition)" [level=3] [ref=e348]'
+              - generic [ref=e349]:
+                - generic [ref=e350]: Remaster
+                - generic [ref=e351]: "2017"
+          - generic [ref=e352]:
+            - generic [ref=e353]: "Platforms:"
+            - generic [ref=e354]: Win
+          - generic [ref=e356]:
+            - generic [ref=e357]: "Age of Empires II: The Age of Kings"
+            - generic [ref=e358]: Remaster · Win
+        - article [ref=e359]:
+          - generic [ref=e360]:
+            - generic [ref=e361]: 📦
+            - generic [ref=e362]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): The Conquerors" [level=3] [ref=e363]'
+              - generic [ref=e364]:
+                - generic [ref=e365]: Remaster
+                - generic [ref=e366]: "2017"
+          - generic [ref=e367]:
+            - generic [ref=e368]: "Platforms:"
+            - generic [ref=e369]: Win
+          - generic [ref=e371]:
+            - generic [ref=e372]: "DLC: The Conquerors"
+            - generic [ref=e373]: Remaster
+        - article [ref=e374]:
+          - generic [ref=e375]:
+            - generic [ref=e376]: 📦
+            - generic [ref=e377]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): The Forgotten" [level=3] [ref=e378]'
+              - generic [ref=e379]:
+                - generic [ref=e380]: Remaster
+                - generic [ref=e381]: "2017"
+          - generic [ref=e382]:
+            - generic [ref=e383]: "Platforms:"
+            - generic [ref=e384]: Win
+          - generic [ref=e386]:
+            - generic [ref=e387]: "DLC: The Forgotten"
+            - generic [ref=e388]: Remaster
+        - article [ref=e389]:
+          - generic [ref=e390]:
+            - generic [ref=e391]: 📦
+            - generic [ref=e392]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): The African Kingdoms" [level=3] [ref=e393]'
+              - generic [ref=e394]:
+                - generic [ref=e395]: Remaster
+                - generic [ref=e396]: "2017"
+          - generic [ref=e397]:
+            - generic [ref=e398]: "Platforms:"
+            - generic [ref=e399]: Win
+          - generic [ref=e401]:
+            - generic [ref=e402]: "DLC: The African Kingdoms"
+            - generic [ref=e403]: Remaster
+        - article [ref=e404]:
+          - generic [ref=e405]:
+            - generic [ref=e406]: 📦
+            - generic [ref=e407]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): Rise of the Rajas" [level=3] [ref=e408]'
+              - generic [ref=e409]:
+                - generic [ref=e410]: Remaster
+                - generic [ref=e411]: "2017"
+          - generic [ref=e412]:
+            - generic [ref=e413]: "Platforms:"
+            - generic [ref=e414]: Win
+          - generic [ref=e416]:
+            - generic [ref=e417]: "DLC: Rise of the Rajas"
+            - generic [ref=e418]: Remaster
+        - article [ref=e419]:
+          - generic [ref=e420]:
+            - generic [ref=e421]: 📦
+            - generic [ref=e422]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): Lords of the West" [level=3] [ref=e423]'
+              - generic [ref=e424]:
+                - generic [ref=e425]: Remaster
+                - generic [ref=e426]: "2021"
+          - generic [ref=e427]:
+            - generic [ref=e428]: "Platforms:"
+            - generic [ref=e429]: Win
+          - generic [ref=e431]:
+            - generic [ref=e432]: "DLC: Lords of the West"
+            - generic [ref=e433]: Remaster
+        - article [ref=e434]:
+          - generic [ref=e435]:
+            - generic [ref=e436]: 📦
+            - generic [ref=e437]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): Dawn of the Dukes" [level=3] [ref=e438]'
+              - generic [ref=e439]:
+                - generic [ref=e440]: Remaster
+                - generic [ref=e441]: "2021"
+          - generic [ref=e442]:
+            - generic [ref=e443]: "Platforms:"
+            - generic [ref=e444]: Win
+          - generic [ref=e446]:
+            - generic [ref=e447]: "DLC: Dawn of the Dukes"
+            - generic [ref=e448]: Remaster
+        - article [ref=e449]:
+          - generic [ref=e450]:
+            - generic [ref=e451]: 📦
+            - generic [ref=e452]:
+              - 'heading "Age of Empires 2: Age of Kings (Definitive Edition): Dynasties of India" [level=3] [ref=e453]'
+              - generic [ref=e454]:
+                - generic [ref=e455]: Remaster
+                - generic [ref=e456]: "2022"
+          - generic [ref=e457]:
+            - generic [ref=e458]: "Platforms:"
+            - generic [ref=e459]: Win
+          - generic [ref=e461]:
+            - generic [ref=e462]: "DLC: Dynasties of India"
+            - generic [ref=e463]: Remaster
+        - article [ref=e464]:
+          - generic [ref=e465]:
+            - generic [ref=e466]: 📦
+            - generic [ref=e467]:
+              - heading "Indigo Prophecy" [level=3] [ref=e468]
+              - generic [ref=e469]:
+                - generic [ref=e470]: Original
+                - generic [ref=e471]: "2005"
+          - generic [ref=e472]:
+            - generic [ref=e473]: "Platforms:"
+            - generic [ref=e474]: Win
+          - generic [ref=e476]:
+            - generic [ref=e477]: Indigo Prophecy
+            - generic [ref=e478]: Original · Win
+        - article [ref=e479]:
+          - generic [ref=e480]:
+            - generic [ref=e481]: 📦
+            - generic [ref=e482]:
+              - heading "Indigo Prophecy" [level=3] [ref=e483]
+              - generic [ref=e484]:
+                - generic [ref=e485]: Original
+                - generic [ref=e486]: "2005"
+          - generic [ref=e487]:
+            - generic [ref=e488]: "Platforms:"
+            - generic [ref=e489]: PS2
+          - generic [ref=e491]:
+            - generic [ref=e492]: Indigo Prophecy
+            - generic [ref=e493]: Original · PS2
+        - article [ref=e494]:
+          - generic [ref=e495]:
+            - generic [ref=e496]: 📦
+            - generic [ref=e497]:
+              - heading "Indigo Prophecy" [level=3] [ref=e498]
+              - generic [ref=e499]:
+                - generic [ref=e500]: Original
+                - generic [ref=e501]: "2005"
+          - generic [ref=e502]:
+            - generic [ref=e503]: "Platforms:"
+            - generic [ref=e504]: Xbox
+          - generic [ref=e506]:
+            - generic [ref=e507]: Indigo Prophecy
+            - generic [ref=e508]: Original · Xbox
+        - article [ref=e509]:
+          - generic [ref=e510]:
+            - generic [ref=e511]: 📦
+            - generic [ref=e512]:
+              - heading "Indigo Prophecy" [level=3] [ref=e513]
+              - generic [ref=e514]:
+                - generic [ref=e515]: Enhanced
+                - generic [ref=e516]: "2007"
+          - generic [ref=e517]:
+            - generic [ref=e518]: "Platforms:"
+            - generic [ref=e519]: X360
+          - generic [ref=e521]:
+            - generic [ref=e522]: Indigo Prophecy
+            - generic [ref=e523]: Enhanced · X360
+        - article [ref=e524]:
+          - generic [ref=e525]:
+            - generic [ref=e526]: 📦
+            - generic [ref=e527]:
+              - heading "Indigo Prophecy" [level=3] [ref=e528]
+              - generic [ref=e529]:
+                - generic [ref=e530]: Enhanced
+                - generic [ref=e531]: "2007"
+          - generic [ref=e532]:
+            - generic [ref=e533]: "Platforms:"
+            - generic [ref=e534]: X360
+          - generic [ref=e536]:
+            - generic [ref=e537]: Indigo Prophecy
+            - generic [ref=e538]: Enhanced · X360
+        - article [ref=e539]:
+          - generic [ref=e540]:
+            - generic [ref=e541]: 📦
+            - generic [ref=e542]:
+              - 'heading "Fahrenheit: Indigo Prophecy Remastered" [level=3] [ref=e543]'
+              - generic [ref=e544]:
+                - generic [ref=e545]: Remaster
+                - generic [ref=e546]: "2015"
+          - generic [ref=e547]:
+            - generic [ref=e548]: "Platforms:"
+            - generic [ref=e549]: Win, Linux, macOS
+          - generic [ref=e551]:
+            - generic [ref=e552]: Indigo Prophecy
+            - generic [ref=e553]: Remaster · Win, Linux, macOS
+        - article [ref=e554]:
+          - generic [ref=e555]:
+            - generic [ref=e556]: 📦
+            - generic [ref=e557]:
+              - heading "Indigo Prophecy" [level=3] [ref=e558]
+              - generic [ref=e559]:
+                - generic [ref=e560]: Remaster
+                - generic [ref=e561]: "2015"
+          - generic [ref=e562]:
+            - generic [ref=e563]: "Platforms:"
+            - generic [ref=e564]: PS4, PS5
+          - generic [ref=e566]:
+            - generic [ref=e567]: Indigo Prophecy
+            - generic [ref=e568]: Remaster · PS4, PS5
+        - article [ref=e569]:
+          - generic [ref=e570]:
+            - generic [ref=e571]: 📦
+            - generic [ref=e572]:
+              - 'heading "Indigo Prophecy: Limited Run #331" [level=3] [ref=e573]'
+              - generic [ref=e574]:
+                - generic [ref=e575]: Remaster
+                - generic [ref=e576]: "2020"
+          - generic [ref=e577]:
+            - generic [ref=e578]: "Platforms:"
+            - generic [ref=e579]: PS4, PS5
+          - generic [ref=e581]:
+            - generic [ref=e582]: Indigo Prophecy
+            - generic [ref=e583]: Remaster · PS4, PS5
+        - article [ref=e584]:
+          - generic [ref=e585]:
+            - generic [ref=e586]: 📦
+            - generic [ref=e587]:
+              - 'heading "Red Dead Redemption: Game of the Year Edition" [level=3] [ref=e588]'
+              - generic [ref=e589]:
+                - generic [ref=e590]: Original, Enhanced
+                - generic [ref=e591]: "2011"
+          - generic [ref=e592]:
+            - generic [ref=e593]: "Platforms:"
+            - generic [ref=e594]: X360, XONE, XONEX, XSX
+          - generic [ref=e595]:
+            - generic [ref=e596]:
+              - generic [ref=e597]: Red Dead Redemption
+              - generic [ref=e598]: Original · X360
+            - generic [ref=e599]:
+              - generic [ref=e600]: Red Dead Redemption
+              - generic [ref=e601]: Enhanced · XONE
+            - generic [ref=e602]:
+              - generic [ref=e603]: Red Dead Redemption
+              - generic [ref=e604]: Enhanced · XONEX, XSX
+            - generic [ref=e605]:
+              - generic [ref=e606]: "Red Dead Redemption: Undead Nightmare"
+              - generic [ref=e607]: Original · X360
+            - generic [ref=e608]:
+              - generic [ref=e609]: "Red Dead Redemption: Undead Nightmare"
+              - generic [ref=e610]: Enhanced · XONE
+            - generic [ref=e611]:
+              - generic [ref=e612]: "Red Dead Redemption: Undead Nightmare"
+              - generic [ref=e613]: Enhanced · XONEX, XSX
+        - article [ref=e614]:
+          - generic [ref=e615]:
+            - generic [ref=e616]: 📦
+            - generic [ref=e617]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e618]'
+              - generic [ref=e619]:
+                - generic [ref=e620]: Original, Enhanced
+                - generic [ref=e621]: "2015"
+          - generic [ref=e622]:
+            - generic [ref=e623]: "Platforms:"
+            - generic [ref=e624]: XONE, XSX
+          - generic [ref=e625]:
+            - generic [ref=e626]:
+              - generic [ref=e627]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e628]: Original · XONE, XSX
+            - generic [ref=e629]:
+              - generic [ref=e630]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e631]: Enhanced · XSX
+        - article [ref=e632]:
+          - generic [ref=e633]:
+            - generic [ref=e634]: 📦
+            - generic [ref=e635]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e636]'
+              - generic [ref=e637]:
+                - generic [ref=e638]: Original, Enhanced
+                - generic [ref=e639]: "2015"
+          - generic [ref=e640]:
+            - generic [ref=e641]: "Platforms:"
+            - generic [ref=e642]: XONE, XSX, XSS
+          - generic [ref=e643]:
+            - generic [ref=e644]:
+              - generic [ref=e645]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e646]: Original · XONE, XSX, XSS
+            - generic [ref=e647]:
+              - generic [ref=e648]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e649]: Enhanced · XSX, XSS
+        - article [ref=e650]:
+          - generic [ref=e651]:
+            - generic [ref=e652]: 📦
+            - generic [ref=e653]:
+              - 'heading "The Witcher 3: Wild Hunt - Game of the Year Edition" [level=3] [ref=e654]'
+              - generic [ref=e655]:
+                - generic [ref=e656]: Original, Enhanced
+                - generic [ref=e657]: "2016"
+          - generic [ref=e658]:
+            - generic [ref=e659]: "Platforms:"
+            - generic [ref=e660]: XONE, XSX, XSS
+          - generic [ref=e661]:
+            - generic [ref=e662]:
+              - generic [ref=e663]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e664]: Original · XONE, XSX
+            - generic [ref=e665]:
+              - generic [ref=e666]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e667]: Enhanced · XSX
+            - generic [ref=e668]:
+              - generic [ref=e669]: "DLC: Hearts of Stone"
+              - generic [ref=e670]: Enhanced
+            - generic [ref=e671]:
+              - generic [ref=e672]: "DLC: Blood and Wine"
+              - generic [ref=e673]: Enhanced
+            - generic [ref=e674]:
+              - generic [ref=e675]: "DLC: Hearts of Stone"
+              - generic [ref=e676]: Original
+            - generic [ref=e677]:
+              - generic [ref=e678]: "DLC: Blood and Wine"
+              - generic [ref=e679]: Original
+        - article [ref=e680]:
+          - generic [ref=e681]:
+            - generic [ref=e682]: 📦
+            - generic [ref=e683]:
+              - 'heading "The Witcher 3: Wild Hunt - Game of the Year Edition" [level=3] [ref=e684]'
+              - generic [ref=e685]:
+                - generic [ref=e686]: Original, Enhanced
+                - generic [ref=e687]: "2016"
+          - generic [ref=e688]:
+            - generic [ref=e689]: "Platforms:"
+            - generic [ref=e690]: XONE, XSX, XSS
+          - generic [ref=e691]:
+            - generic [ref=e692]:
+              - generic [ref=e693]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e694]: Original · XONE, XSX, XSS
+            - generic [ref=e695]:
+              - generic [ref=e696]: "The Witcher 3: Wild Hunt"
+              - generic [ref=e697]: Enhanced · XSX, XSS
+            - generic [ref=e698]:
+              - generic [ref=e699]: "DLC: Hearts of Stone"
+              - generic [ref=e700]: Enhanced
+            - generic [ref=e701]:
+              - generic [ref=e702]: "DLC: Blood and Wine"
+              - generic [ref=e703]: Enhanced
+            - generic [ref=e704]:
+              - generic [ref=e705]: "DLC: Hearts of Stone"
+              - generic [ref=e706]: Original
+            - generic [ref=e707]:
+              - generic [ref=e708]: "DLC: Blood and Wine"
+              - generic [ref=e709]: Original
+        - article [ref=e710]:
+          - generic [ref=e711]:
+            - generic [ref=e712]: 📦
+            - generic [ref=e713]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e714]'
+              - generic [ref=e717]: "2015"
+          - generic [ref=e719]: "Platforms:"
+        - article [ref=e720]:
+          - generic [ref=e721]:
+            - generic [ref=e722]: 📦
+            - generic [ref=e723]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e724]'
+              - generic [ref=e727]: "2015"
+          - generic [ref=e729]: "Platforms:"
+    - generic [ref=e730]:
+      - generic [ref=e731]:
+        - heading "Games" [level=2] [ref=e732]
+        - paragraph [ref=e733]: All titles and their versions
+      - generic [ref=e734]:
+        - article [ref=e735]:
+          - generic [ref=e736]:
+            - 'img "Warcraft 3: Reign of Chaos" [ref=e738]'
+            - generic [ref=e739]:
+              - 'heading "Warcraft 3: Reign of Chaos" [level=3] [ref=e740]'
+              - generic [ref=e741]:
+                - generic [ref=e742]: RTS
+                - generic [ref=e743]: "2002"
+            - button "♡" [ref=e744] [cursor=pointer]
+          - generic [ref=e746]:
+            - generic [ref=e747]: Original
+            - generic [ref=e748]: Win
+        - article [ref=e749]:
+          - generic [ref=e750]:
+            - img "Heroes of Might and Magic" [ref=e752]
+            - generic [ref=e753]:
+              - heading "Heroes of Might and Magic" [level=3] [ref=e754]
+              - generic [ref=e755]:
+                - generic [ref=e756]: RPG
+                - generic [ref=e757]: "1995"
+            - button "♡" [ref=e758] [cursor=pointer]
+          - generic [ref=e760]:
+            - generic [ref=e761]: Original
+            - generic [ref=e762]: Win
+        - article [ref=e763]:
+          - generic [ref=e764]:
+            - img "Heroes of Might and Magic 2" [ref=e766]
+            - generic [ref=e767]:
+              - heading "Heroes of Might and Magic 2" [level=3] [ref=e768]
+              - generic [ref=e769]:
+                - generic [ref=e770]: RPG
+                - generic [ref=e771]: "1996"
+            - button "♡" [ref=e772] [cursor=pointer]
+          - generic [ref=e774]:
+            - generic [ref=e775]: Original
+            - generic [ref=e776]: Win
+          - generic [ref=e777]:
+            - generic [ref=e778]: "DLC:"
+            - generic [ref=e779]: The Price of Loyalty
+        - article [ref=e780]:
+          - generic [ref=e781]:
+            - img "Heroes of Might and Magic 3" [ref=e783]
+            - generic [ref=e784]:
+              - heading "Heroes of Might and Magic 3" [level=3] [ref=e785]
+              - generic [ref=e786]:
+                - generic [ref=e787]: RPG
+                - generic [ref=e788]: "1999"
+            - button "♡" [ref=e789] [cursor=pointer]
+          - generic [ref=e791]:
+            - generic [ref=e792]: Original
+            - generic [ref=e793]: Win
+            - generic [ref=e794]: Win
+          - generic [ref=e795]:
+            - generic [ref=e796]: "DLC:"
+            - generic [ref=e797]: Armageddon's Blade
+            - generic [ref=e798]: The Shadow of Death
+        - article [ref=e799]:
+          - generic [ref=e800]:
+            - img "Heroes of Might and Magic 4" [ref=e802]
+            - generic [ref=e803]:
+              - heading "Heroes of Might and Magic 4" [level=3] [ref=e804]
+              - generic [ref=e805]:
+                - generic [ref=e806]: RPG
+                - generic [ref=e807]: "2002"
+            - button "♡" [ref=e808] [cursor=pointer]
+          - generic [ref=e810]:
+            - generic [ref=e811]: Original
+            - generic [ref=e812]: Win
+          - generic [ref=e813]:
+            - generic [ref=e814]: "DLC:"
+            - generic [ref=e815]: The Gathering Storm
+            - generic [ref=e816]: Winds of War
+        - article [ref=e817]:
+          - generic [ref=e818]:
+            - img "Half-Life 2" [ref=e820]
+            - generic [ref=e821]:
+              - heading "Half-Life 2" [level=3] [ref=e822]
+              - generic [ref=e823]:
+                - generic [ref=e824]: FPS
+                - generic [ref=e825]: "2004"
+            - button "♡" [ref=e826] [cursor=pointer]
+          - generic [ref=e828]:
+            - generic [ref=e829]: Original
+            - generic [ref=e830]: Win, SD
+        - article [ref=e831]:
+          - generic [ref=e832]:
+            - 'img "Half-Life 2: Episode One" [ref=e834]'
+            - generic [ref=e835]:
+              - 'heading "Half-Life 2: Episode One" [level=3] [ref=e836]'
+              - generic [ref=e837]:
+                - generic [ref=e838]: FPS
+                - generic [ref=e839]: "2006"
+            - button "♡" [ref=e840] [cursor=pointer]
+          - generic [ref=e842]:
+            - generic [ref=e843]: Original
+            - generic [ref=e844]: Win, SD
+        - article [ref=e845]:
+          - generic [ref=e846]:
+            - 'img "Half-Life 2: Episode Two" [ref=e848]'
+            - generic [ref=e849]:
+              - 'heading "Half-Life 2: Episode Two" [level=3] [ref=e850]'
+              - generic [ref=e851]:
+                - generic [ref=e852]: FPS
+                - generic [ref=e853]: "2007"
+            - button "♡" [ref=e854] [cursor=pointer]
+          - generic [ref=e856]:
+            - generic [ref=e857]: Original
+            - generic [ref=e858]: Win, SD
+        - article [ref=e859]:
+          - generic [ref=e860]:
+            - img "Portal" [ref=e862]
+            - generic [ref=e863]:
+              - heading "Portal" [level=3] [ref=e864]
+              - generic [ref=e865]:
+                - generic [ref=e866]: FPS
+                - generic [ref=e867]: "2007"
+            - button "♡" [ref=e868] [cursor=pointer]
+          - generic [ref=e870]:
+            - generic [ref=e871]: Original
+            - generic [ref=e872]: Win, SD
+        - article [ref=e873]:
+          - generic [ref=e874]:
+            - img "Team Fortress 2" [ref=e876]
+            - generic [ref=e877]:
+              - heading "Team Fortress 2" [level=3] [ref=e878]
+              - generic [ref=e879]:
+                - generic [ref=e880]: FPS
+                - generic [ref=e881]: "2007"
+            - button "♡" [ref=e882] [cursor=pointer]
+          - generic [ref=e884]:
+            - generic [ref=e885]: Original
+            - generic [ref=e886]: Win, SD
+        - article [ref=e887]:
+          - generic [ref=e888]:
+            - img "Metal Gear Solid" [ref=e890]
+            - generic [ref=e891]:
+              - heading "Metal Gear Solid" [level=3] [ref=e892]
+              - generic [ref=e893]:
+                - generic [ref=e894]: Stealth
+                - generic [ref=e895]: "1998"
+            - button "♡" [ref=e896] [cursor=pointer]
+        - article [ref=e897]:
+          - generic [ref=e898]:
+            - 'img "Metal Gear Solid 2: Sons of Liberty" [ref=e900]'
+            - generic [ref=e901]:
+              - 'heading "Metal Gear Solid 2: Sons of Liberty" [level=3] [ref=e902]'
+              - generic [ref=e903]:
+                - generic [ref=e904]: Stealth
+                - generic [ref=e905]: "2001"
+            - button "♡" [ref=e906] [cursor=pointer]
+          - generic [ref=e908]:
+            - generic [ref=e909]: Remaster
+            - generic [ref=e910]: "2011"
+            - generic [ref=e911]: PS3
+        - article [ref=e912]:
+          - generic [ref=e913]:
+            - 'img "Metal Gear Solid 3: Snake Eater" [ref=e915]'
+            - generic [ref=e916]:
+              - 'heading "Metal Gear Solid 3: Snake Eater" [level=3] [ref=e917]'
+              - generic [ref=e918]:
+                - generic [ref=e919]: Stealth
+                - generic [ref=e920]: "2004"
+            - button "♡" [ref=e921] [cursor=pointer]
+          - generic [ref=e922]:
+            - generic [ref=e923]:
+              - generic [ref=e924]: Downsample
+              - generic [ref=e925]: "2012"
+              - generic [ref=e926]: 3DS
+            - generic [ref=e927]:
+              - generic [ref=e928]: Remaster
+              - generic [ref=e929]: "2011"
+              - generic [ref=e930]: PS3
+        - article [ref=e931]:
+          - generic [ref=e932]:
+            - 'img "Metal Gear Solid 4: Guns of the Patriots" [ref=e934]'
+            - generic [ref=e935]:
+              - 'heading "Metal Gear Solid 4: Guns of the Patriots" [level=3] [ref=e936]'
+              - generic [ref=e937]:
+                - generic [ref=e938]: Stealth
+                - generic [ref=e939]: "2008"
+            - button "♡" [ref=e940] [cursor=pointer]
+          - generic [ref=e942]:
+            - generic [ref=e943]: Original
+            - generic [ref=e944]: PS3
+        - article [ref=e945]:
+          - generic [ref=e946]:
+            - 'img "Age of Empires II: The Age of Kings" [ref=e948]'
+            - generic [ref=e949]:
+              - 'heading "Age of Empires II: The Age of Kings" [level=3] [ref=e950]'
+              - generic [ref=e951]:
+                - generic [ref=e952]: RTS
+                - generic [ref=e953]: "1999"
+            - button "♡" [ref=e954] [cursor=pointer]
+          - generic [ref=e955]:
+            - generic [ref=e956]:
+              - generic [ref=e957]: Original
+              - generic [ref=e958]: "1999"
+              - generic [ref=e959]: Win
+            - generic [ref=e960]:
+              - generic [ref=e961]: Remaster
+              - generic [ref=e962]: "2012"
+              - generic [ref=e963]: HD Edition
+              - generic [ref=e964]: Win
+            - generic [ref=e965]:
+              - generic [ref=e966]: Remaster
+              - generic [ref=e967]: "2017"
+              - generic [ref=e968]: Definitive Edition
+              - generic [ref=e969]: Win
+          - generic [ref=e970]:
+            - generic [ref=e971]: "DLC:"
+            - generic [ref=e972]: The Conquerors
+            - generic [ref=e973]: The Forgotten
+            - generic [ref=e974]: The African Kingdoms
+            - generic [ref=e975]: Rise of the Rajas
+            - generic [ref=e976]: Lords of the West
+            - generic [ref=e977]: Dawn of the Dukes
+            - generic [ref=e978]: Dynasties of India
+        - article [ref=e979]:
+          - generic [ref=e980]:
+            - img "Indigo Prophecy" [ref=e982]
+            - generic [ref=e983]:
+              - heading "Indigo Prophecy" [level=3] [ref=e984]
+              - generic [ref=e985]:
+                - generic [ref=e986]: Undefined
+                - generic [ref=e987]: "2005"
+                - generic [ref=e988]: a.k.a. Fahrenheit
+            - button "♡" [ref=e989] [cursor=pointer]
+          - generic [ref=e990]:
+            - generic [ref=e991]:
+              - generic [ref=e992]: Original
+              - generic [ref=e993]: "2005"
+              - generic [ref=e994]: Win
+              - generic [ref=e995]: PS2
+              - generic [ref=e996]: Xbox
+            - generic [ref=e997]:
+              - generic [ref=e998]: Enhanced
+              - generic [ref=e999]: "2007"
+              - generic [ref=e1000]: X360
+              - generic [ref=e1001]: X360
+            - generic [ref=e1002]:
+              - generic [ref=e1003]: Remaster
+              - generic [ref=e1004]: "2015"
+              - generic [ref=e1005]: Win, Linux, macOS
+              - generic [ref=e1006]: PS4, PS5
+              - generic [ref=e1007]: PS4, PS5
+        - article [ref=e1008]:
+          - generic [ref=e1009]:
+            - img "Red Dead Redemption" [ref=e1011]
+            - generic [ref=e1012]:
+              - heading "Red Dead Redemption" [level=3] [ref=e1013]
+              - generic [ref=e1014]:
+                - generic [ref=e1015]: Open World
+                - generic [ref=e1016]: "2010"
+            - button "♡" [ref=e1017] [cursor=pointer]
+          - generic [ref=e1018]:
+            - generic [ref=e1019]:
+              - generic [ref=e1020]: Original
+              - generic [ref=e1021]: "2010"
+              - generic [ref=e1022]: X360
+            - generic [ref=e1023]:
+              - generic [ref=e1024]: Enhanced
+              - generic [ref=e1025]: "2016"
+              - generic [ref=e1026]: XONE
+            - generic [ref=e1027]:
+              - generic [ref=e1028]: Enhanced
+              - generic [ref=e1029]: "2018"
+              - generic [ref=e1030]: XONEX, XSX
+          - generic [ref=e1031]:
+            - generic [ref=e1032]: "DLC:"
+            - generic [ref=e1033]: Undead Nightmare
+        - article [ref=e1034]:
+          - generic [ref=e1035]:
+            - 'img "Red Dead Redemption: Undead Nightmare" [ref=e1037]'
+            - generic [ref=e1038]:
+              - 'heading "Red Dead Redemption: Undead Nightmare" [level=3] [ref=e1039]'
+              - generic [ref=e1040]:
+                - generic [ref=e1041]: Open World
+                - generic [ref=e1042]: "2010"
+            - button "♡" [ref=e1043] [cursor=pointer]
+          - generic [ref=e1044]:
+            - generic [ref=e1045]:
+              - generic [ref=e1046]: Original
+              - generic [ref=e1047]: "2010"
+              - generic [ref=e1048]: X360
+            - generic [ref=e1049]:
+              - generic [ref=e1050]: Enhanced
+              - generic [ref=e1051]: "2016"
+              - generic [ref=e1052]: XONE
+            - generic [ref=e1053]:
+              - generic [ref=e1054]: Enhanced
+              - generic [ref=e1055]: "2018"
+              - generic [ref=e1056]: XONEX, XSX
+        - article [ref=e1057]:
+          - generic [ref=e1058]:
+            - 'img "The Witcher 3: Wild Hunt" [ref=e1060]'
+            - generic [ref=e1061]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1062]'
+              - generic [ref=e1063]:
+                - generic [ref=e1064]: Open World
+                - generic [ref=e1065]: "2015"
+            - button "♡" [ref=e1066] [cursor=pointer]
+          - generic [ref=e1067]:
+            - generic [ref=e1068]:
+              - generic [ref=e1069]: Original
+              - generic [ref=e1070]: "2015"
+              - generic [ref=e1071]: XONE, XSX
+              - generic [ref=e1072]: XONE, XSX, XSS
+              - generic [ref=e1073]: XONE, XSX
+              - generic [ref=e1074]: XONE, XSX, XSS
+            - generic [ref=e1075]:
+              - generic [ref=e1076]: Enhanced
+              - generic [ref=e1077]: "2022"
+              - generic [ref=e1078]: XSX
+              - generic [ref=e1079]: XSX, XSS
+              - generic [ref=e1080]: XSX
+              - generic [ref=e1081]: XSX, XSS
+              - generic [ref=e1082]: Win
+              - generic [ref=e1083]: Win
+          - generic [ref=e1084]:
+            - generic [ref=e1085]: "DLC:"
+            - generic [ref=e1086]: Hearts of Stone
+            - generic [ref=e1087]: Blood and Wine
+    - generic [ref=e1088]:
+      - generic [ref=e1089]:
+        - heading "Series" [level=2] [ref=e1090]
+        - paragraph [ref=e1091]: Game franchises and their titles
+      - generic [ref=e1092]:
+        - article [ref=e1093]:
+          - generic [ref=e1094]:
+            - generic [ref=e1095]: 📚
+            - generic [ref=e1096]:
+              - heading "None" [level=3] [ref=e1097]
+              - generic [ref=e1099]: 1 title
+          - generic [ref=e1101]:
+            - generic [ref=e1102]: Indigo Prophecy
+            - generic [ref=e1103]: 2005 · Undefined
+        - article [ref=e1104]:
+          - generic [ref=e1105]:
+            - generic [ref=e1106]: 📚
+            - generic [ref=e1107]:
+              - heading "Warcraft" [level=3] [ref=e1108]
+              - generic [ref=e1110]: 1 title
+          - generic [ref=e1112]:
+            - generic [ref=e1113]: "Warcraft 3: Reign of Chaos"
+            - generic [ref=e1114]: 2002 · RTS
+        - article [ref=e1115]:
+          - generic [ref=e1116]:
+            - generic [ref=e1117]: 📚
+            - generic [ref=e1118]:
+              - heading "Metal Gear Solid" [level=3] [ref=e1119]
+              - generic [ref=e1121]: 4 titles
+          - generic [ref=e1122]:
+            - generic [ref=e1123]:
+              - generic [ref=e1124]: Metal Gear Solid
+              - generic [ref=e1125]: 1998 · Stealth
+            - generic [ref=e1126]:
+              - generic [ref=e1127]: "Metal Gear Solid 2: Sons of Liberty"
+              - generic [ref=e1128]: 2001 · Stealth
+            - generic [ref=e1129]:
+              - generic [ref=e1130]: "Metal Gear Solid 3: Snake Eater"
+              - generic [ref=e1131]: 2004 · Stealth
+            - generic [ref=e1132]:
+              - generic [ref=e1133]: "Metal Gear Solid 4: Guns of the Patriots"
+              - generic [ref=e1134]: 2008 · Stealth
+        - article [ref=e1135]:
+          - generic [ref=e1136]:
+            - generic [ref=e1137]: 📚
+            - generic [ref=e1138]:
+              - heading "Heroes of Might And Magic" [level=3] [ref=e1139]
+              - generic [ref=e1141]: 4 titles
+          - generic [ref=e1142]:
+            - generic [ref=e1143]:
+              - generic [ref=e1144]: Heroes of Might and Magic
+              - generic [ref=e1145]: 1995 · RPG
+            - generic [ref=e1146]:
+              - generic [ref=e1147]: Heroes of Might and Magic 2
+              - generic [ref=e1148]: 1996 · RPG
+            - generic [ref=e1149]:
+              - generic [ref=e1150]: Heroes of Might and Magic 3
+              - generic [ref=e1151]: 1999 · RPG
+            - generic [ref=e1152]:
+              - generic [ref=e1153]: Heroes of Might and Magic 4
+              - generic [ref=e1154]: 2002 · RPG
+        - article [ref=e1155]:
+          - generic [ref=e1156]:
+            - generic [ref=e1157]: 📚
+            - generic [ref=e1158]:
+              - heading "Half-Life" [level=3] [ref=e1159]
+              - generic [ref=e1161]: 3 titles
+          - generic [ref=e1162]:
+            - generic [ref=e1163]:
+              - generic [ref=e1164]: Half-Life 2
+              - generic [ref=e1165]: 2004 · FPS
+            - generic [ref=e1166]:
+              - generic [ref=e1167]: "Half-Life 2: Episode One"
+              - generic [ref=e1168]: 2006 · FPS
+            - generic [ref=e1169]:
+              - generic [ref=e1170]: "Half-Life 2: Episode Two"
+              - generic [ref=e1171]: 2007 · FPS
+        - article [ref=e1172]:
+          - generic [ref=e1173]:
+            - generic [ref=e1174]: 📚
+            - generic [ref=e1175]:
+              - heading "Portal" [level=3] [ref=e1176]
+              - generic [ref=e1178]: 1 title
+          - generic [ref=e1180]:
+            - generic [ref=e1181]: Portal
+            - generic [ref=e1182]: 2007 · FPS
+        - article [ref=e1183]:
+          - generic [ref=e1184]:
+            - generic [ref=e1185]: 📚
+            - generic [ref=e1186]:
+              - heading "Team Fortress" [level=3] [ref=e1187]
+              - generic [ref=e1189]: 1 title
+          - generic [ref=e1191]:
+            - generic [ref=e1192]: Team Fortress 2
+            - generic [ref=e1193]: 2007 · FPS
+        - article [ref=e1194]:
+          - generic [ref=e1195]:
+            - generic [ref=e1196]: 📚
+            - generic [ref=e1197]:
+              - heading "Age of Empires" [level=3] [ref=e1198]
+              - generic [ref=e1200]: 1 title
+          - generic [ref=e1202]:
+            - generic [ref=e1203]: "Age of Empires II: The Age of Kings"
+            - generic [ref=e1204]: 1999 · RTS
+        - article [ref=e1205]:
+          - generic [ref=e1206]:
+            - generic [ref=e1207]: 📚
+            - generic [ref=e1208]:
+              - heading "Red Dead" [level=3] [ref=e1209]
+              - generic [ref=e1211]: 2 titles
+          - generic [ref=e1212]:
+            - generic [ref=e1213]:
+              - generic [ref=e1214]: Red Dead Redemption
+              - generic [ref=e1215]: 2010 · Open World
+            - generic [ref=e1216]:
+              - generic [ref=e1217]: "Red Dead Redemption: Undead Nightmare"
+              - generic [ref=e1218]: 2010 · Open World
+        - article [ref=e1219]:
+          - generic [ref=e1220]:
+            - generic [ref=e1221]: 📚
+            - generic [ref=e1222]:
+              - heading "The Witcher" [level=3] [ref=e1223]
+              - generic [ref=e1225]: 1 title
+          - generic [ref=e1227]:
+            - generic [ref=e1228]: "The Witcher 3: Wild Hunt"
+            - generic [ref=e1229]: 2015 · Open World
+    - generic [ref=e1230]:
+      - generic [ref=e1231]:
+        - heading "My Inventory" [level=2] [ref=e1232]
+        - paragraph [ref=e1233]: Track your owned game copies
+      - paragraph [ref=e1235]: Log in to see your inventory.
+    - generic [ref=e1236]:
+      - generic [ref=e1237]:
+        - heading "Game Versions & DLC" [level=2] [ref=e1238]
+        - paragraph [ref=e1239]: Available DLC per version
+      - generic [ref=e1240]:
+        - article [ref=e1241]:
+          - generic [ref=e1242]:
+            - generic [ref=e1243]: 🔖
+            - generic [ref=e1244]:
+              - heading "Heroes of Might and Magic 2" [level=3] [ref=e1245]
+              - generic [ref=e1246]:
+                - generic [ref=e1247]: Original
+                - generic [ref=e1248]: "1996"
+                - generic [ref=e1249]: Physical
+          - generic [ref=e1250]:
+            - generic [ref=e1251]: "Platforms:"
+            - generic [ref=e1252]: Win
+          - generic [ref=e1253]:
+            - generic [ref=e1254]: "Compatible DLC:"
+            - generic [ref=e1255]: The Price of Loyalty (1997)
+        - article [ref=e1256]:
+          - generic [ref=e1257]:
+            - generic [ref=e1258]: 🔖
+            - generic [ref=e1259]:
+              - heading "Heroes of Might and Magic 3" [level=3] [ref=e1260]
+              - generic [ref=e1261]:
+                - generic [ref=e1262]: Original
+                - generic [ref=e1263]: "1999"
+                - generic [ref=e1264]: Physical
+          - generic [ref=e1265]:
+            - generic [ref=e1266]: "Platforms:"
+            - generic [ref=e1267]: Win
+          - generic [ref=e1268]:
+            - generic [ref=e1269]: "Compatible DLC:"
+            - generic [ref=e1270]: Armageddon's Blade (1999)
+            - generic [ref=e1271]: The Shadow of Death (2000)
+        - article [ref=e1272]:
+          - generic [ref=e1273]:
+            - generic [ref=e1274]: 🔖
+            - generic [ref=e1275]:
+              - heading "Heroes of Might and Magic 3" [level=3] [ref=e1276]
+              - generic [ref=e1277]:
+                - generic [ref=e1278]: Original
+                - generic [ref=e1279]: "1999"
+                - generic [ref=e1280]: GOG
+          - generic [ref=e1281]:
+            - generic [ref=e1282]: "Platforms:"
+            - generic [ref=e1283]: Win
+          - generic [ref=e1284]:
+            - generic [ref=e1285]: "Compatible DLC:"
+            - generic [ref=e1286]: Armageddon's Blade (1999)
+            - generic [ref=e1287]: The Shadow of Death (2000)
+        - article [ref=e1288]:
+          - generic [ref=e1289]:
+            - generic [ref=e1290]: 🔖
+            - generic [ref=e1291]:
+              - heading "Heroes of Might and Magic 4" [level=3] [ref=e1292]
+              - generic [ref=e1293]:
+                - generic [ref=e1294]: Original
+                - generic [ref=e1295]: "2002"
+                - generic [ref=e1296]: Physical
+          - generic [ref=e1297]:
+            - generic [ref=e1298]: "Platforms:"
+            - generic [ref=e1299]: Win
+          - generic [ref=e1300]:
+            - generic [ref=e1301]: "Compatible DLC:"
+            - generic [ref=e1302]: The Gathering Storm (2002)
+            - generic [ref=e1303]: Winds of War (2003)
+        - article [ref=e1304]:
+          - generic [ref=e1305]:
+            - generic [ref=e1306]: 🔖
+            - generic [ref=e1307]:
+              - 'heading "Age of Empires II: The Age of Kings" [level=3] [ref=e1308]'
+              - generic [ref=e1309]:
+                - generic [ref=e1310]: Original
+                - generic [ref=e1311]: "1999"
+                - generic [ref=e1312]: Physical
+          - generic [ref=e1313]:
+            - generic [ref=e1314]: "Platforms:"
+            - generic [ref=e1315]: Win
+          - generic [ref=e1316]:
+            - generic [ref=e1317]: "Compatible DLC:"
+            - generic [ref=e1318]: The Conquerors (2000)
+        - article [ref=e1319]:
+          - generic [ref=e1320]:
+            - generic [ref=e1321]: 🔖
+            - generic [ref=e1322]:
+              - 'heading "Age of Empires II: The Age of Kings" [level=3] [ref=e1323]'
+              - generic [ref=e1324]:
+                - generic [ref=e1325]: Remaster
+                - generic [ref=e1326]: "2012"
+                - generic [ref=e1327]: Physical
+          - generic [ref=e1328]:
+            - generic [ref=e1329]: "Platforms:"
+            - generic [ref=e1330]: Win
+          - generic [ref=e1331]:
+            - generic [ref=e1332]: "Compatible DLC:"
+            - generic [ref=e1333]: The Conquerors (2000)
+            - generic [ref=e1334]: The Forgotten (2013)
+            - generic [ref=e1335]: The African Kingdoms (2015)
+            - generic [ref=e1336]: Rise of the Rajas (2016)
+        - article [ref=e1337]:
+          - generic [ref=e1338]:
+            - generic [ref=e1339]: 🔖
+            - generic [ref=e1340]:
+              - 'heading "Age of Empires II: The Age of Kings" [level=3] [ref=e1341]'
+              - generic [ref=e1342]:
+                - generic [ref=e1343]: Remaster
+                - generic [ref=e1344]: "2017"
+                - generic [ref=e1345]: Physical
+          - generic [ref=e1346]:
+            - generic [ref=e1347]: "Platforms:"
+            - generic [ref=e1348]: Win
+          - generic [ref=e1349]:
+            - generic [ref=e1350]: "Compatible DLC:"
+            - generic [ref=e1351]: The Conquerors (2000)
+            - generic [ref=e1352]: The Forgotten (2013)
+            - generic [ref=e1353]: The African Kingdoms (2015)
+            - generic [ref=e1354]: Rise of the Rajas (2016)
+            - generic [ref=e1355]: Lords of the West (2021)
+            - generic [ref=e1356]: Dawn of the Dukes (2021)
+            - generic [ref=e1357]: Dynasties of India (2022)
+        - article [ref=e1358]:
+          - generic [ref=e1359]:
+            - generic [ref=e1360]: 🔖
+            - generic [ref=e1361]:
+              - heading "Red Dead Redemption" [level=3] [ref=e1362]
+              - generic [ref=e1363]:
+                - generic [ref=e1364]: Original
+                - generic [ref=e1365]: "2010"
+                - generic [ref=e1366]: Physical
+          - generic [ref=e1367]:
+            - generic [ref=e1368]: "Platforms:"
+            - generic [ref=e1369]: X360
+          - generic [ref=e1370]:
+            - generic [ref=e1371]: "Compatible DLC:"
+            - generic [ref=e1372]: Undead Nightmare (2010)
+        - article [ref=e1373]:
+          - generic [ref=e1374]:
+            - generic [ref=e1375]: 🔖
+            - generic [ref=e1376]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1377]'
+              - generic [ref=e1378]:
+                - generic [ref=e1379]: Original
+                - generic [ref=e1380]: "2015"
+                - generic [ref=e1381]: Physical
+          - generic [ref=e1382]:
+            - generic [ref=e1383]: "Platforms:"
+            - generic [ref=e1384]: XONE, XSX
+          - generic [ref=e1385]:
+            - generic [ref=e1386]: "Compatible DLC:"
+            - generic [ref=e1387]: Hearts of Stone (2015)
+            - generic [ref=e1388]: Blood and Wine (2016)
+        - article [ref=e1389]:
+          - generic [ref=e1390]:
+            - generic [ref=e1391]: 🔖
+            - generic [ref=e1392]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1393]'
+              - generic [ref=e1394]:
+                - generic [ref=e1395]: Original
+                - generic [ref=e1396]: "2015"
+                - generic [ref=e1397]: Xbox Live
+          - generic [ref=e1398]:
+            - generic [ref=e1399]: "Platforms:"
+            - generic [ref=e1400]: XONE, XSX, XSS
+          - generic [ref=e1401]:
+            - generic [ref=e1402]: "Compatible DLC:"
+            - generic [ref=e1403]: Hearts of Stone (2015)
+            - generic [ref=e1404]: Blood and Wine (2016)
+        - article [ref=e1405]:
+          - generic [ref=e1406]:
+            - generic [ref=e1407]: 🔖
+            - generic [ref=e1408]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1409]'
+              - generic [ref=e1410]:
+                - generic [ref=e1411]: Enhanced
+                - generic [ref=e1412]: "2022"
+                - generic [ref=e1413]: Physical
+          - generic [ref=e1414]:
+            - generic [ref=e1415]: "Platforms:"
+            - generic [ref=e1416]: XSX
+          - generic [ref=e1417]:
+            - generic [ref=e1418]: "Compatible DLC:"
+            - generic [ref=e1419]: Hearts of Stone (2015)
+            - generic [ref=e1420]: Blood and Wine (2016)
+        - article [ref=e1421]:
+          - generic [ref=e1422]:
+            - generic [ref=e1423]: 🔖
+            - generic [ref=e1424]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1425]'
+              - generic [ref=e1426]:
+                - generic [ref=e1427]: Enhanced
+                - generic [ref=e1428]: "2022"
+                - generic [ref=e1429]: Xbox Live
+          - generic [ref=e1430]:
+            - generic [ref=e1431]: "Platforms:"
+            - generic [ref=e1432]: XSX, XSS
+          - generic [ref=e1433]:
+            - generic [ref=e1434]: "Compatible DLC:"
+            - generic [ref=e1435]: Hearts of Stone (2015)
+            - generic [ref=e1436]: Blood and Wine (2016)
+        - article [ref=e1437]:
+          - generic [ref=e1438]:
+            - generic [ref=e1439]: 🔖
+            - generic [ref=e1440]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1441]'
+              - generic [ref=e1442]:
+                - generic [ref=e1443]: Original
+                - generic [ref=e1444]: "2015"
+                - generic [ref=e1445]: Physical
+          - generic [ref=e1446]:
+            - generic [ref=e1447]: "Platforms:"
+            - generic [ref=e1448]: XONE, XSX
+          - generic [ref=e1449]:
+            - generic [ref=e1450]: "Compatible DLC:"
+            - generic [ref=e1451]: Hearts of Stone (2015)
+            - generic [ref=e1452]: Blood and Wine (2016)
+        - article [ref=e1453]:
+          - generic [ref=e1454]:
+            - generic [ref=e1455]: 🔖
+            - generic [ref=e1456]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1457]'
+              - generic [ref=e1458]:
+                - generic [ref=e1459]: Original
+                - generic [ref=e1460]: "2015"
+                - generic [ref=e1461]: Xbox Live
+          - generic [ref=e1462]:
+            - generic [ref=e1463]: "Platforms:"
+            - generic [ref=e1464]: XONE, XSX, XSS
+          - generic [ref=e1465]:
+            - generic [ref=e1466]: "Compatible DLC:"
+            - generic [ref=e1467]: Hearts of Stone (2015)
+            - generic [ref=e1468]: Blood and Wine (2016)
+        - article [ref=e1469]:
+          - generic [ref=e1470]:
+            - generic [ref=e1471]: 🔖
+            - generic [ref=e1472]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1473]'
+              - generic [ref=e1474]:
+                - generic [ref=e1475]: Enhanced
+                - generic [ref=e1476]: "2022"
+                - generic [ref=e1477]: Physical
+          - generic [ref=e1478]:
+            - generic [ref=e1479]: "Platforms:"
+            - generic [ref=e1480]: XSX
+          - generic [ref=e1481]:
+            - generic [ref=e1482]: "Compatible DLC:"
+            - generic [ref=e1483]: Hearts of Stone (2015)
+            - generic [ref=e1484]: Blood and Wine (2016)
+        - article [ref=e1485]:
+          - generic [ref=e1486]:
+            - generic [ref=e1487]: 🔖
+            - generic [ref=e1488]:
+              - 'heading "The Witcher 3: Wild Hunt" [level=3] [ref=e1489]'
+              - generic [ref=e1490]:
+                - generic [ref=e1491]: Enhanced
+                - generic [ref=e1492]: "2022"
+                - generic [ref=e1493]: Xbox Live
+          - generic [ref=e1494]:
+            - generic [ref=e1495]: "Platforms:"
+            - generic [ref=e1496]: XSX, XSS
+          - generic [ref=e1497]:
+            - generic [ref=e1498]: "Compatible DLC:"
+            - generic [ref=e1499]: Hearts of Stone (2015)
+            - generic [ref=e1500]: Blood and Wine (2016)
+  - contentinfo [ref=e1501]:
+    - paragraph [ref=e1502]: Game Catalog · 19 games across 10 series · 35 collections

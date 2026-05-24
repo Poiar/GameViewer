@@ -1,5 +1,5 @@
 @if (authService.user(); as user) {
-  <div class="auth-container">
+  <div class="auth-inline">
     <button
       class="avatar-badge"
       type="button"
@@ -10,20 +10,37 @@
     </button>
     @if (dropdownOpen) {
       <div class="dropdown-menu" role="menu">
-        <button class="dropdown-item" type="button" role="menuitem" disabled>Profile</button>
+        <button class="dropdown-item" type="button" role="menuitem" (click)="onProfile()">Profile</button>
         <button class="dropdown-item" type="button" role="menuitem" (click)="onLogout()">Log out</button>
       </div>
     }
   </div>
 } @else {
-  <div class="auth-container login-container">
-    <input
-      type="text"
-      class="login-input"
-      placeholder="Username"
-      [(ngModel)]="loginUsername"
-      (keyup.enter)="onLogin()"
-    />
-    <button class="login-btn" type="button" (click)="onLogin()">Log in</button>
+  <div class="auth-inline">
+    <button class="login-btn" type="button" (click)="toggleDropdown()">Log in</button>
+    @if (dropdownOpen) {
+      <div class="dropdown-menu login-dropdown" role="menu">
+        <div class="login-fields">
+          <input
+            type="text"
+            class="login-input"
+            placeholder="Username"
+            [(ngModel)]="loginUsername"
+            (keyup.enter)="onLogin()"
+          />
+          <input
+            type="password"
+            class="login-input"
+            placeholder="Password"
+            [(ngModel)]="loginPassword"
+            (keyup.enter)="onLogin()"
+          />
+          @if (loginError) {
+            <div class="login-error">{{ loginError }}</div>
+          }
+          <button class="login-submit" type="button" (click)="onLogin()">Sign in</button>
+        </div>
+      </div>
+    }
   </div>
 }
