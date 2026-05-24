@@ -30,6 +30,11 @@
   box-shadow: 0 2px 12px rgba(124, 106, 247, 0.35);
 }
 
+.avatar-badge:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .login-btn {
   padding: 6px 16px;
   background: var(--accent);
@@ -46,6 +51,11 @@
 .login-btn:hover {
   background: var(--accent-hover);
   box-shadow: 0 2px 12px rgba(124, 106, 247, 0.35);
+}
+
+.login-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .dropdown-menu {
@@ -87,9 +97,15 @@
   gap: 8px;
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover,
+.dropdown-item:focus-visible {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+}
+
+.dropdown-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .login-dropdown {
@@ -113,6 +129,8 @@
   font-family: inherit;
   outline: none;
   transition: border-color var(--transition-fast);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-input:focus {
@@ -121,6 +139,38 @@
 
 .login-input::placeholder {
   color: var(--text-muted);
+}
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrap .login-input {
+  padding-right: 42px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.password-toggle:hover {
+  background: var(--bg-card-hover);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .login-error {
@@ -145,4 +195,20 @@
 .login-submit:hover {
   background: var(--accent-hover);
   box-shadow: 0 2px 8px rgba(124, 106, 247, 0.3);
+}
+
+.login-submit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .login-dropdown {
+    position: fixed;
+    top: auto;
+    right: 8px;
+    left: 8px;
+    min-width: auto;
+    width: auto;
+  }
 }

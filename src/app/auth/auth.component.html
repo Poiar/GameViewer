@@ -5,6 +5,8 @@
       type="button"
       (click)="toggleDropdown()"
       [attr.aria-label]="user.displayName + ' menu'"
+      [attr.aria-expanded]="dropdownOpen"
+      aria-haspopup="true"
     >
       {{ authService.initials() }}
     </button>
@@ -17,7 +19,15 @@
   </div>
 } @else {
   <div class="auth-inline">
-    <button class="login-btn" type="button" (click)="toggleDropdown()">Log in</button>
+    <button
+      class="login-btn"
+      type="button"
+      (click)="toggleDropdown()"
+      [attr.aria-expanded]="dropdownOpen"
+      aria-haspopup="true"
+    >
+      Log in
+    </button>
     @if (dropdownOpen) {
       <div class="dropdown-menu login-dropdown" role="menu">
         <div class="login-fields">
@@ -27,16 +37,28 @@
             placeholder="Username"
             [(ngModel)]="loginUsername"
             (keyup.enter)="onLogin()"
+            autocomplete="username"
           />
-          <input
-            type="password"
-            class="login-input"
-            placeholder="Password"
-            [(ngModel)]="loginPassword"
-            (keyup.enter)="onLogin()"
-          />
+          <div class="password-input-wrap">
+            <input
+              class="login-input"
+              placeholder="Password"
+              [type]="showLoginPassword ? 'text' : 'password'"
+              [(ngModel)]="loginPassword"
+              (keyup.enter)="onLogin()"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleLoginPasswordVisibility()"
+              [attr.aria-label]="showLoginPassword ? 'Hide password' : 'Show password'"
+            >
+              {{ showLoginPassword ? "🙈" : "👁" }}
+            </button>
+          </div>
           @if (loginError) {
-            <div class="login-error">{{ loginError }}</div>
+            <div class="login-error" role="alert">{{ loginError }}</div>
           }
           <button class="login-submit" type="button" (click)="onLogin()">Sign in</button>
         </div>
