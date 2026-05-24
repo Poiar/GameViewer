@@ -6,8 +6,8 @@
 |---------|-------------|
 | `ng serve` | Dev server at `http://localhost:4200/` |
 | `ng build` | Production build to `dist/game-viewer/` |
-| `npm test` | Playwright E2E tests (Chromium) |
-| `npx playwright test --ui` | Playwright tests with UI mode |
+| `npm test` | Playwright tests with UI mode |
+| `npm run test:headless` | Playwright tests headless |
 | `npx playwright test --headed` | Playwright tests in headed browser |
 | `ng generate component <name>` | Scaffold a new component |
 | `npm run lint` | Lint TypeScript + HTML (ESLint + Prettier) |
@@ -19,7 +19,7 @@
 
 ## Architecture
 
-- **Angular v21**, single module (`AppModule`), **no routing** — single-page app.
+- **Angular v21**, standalone components, **no routing** — single-page app.
 - Strict TypeScript: `strict`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, strict template checking all enabled.
 - Two components: `AppComponent` (root), `GameUIComponent` (details panel).
 
@@ -35,7 +35,15 @@ Content (abstract: id, title, firstRelease)
 └── Collection (groups GameVersions + DlcVersions)
 ```
 
+Key enums: `genreEnum`, `versionEnum`, `systemEnum`, `providerEnum`, `unsureBoolEnum`, `dlcTypeEnum`, `mediaEnum`.
+
 **Critical convention**: every class constructor self-registers the instance into a module-level array (`allGames`, `allSeries`, `allSuperVersions`, `allGameVersions`, `allDlcs`, `allDlcVersions`, `allCollections`). Importing a module from `src/classes/` triggers all its top-level `new X(...)` calls, populating these arrays as a side effect. AppComponent binds directly to these arrays.
+
+Classes and enums live in `src/classes/model.ts`. Data instances are split across `seriesData.ts`, `gameData.ts`, `superVersionData.ts`, `gameVersionData.ts`, `dlcData.ts`, `dlcVersionData.ts`, and `collectionData.ts`, all re-exported from `model.ts`.
+
+## Database
+
+PostgreSQL is running in Docker (`game-catalog-db` container, port 5432, database `gamedb`). The intent is to eventually migrate the hardcoded data into this database.
 
 ## Linting
 
@@ -43,19 +51,16 @@ ESLint + Prettier are configured for TypeScript and HTML files. Run `npm run lin
 
 ## Testing
 
-**Playwright** is used for UI/E2E testing (replaced Karma/Jasmine). Tests live in `e2e/` directory.
+**Playwright** is used for unit and E2E tests.
 
-- `npm test` — runs all Playwright tests headlessly
+- `npm test` — runs all tests headlessly
 - `npx playwright test --ui` — interactive UI mode
 - `npx playwright test --headed` — run in visible browser
 - `npx playwright test --debug` — step-through debugger
 
 Test files:
+- `src/classes/game.spec.ts` — model unit tests (genreEnum, Game, Series)
 - `e2e/app.component.spec.ts` — AppComponent E2E tests (sections, series, collections, navigation)
 - `e2e/game-ui.component.spec.ts` — GameUIComponent E2E tests (rendering, selection, details panel)
 
 The Playwright config (`playwright.config.ts`) auto-starts `ng serve` on port 4200 before tests.
-
-## No typecheck script
-
-No `typecheck` npm script. Angular CLI performs type checking during `ng build` / `ng serve`.

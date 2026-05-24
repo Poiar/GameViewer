@@ -52,7 +52,7 @@
 //       case providerEnum.rockstarSocialClub:
 //         return 'Rockstar';
 //     }
-//     throw 'You called versionEnum.toString() with something that is unhandled - Throwing';
+//     throw 'You called providerEnum.toString() with something that is unhandled - Throwing';
 //   }
 // }
 //
