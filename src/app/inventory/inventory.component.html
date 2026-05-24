@@ -1,0 +1,123 @@
+@if (authService.user()) {
+  <h1>My Inventory</h1>
+
+  <div class="inventory-layout">
+    <div class="inventory-list">
+      <button class="add-btn" (click)="onToggleAdd()">+ Add to Inventory</button>
+
+      @if (showAddForm) {
+        <div class="add-form">
+          <h3>Add Owned Copy</h3>
+          <label>
+            Game Version:
+            <select [(ngModel)]="newGameVersionId">
+              @for (gv of gameVersions; track gv.id) {
+                <option [value]="gv.id">{{ getGameVersionLabel(gv) }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Condition:
+            <input type="text" [(ngModel)]="newCondition" placeholder="e.g. Mint, Good, Fair" />
+          </label>
+          <label>
+            Location:
+            <input type="text" [(ngModel)]="newLocation" placeholder="e.g. Shelf, Steam Library" />
+          </label>
+          <label>
+            Acquired:
+            <input type="date" [(ngModel)]="newAcquiredDate" />
+          </label>
+          <label>
+            Price:
+            <input type="text" [(ngModel)]="newPurchasePrice" placeholder="e.g. 19.99" />
+          </label>
+          <label>
+            Notes:
+            <textarea [(ngModel)]="newNotes" placeholder="Any notes..."></textarea>
+          </label>
+          <div class="form-actions">
+            <button (click)="onAdd()">Save</button>
+            <button (click)="onToggleAdd()">Cancel</button>
+          </div>
+        </div>
+      }
+
+      @for (owned of ownedInstances; track owned.id) {
+        <div class="inventory-item" [class.selected]="selectedOwned === owned">
+          <div class="item-summary" (click)="onSelect(owned)">
+            <span class="item-title">{{ owned.getGameTitle() }}</span>
+            <span class="item-detail">{{ owned.getVersionType() }} ({{ owned.getPlayableOnTitles() }})</span>
+            <span class="item-provider">{{ owned.getProvider() }}</span>
+            @if (owned.condition) {
+              <span class="item-condition">{{ owned.condition }}</span>
+            }
+            @if (owned.location) {
+              <span class="item-location">{{ owned.location }}</span>
+            }
+          </div>
+          <div class="item-actions">
+            <button (click)="onEdit(owned)">Edit</button>
+            <button class="delete-btn" (click)="onDelete(owned)">Delete</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="empty">No items in your inventory yet. Click "Add to Inventory" to get started.</p>
+      }
+    </div>
+
+    @if (selectedOwned) {
+      <div class="inventory-detail">
+        <h2>{{ selectedOwned.getGameTitle() }}</h2>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="label">Version:</span> {{ selectedOwned.getVersionType() }} ({{
+              selectedOwned.getVersionYear()
+            }})
+          </div>
+          <div class="detail-row"><span class="label">Platform:</span> {{ selectedOwned.getPlayableOnTitles() }}</div>
+          <div class="detail-row"><span class="label">Provider:</span> {{ selectedOwned.getProvider() }}</div>
+          <div class="detail-row"><span class="label">Condition:</span> {{ selectedOwned.condition || "—" }}</div>
+          <div class="detail-row"><span class="label">Location:</span> {{ selectedOwned.location || "—" }}</div>
+          <div class="detail-row"><span class="label">Acquired:</span> {{ selectedOwned.acquiredDate || "—" }}</div>
+          <div class="detail-row">
+            <span class="label">Price:</span>
+            {{ selectedOwned.purchasePrice ? "$" + selectedOwned.purchasePrice : "—" }}
+          </div>
+          <div class="detail-row"><span class="label">Notes:</span> {{ selectedOwned.notes || "—" }}</div>
+        </div>
+
+        @if (editing === selectedOwned) {
+          <div class="edit-form">
+            <h3>Edit</h3>
+            <label>
+              Condition:
+              <input type="text" [(ngModel)]="editing.condition" />
+            </label>
+            <label>
+              Location:
+              <input type="text" [(ngModel)]="editing.location" />
+            </label>
+            <label>
+              Acquired:
+              <input type="date" [(ngModel)]="editing.acquiredDate" />
+            </label>
+            <label>
+              Price:
+              <input type="text" [(ngModel)]="editing.purchasePrice" />
+            </label>
+            <label>
+              Notes:
+              <textarea [(ngModel)]="editing.notes"></textarea>
+            </label>
+            <div class="form-actions">
+              <button (click)="onSaveEdit()">Done</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <p class="empty">Log in to see your inventory.</p>
+}
