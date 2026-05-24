@@ -118,112 +118,112 @@ const c_PC_gog_HeroesOfMightAndMagic3Complete = new Collection(
     dv_PC_gog_original_heroesOfMightAndMagic3_theShadowOfDeath,
   ],
   mediaEnum.na,
-  undefined,
+  1999,
 );
 const c_PC_physical_ageOfEmpires2 = new Collection(
   "Age of Empires 2: Age of Kings",
   [gv_PC_steam_original_ageOfEmpires2],
   [],
   mediaEnum.na,
-  undefined,
+  1999,
 );
 const c_PC_physical_ageOfEmpires2TheConquerors = new Collection(
   "Age of Empires 2: Age of Kings: The Conquerors",
   [],
   [dv_PC_physical_original_ageOfEmpires2_theConquerors],
   mediaEnum.na,
-  undefined,
+  2000,
 );
 const c_PC_physical_ageOfEmpires2HdEdition = new Collection(
   "Age of Empires 2: Age of Kings (HD Edition)",
   [gv_PC_steam_remaster1_ageOfEmpires2],
   [],
   mediaEnum.na,
-  undefined,
+  2012,
 );
 const c_PC_physical_ageOfEmpires2HdEditionTheConquerors = new Collection(
   "Age of Empires 2: Age of Kings (HD Edition): The Conquerors",
   [],
   [dv_PC_steam_remaster1_ageOfEmpires2_theConquerors],
   mediaEnum.na,
-  undefined,
+  2013,
 );
 const c_PC_physical_ageOfEmpires2HdEditionTheForgotten = new Collection(
   "Age of Empires 2: Age of Kings (HD Edition): The Forgotten",
   [],
   [dv_PC_steam_remaster1_ageOfEmpires2_theForgotten],
   mediaEnum.na,
-  undefined,
+  2013,
 );
 const c_PC_physical_ageOfEmpires2HdEditionTheAfricanKingdoms = new Collection(
   "Age of Empires 2: Age of Kings (HD Edition): The African Kingdoms",
   [],
   [dv_PC_steam_remaster1_ageOfEmpires2_theAfricanKingdoms],
   mediaEnum.na,
-  undefined,
+  2015,
 );
 const c_PC_physical_ageOfEmpires2HdEditionRiseOfTheRajas = new Collection(
   "Age of Empires 2: Age of Kings (HD Edition): Rise of the Rajas",
   [],
   [dv_PC_steam_remaster1_ageOfEmpires1_riseOfTheRajas],
   mediaEnum.na,
-  undefined,
+  2016,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEdition = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition)",
   [gv_PC_steam_remaster2_ageOfEmpires2],
   [],
   mediaEnum.na,
-  undefined,
+  2017,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionTheConquerors = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): The Conquerors",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_theConquerors],
   mediaEnum.na,
-  undefined,
+  2017,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionTheForgotten = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): The Forgotten",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_theForgotten],
   mediaEnum.na,
-  undefined,
+  2017,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionTheAfricanKingdoms = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): The African Kingdoms",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_theAfricanKingdoms],
   mediaEnum.na,
-  undefined,
+  2017,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionRiseOfTheRajas = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): Rise of the Rajas",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_riseOfTheRajas],
   mediaEnum.na,
-  undefined,
+  2017,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionLordsOfTheWest = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): Lords of the West",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_lordsOfTheWest],
   mediaEnum.na,
-  undefined,
+  2021,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionDawnOfTheDukes = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): Dawn of the Dukes",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_dawnOfTheDukes],
   mediaEnum.na,
-  undefined,
+  2021,
 );
 const c_PC_physical_ageOfEmpires2DefinitiveEditionDynastiesOfIndia = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition): Dynasties of India",
   [],
   [dv_PC_steam_remaster2_ageOfEmpires2_dynastiesOfIndia],
   mediaEnum.na,
-  undefined,
+  2022,
 );
 const c_PC_physical_indigoProphecy = new Collection(
   "Indigo Prophecy",
