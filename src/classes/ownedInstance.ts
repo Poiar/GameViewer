@@ -2,6 +2,8 @@ import { GameVersion } from "./model";
 
 export const allOwnedInstances: OwnedInstance[] = [];
 
+let nextId = 0;
+
 export class OwnedInstance {
   readonly id: number;
   readonly gameVersion: GameVersion;
@@ -19,7 +21,7 @@ export class OwnedInstance {
     acquiredDate: string = "",
     purchasePrice: string = "",
   ) {
-    this.id = allOwnedInstances.length;
+    this.id = nextId++;
     this.gameVersion = gameVersion;
     this.condition = condition;
     this.location = location;
