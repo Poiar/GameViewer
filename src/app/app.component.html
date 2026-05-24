@@ -19,6 +19,7 @@
         <span class="stat">{{ games.length }} games</span>
         <span class="stat">{{ series.length }} series</span>
       </div>
+      <app-auth></app-auth>
       <button
         class="mobile-menu-btn"
         (click)="toggleMobileMenu()"
@@ -49,7 +50,7 @@
         <p class="section-subtitle">Grouped releases across platforms</p>
       </div>
       <div class="grid">
-        @for (collection of collections; track collection.id) {
+        @for (collection of paginatedCollections(); track collection.id) {
           <article class="card">
             <div class="card-header">
               <div class="card-icon">📦</div>
@@ -86,6 +87,21 @@
           </article>
         }
       </div>
+      @if (collectionsTotalPages() > 1) {
+        <div class="pagination">
+          <button class="pagination-btn" [disabled]="collectionsPage() === 0" (click)="prevCollectionsPage()">
+            ← Previous
+          </button>
+          <span class="pagination-info">Page {{ collectionsPage() + 1 }} of {{ collectionsTotalPages() }}</span>
+          <button
+            class="pagination-btn"
+            [disabled]="collectionsPage() >= collectionsTotalPages() - 1"
+            (click)="nextCollectionsPage()"
+          >
+            Next →
+          </button>
+        </div>
+      }
     </section>
 
     <section id="games" class="section">
@@ -98,13 +114,17 @@
           <article class="card">
             <div class="card-header">
               <div class="card-cover">
-                <img
-                  [src]="'https://picsum.photos/seed/' + game.id + '/80/112'"
-                  [alt]="game.title"
-                  loading="lazy"
-                  width="80"
-                  height="112"
-                />
+                @if (game.coverImage) {
+                  <img [src]="game.coverImage" [alt]="game.title" loading="lazy" width="80" height="112" />
+                } @else {
+                  <img
+                    [src]="'https://picsum.photos/seed/' + game.id + '/80/112'"
+                    [alt]="game.title"
+                    loading="lazy"
+                    width="80"
+                    height="112"
+                  />
+                }
               </div>
               <div class="card-title-wrap">
                 <h3 class="card-title">{{ game.title }}</h3>
@@ -241,6 +261,6 @@
   </footer>
 </div>
 
-@if (showProfile()) {
-  <app-profile (cancel)="showProfile.set(false)" (save)="showProfile.set(false)" />
+@if (authUiService.showProfile()) {
+  <app-profile (cancel)="authUiService.closeProfile()" (save)="authUiService.closeProfile()" />
 }

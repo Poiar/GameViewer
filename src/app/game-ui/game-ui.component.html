@@ -72,13 +72,17 @@
   <div class="picker-detail">
     <div class="detail-header">
       <div class="detail-cover">
-        <img
-          [src]="'https://picsum.photos/seed/' + selectedGame.id + '/200/280'"
-          [alt]="selectedGame.title"
-          loading="lazy"
-          width="200"
-          height="280"
-        />
+        @if (selectedGame.coverImage) {
+          <img [src]="selectedGame.coverImage" [alt]="selectedGame.title" loading="lazy" width="200" height="280" />
+        } @else {
+          <img
+            [src]="'https://picsum.photos/seed/' + selectedGame.id + '/200/280'"
+            [alt]="selectedGame.title"
+            loading="lazy"
+            width="200"
+            height="280"
+          />
+        }
       </div>
       <div class="detail-info">
         <div class="detail-header-top">
@@ -190,6 +194,53 @@
             <dd>{{ selectedGameVersion.id }}</dd>
           </div>
         </dl>
+      </div>
+
+      <div class="user-content-panel">
+        <div class="info-panel-header">
+          <h4 class="section-label">My Collection</h4>
+          <button class="upload-toggle" (click)="showUploadPanel.set(!showUploadPanel())">
+            {{ showUploadPanel() ? "Hide" : "+ Add" }}
+          </button>
+        </div>
+
+        @if (showUploadPanel()) {
+          <div class="upload-section">
+            <div class="upload-group">
+              <label class="upload-label">
+                <span class="upload-icon">📷</span>
+                <span>Upload photo of your game</span>
+                <input type="file" accept="image/*" class="upload-input" (change)="onFileSelected($event)" />
+              </label>
+            </div>
+            <div class="upload-group">
+              <label class="upload-label">
+                <span class="upload-icon">🧊</span>
+                <span>Upload 3D scan (.glb / .gltf)</span>
+                <input type="file" accept=".glb,.gltf" class="upload-input" (change)="onModelFileSelected($event)" />
+              </label>
+            </div>
+          </div>
+        }
+
+        @if (userPhotos().length > 0) {
+          <div class="user-photos-grid">
+            @for (photo of userPhotos(); track photo.id) {
+              <div class="user-photo-item">
+                <img [src]="getUserPhotoUrl(photo)" [alt]="'User photo'" loading="lazy" />
+              </div>
+            }
+          </div>
+        }
+
+        @if (getStoredModelPath()) {
+          <div class="model-viewer-section">
+            <h5 class="model-viewer-title">3D Scan</h5>
+            <div class="model-viewer-container">
+              <app-model-viewer [modelPath]="getStoredModelPath()" />
+            </div>
+          </div>
+        }
       </div>
     }
 
