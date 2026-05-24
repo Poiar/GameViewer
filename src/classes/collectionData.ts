@@ -1,5 +1,7 @@
-import {
-  GameVersion,
+﻿import {
+  Collection,
+  allCollections,
+  mediaEnum,
   gv_3DS_physical_downsample_metalGearSolid3,
   gv_PC_gog_original_heroesOfMightAndMagic3,
   gv_PC_physical_original_heroesOfMightAndMagic,
@@ -40,9 +42,6 @@ import {
   gv_XSX_digital_enhanced_theWitcher3Goty,
   gv_XSX_physical_enhanced_theWitcher3,
   gv_XSX_physical_enhanced_theWitcher3Goty,
-} from "./gameVersion";
-import {
-  DlcVersion,
   dv_PC_gog_original_heroesOfMightAndMagic3_armageddonsBlade,
   dv_PC_gog_original_heroesOfMightAndMagic3_theShadowOfDeath,
   dv_PC_physical_original_ageOfEmpires2_theConquerors,
@@ -66,74 +65,7 @@ import {
   dv_XONE_original_theWitcher3goty_heartsOfStone,
   dv_XSX_Enhanced_theWitcher3goty_bloodAndWine,
   dv_XSX_Enhanced_theWitcher3goty_heartsOfStone,
-} from "./dlcVersion";
-
-enum mediaEnum {
-  na,
-  digital,
-  dvd,
-  cd,
-}
-
-export const allCollections: Collection[] = [];
-
-export class Collection {
-  readonly id: number;
-  readonly title: string;
-  readonly gameVersions: GameVersion[];
-  readonly media: mediaEnum;
-  readonly releaseYear?: number;
-  readonly dlcVersions: DlcVersion[];
-
-  constructor(
-    title: string,
-    gameVersions: GameVersion[],
-    dlcVersions: DlcVersion[],
-    media: mediaEnum,
-    releaseYear?: number,
-  ) {
-    this.id = allCollections.length;
-    this.title = title;
-    this.media = media;
-    this.releaseYear = releaseYear;
-
-    this.gameVersions = gameVersions;
-    gameVersions.forEach((gameIteration) => gameIteration.collections.push(this));
-
-    this.dlcVersions = dlcVersions;
-    dlcVersions.forEach((dlcVersion) => dlcVersion.collections.push(this));
-
-    allCollections.push(this);
-  }
-
-  getPlayableOnTitles(): string {
-    const playableOnList: string[] = [];
-
-    this.gameVersions.forEach((gameVersion) =>
-      gameVersion.getPlayableOn().forEach((playableOn) => playableOnList.push(playableOn)),
-    );
-
-    this.dlcVersions.forEach((dlcVersion) => {
-      dlcVersion.gameVersionsThisCanBeUsedOn.forEach((gameVersion) => {
-        gameVersion.getPlayableOn().forEach((playableOn) => playableOnList.push(playableOn));
-      });
-    });
-
-    return [...new Set(playableOnList)].join(", "); //unique
-  }
-
-  getVersionTypes(): string {
-    const versionTypes: string[] = this.gameVersions.map((gameVersion) => gameVersion.superVersion.getVersionType());
-
-    this.dlcVersions.forEach((dlcVersion) => {
-      dlcVersion.gameVersionsThisCanBeUsedOn.forEach((gameVersion) => {
-        versionTypes.push(gameVersion.superVersion.getVersionType());
-      });
-    });
-
-    return [...new Set(versionTypes)].join(", "); //unique
-  }
-}
+} from "./model";
 
 export const c_PC_none_warcraft3 = new Collection(
   "Warcraft 3: Reign of Chaos",
@@ -160,7 +92,6 @@ const c_PC_none_HeroesOfMightAndMagicCollection = new Collection(
   mediaEnum.dvd,
   2004,
 );
-// const c_PC_steam_TheOrangeBox = new Collection('The Orange Box', [gv_PC_steam_original_halfLife2, gv_PC_steam_original_halfLife2Episode1, gv_PC_steam_original_halfLife2Episode2, gv_PC_steam_original_portal, gv_PC_steam_original_teamFortress2], [], mediaEnum.digital, 2007);
 const c_3DS_none_MetalGearSolid3SnakeEater3D = new Collection(
   "Metal Gear Solid: Snake Eater 3D",
   [gv_3DS_physical_downsample_metalGearSolid3],
@@ -189,7 +120,6 @@ const c_PC_gog_HeroesOfMightAndMagic3Complete = new Collection(
   mediaEnum.na,
   undefined,
 );
-
 const c_PC_physical_ageOfEmpires2 = new Collection(
   "Age of Empires 2: Age of Kings",
   [gv_PC_steam_original_ageOfEmpires2],
@@ -204,7 +134,6 @@ const c_PC_physical_ageOfEmpires2TheConquerors = new Collection(
   mediaEnum.na,
   undefined,
 );
-
 const c_PC_physical_ageOfEmpires2HdEdition = new Collection(
   "Age of Empires 2: Age of Kings (HD Edition)",
   [gv_PC_steam_remaster1_ageOfEmpires2],
@@ -240,7 +169,6 @@ const c_PC_physical_ageOfEmpires2HdEditionRiseOfTheRajas = new Collection(
   mediaEnum.na,
   undefined,
 );
-
 const c_PC_physical_ageOfEmpires2DefinitiveEdition = new Collection(
   "Age of Empires 2: Age of Kings (Definitive Edition)",
   [gv_PC_steam_remaster2_ageOfEmpires2],
@@ -297,7 +225,6 @@ const c_PC_physical_ageOfEmpires2DefinitiveEditionDynastiesOfIndia = new Collect
   mediaEnum.na,
   undefined,
 );
-
 const c_PC_physical_indigoProphecy = new Collection(
   "Indigo Prophecy",
   [gv_PC_physical_original_indigoProphecy],
@@ -340,7 +267,6 @@ const c_PC_steam_fahrenheitIndigoProphecyRemastered = new Collection(
   mediaEnum.digital,
   2015,
 );
-
 const c_PS4_digital_indigoProphecy = new Collection(
   "Indigo Prophecy",
   [gv_PS4_digital_remastered_indigoProphecy],
@@ -355,7 +281,6 @@ const c_PS4_physical_indigoProphecy = new Collection(
   mediaEnum.digital,
   2020,
 );
-
 const c_X360_physical_redDeadRedemptionGameOfTheYearEdition = new Collection(
   "Red Dead Redemption: Game of the Year Edition",
   [
@@ -370,7 +295,6 @@ const c_X360_physical_redDeadRedemptionGameOfTheYearEdition = new Collection(
   mediaEnum.na,
   2011,
 );
-
 const c_XONE_physical_TheWitcher3 = new Collection(
   "The Witcher 3: Wild Hunt",
   [gv_XONE_physical_original_theWitcher3, gv_XSX_physical_enhanced_theWitcher3],
@@ -385,7 +309,6 @@ const c_XONE_digital_TheWitcher3 = new Collection(
   mediaEnum.na,
   2015,
 );
-
 const c_XONEXSX_physical_TheWitcher3goty = new Collection(
   "The Witcher 3: Wild Hunt - Game of the Year Edition",
   [gv_XONE_physical_original_theWitcher3Goty, gv_XSX_physical_enhanced_theWitcher3Goty],
@@ -410,7 +333,6 @@ const c_XONEXSXXSS_digital_TheWitcher3goty = new Collection(
   mediaEnum.na,
   2016,
 );
-
 const c_PS4PS5_physical_TheWitcher3 = new Collection("The Witcher 3: Wild Hunt", [], [], mediaEnum.na, 2015);
 const c_PS4PS5PS5D_digital_TheWitcher3 = new Collection("The Witcher 3: Wild Hunt", [], [], mediaEnum.na, 2015);
 

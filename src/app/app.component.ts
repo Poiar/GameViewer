@@ -1,10 +1,16 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
 
 import { GameUIComponent } from "./game-ui/game-ui.component";
-import { allCollections, Collection } from "../classes/collection";
-import { allGames, Game } from "../classes/game";
-import { GameVersion, allGameVersions } from "../classes/gameVersion";
-import { allSeries, Series } from "../classes/series";
+import {
+  allCollections,
+  Collection,
+  allGames,
+  Game,
+  GameVersion,
+  allGameVersions,
+  allSeries,
+  Series,
+} from "../classes/model";
 
 @Component({
   selector: "app-root",

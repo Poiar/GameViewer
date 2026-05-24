@@ -12,7 +12,7 @@
 
     <div cy-data="app-7000" class="card-container" *ngFor="let gameVersion of collection.gameVersions">
       <button cy-data="app-8000" class="card card-small">
-        <a cy-data="app-9000" *ngIf="gameVersion.superVersion.game.title" href="https://angular.io/tutorial">
+        <a cy-data="app-9000" *ngIf="gameVersion.superVersion.game.title" href="#">
           {{ gameVersion.superVersion.game.title }} ({{ gameVersion.superVersion.getVersionType() }}) ({{
             gameVersion.getPlayableOnTitles()
           }})
@@ -20,9 +20,9 @@
       </button>
     </div>
 
-    <div cy-data="app-9000" class="card-container" *ngFor="let dlcVersion of collection.dlcVersions">
-      <button cy-data="app-10000" class="card card-small">
-        <a cy-data="app-11000" *ngIf="dlcVersion.dlc.title" href="https://angular.io/tutorial">
+    <div cy-data="app-10000" class="card-container" *ngFor="let dlcVersion of collection.dlcVersions">
+      <button cy-data="app-11000" class="card card-small">
+        <a cy-data="app-12000" *ngIf="dlcVersion.dlc.title" href="#">
           {{ dlcVersion.getFirstGameVersion().superVersion.game.title }}: {{ dlcVersion.dlc.title }} ({{
             dlcVersion.getPlayableOnTitles()
           }}) (DLC)
@@ -40,11 +40,9 @@
       </a>
     </h3>
 
-    <div cy-data="app-500" class="card-container" *ngFor="let superVersion of game.superVersions">
-      <button cy-data="app-600" class="card card-small">
-        <a cy-data="app-700" href="https://angular.io/tutorial"
-          >{{ superVersion.getVersionType() }} {{ superVersion.getVersionYear() }}</a
-        >
+    <div cy-data="app-1300" class="card-container" *ngFor="let superVersion of game.superVersions">
+      <button cy-data="app-1400" class="card card-small">
+        <a cy-data="app-1500" href="#">{{ superVersion.getVersionType() }} {{ superVersion.getVersionYear() }}</a>
       </button>
     </div>
   </div>
@@ -52,19 +50,19 @@
   <h1>Series=>Games</h1>
 
   <div cy-data="app-800" *ngFor="let aSeries of series">
-    <h3 cy-data="app-900">
-      <a cy-data="app-1000" [title]="aSeries.title + ' details'">
+    <h3 cy-data="app-1600">
+      <a cy-data="app-1700" [title]="aSeries.title + ' details'">
         {{ aSeries.title }}
       </a>
     </h3>
 
-    <div cy-data="app-1100" class="card-container" *ngFor="let game of aSeries.games">
-      <button cy-data="app-1200" class="card">
-        <a cy-data="app-1300" *ngIf="game.title" href="https://angular.io/tutorial">{{ game.title }}</a>
+    <div cy-data="app-1800" class="card-container" *ngFor="let game of aSeries.games">
+      <button cy-data="app-1900" class="card">
+        <a cy-data="app-2000" *ngIf="game.title" href="#">{{ game.title }}</a>
       </button>
-      <div cy-data="app-1400" *ngFor="let dlc of game.getAllDlcForThisGame()">
-        <button cy-data="app-1500" class="card card-small">
-          <a cy-data="app-1600" [title]="dlc.title + ' details'">
+      <div cy-data="app-2100" *ngFor="let dlc of game.getAllDlcForThisGame()">
+        <button cy-data="app-2200" class="card card-small">
+          <a cy-data="app-2300" [title]="dlc.title + ' details'">
             {{ dlc.title }}
           </a>
         </button>
@@ -72,12 +70,12 @@
     </div>
   </div>
 
-  <h1 cy-data="app-1700">GameVersions=>DlcVersions</h1>
+  <h1 cy-data="app-2400">GameVersions=>DlcVersions</h1>
 
-  <div cy-data="app-1800" *ngFor="let gameVersion of gameVersions">
-    <h3 cy-data="app-1900">
+  <div cy-data="app-2500" *ngFor="let gameVersion of gameVersions">
+    <h3 cy-data="app-2600">
       <a
-        cy-data="app-2000"
+        cy-data="app-2700"
         *ngIf="gameVersion.dlcVersionsThatThisCanUse.length > 0"
         [title]="gameVersion.superVersion.game.title + ' details'"
       >
@@ -87,9 +85,9 @@
       </a>
     </h3>
 
-    <div cy-data="app-2100" class="card-container" *ngFor="let dlcVersion of gameVersion.dlcVersionsThatThisCanUse">
-      <button cy-data="app-2200" class="card card-small">
-        <a cy-data="app-2300" *ngIf="dlcVersion.dlc.title" href="https://angular.io/tutorial"
+    <div cy-data="app-2800" class="card-container" *ngFor="let dlcVersion of gameVersion.dlcVersionsThatThisCanUse">
+      <button cy-data="app-2900" class="card card-small">
+        <a cy-data="app-3000" *ngIf="dlcVersion.dlc.title" href="#"
           >{{ dlcVersion.dlc.title }} ({{ dlcVersion.dlc.firstRelease }})</a
         >
       </button>
