@@ -1,122 +1,246 @@
-<div cy-data="app-1000" class="content">
-  <app-auth></app-auth>
-  <app-game-ui cy-data="app-2000"></app-game-ui>
-  <app-inventory></app-inventory>
-
-  <h1 cy-data="app-3000">Collections=>GameVersions and DlcVersions</h1>
-
-  @for (collection of collections; track collection.id) {
-    <div cy-data="app-4000">
-      <h3 cy-data="app-5000">
-        <a cy-data="app-6000" [title]="collection.title + ' details'">
-          {{ collection.title }} ({{ collection.getVersionTypes() }}) ({{ collection.getPlayableOnTitles() }})
-        </a>
-      </h3>
-
-      @for (gameVersion of collection.gameVersions; track gameVersion.id) {
-        <div cy-data="app-7000" class="card-container">
-          <button cy-data="app-8000" class="card card-small">
-            @if (gameVersion.superVersion.game.title) {
-              <a cy-data="app-9000" href="#">
-                {{ gameVersion.superVersion.game.title }} ({{ gameVersion.superVersion.getVersionType() }}) ({{
-                  gameVersion.getPlayableOnTitles()
-                }})
-              </a>
-            }
-          </button>
-        </div>
-      }
-
-      @for (dlcVersion of collection.dlcVersions; track dlcVersion.id) {
-        <div cy-data="app-10000" class="card-container">
-          <button cy-data="app-11000" class="card card-small">
-            @if (dlcVersion.dlc.title) {
-              <a cy-data="app-12000" href="#">
-                {{ dlcVersion.getFirstGameVersion().superVersion.game.title }}: {{ dlcVersion.dlc.title }} ({{
-                  dlcVersion.getPlayableOnTitles()
-                }}) (DLC)
-              </a>
-            }
-          </button>
-        </div>
-      }
+<div class="app-layout">
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand">
+        <span class="brand-icon">🎮</span>
+        <span class="brand-text">Game Catalog</span>
+      </div>
+      <nav class="top-nav" [class.open]="isMobileMenuOpen()">
+        <a href="#explorer" class="nav-link" (click)="scrollTo($event, 'explorer'); closeMobileMenu()">Explore</a>
+        <a href="#collections" class="nav-link" (click)="scrollTo($event, 'collections'); closeMobileMenu()"
+          >Collections</a
+        >
+        <a href="#games" class="nav-link" (click)="scrollTo($event, 'games'); closeMobileMenu()">Games</a>
+        <a href="#series" class="nav-link" (click)="scrollTo($event, 'series'); closeMobileMenu()">Series</a>
+        <a href="#inventory" class="nav-link" (click)="scrollTo($event, 'inventory'); closeMobileMenu()">Inventory</a>
+        <a href="#versions" class="nav-link" (click)="scrollTo($event, 'versions'); closeMobileMenu()">Versions</a>
+      </nav>
+      <div class="stats">
+        <span class="stat">{{ games.length }} games</span>
+        <span class="stat">{{ series.length }} series</span>
+      </div>
+      <button
+        class="mobile-menu-btn"
+        (click)="toggleMobileMenu()"
+        [attr.aria-label]="isMobileMenuOpen() ? 'Close menu' : 'Open menu'"
+        [attr.aria-expanded]="isMobileMenuOpen()"
+      >
+        @if (isMobileMenuOpen()) {
+          ✕
+        } @else {
+          ☰
+        }
+      </button>
     </div>
-  }
+  </header>
 
-  <h1 cy-data="app-100">Games=>Super versions</h1>
+  <main class="main-content">
+    <section id="explorer" class="section explorer-section">
+      <div class="section-header">
+        <h2>Game Explorer</h2>
+        <p class="section-subtitle">Search, sort, and compare game versions across platforms</p>
+      </div>
+      <app-game-ui></app-game-ui>
+    </section>
 
-  @for (game of games; track game.id) {
-    <div cy-data="app-200">
-      <h3 cy-data="app-300">
-        <a cy-data="app-400" [title]="game.title + ' details'">
-          {{ game.title }}
-        </a>
-      </h3>
+    <section id="collections" class="section">
+      <div class="section-header">
+        <h2>Collections</h2>
+        <p class="section-subtitle">Grouped releases across platforms</p>
+      </div>
+      <div class="grid">
+        @for (collection of collections; track collection.id) {
+          <article class="card">
+            <div class="card-header">
+              <div class="card-icon">📦</div>
+              <div class="card-title-wrap">
+                <h3 class="card-title">{{ collection.title }}</h3>
+                <div class="card-meta">
+                  <span class="tag tag-accent">{{ collection.getVersionTypes() }}</span>
+                  @if (collection.releaseYear) {
+                    <span class="tag">{{ collection.releaseYear }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="card-platforms">
+              <span class="platforms-label">Platforms:</span>
+              <span class="platforms-list">{{ collection.getPlayableOnTitles() }}</span>
+            </div>
+            <div class="card-items">
+              @for (gameVersion of collection.gameVersions; track gameVersion.id) {
+                <div class="mini-item">
+                  <span class="mini-label">{{ gameVersion.superVersion.game.title }}</span>
+                  <span class="mini-detail"
+                    >{{ gameVersion.superVersion.getVersionType() }} · {{ gameVersion.getPlayableOnTitles() }}</span
+                  >
+                </div>
+              }
+              @for (dlcVersion of collection.dlcVersions; track dlcVersion.id) {
+                <div class="mini-item mini-dlc">
+                  <span class="mini-label">DLC: {{ dlcVersion.dlc.title }}</span>
+                  <span class="mini-detail">{{ dlcVersion.getPlayableOnTitles() }}</span>
+                </div>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
 
-      @for (superVersion of game.superVersions; track superVersion.id) {
-        <div cy-data="app-1300" class="card-container">
-          <button cy-data="app-1400" class="card card-small">
-            <a cy-data="app-1500" href="#">{{ superVersion.getVersionType() }} {{ superVersion.getVersionYear() }}</a>
-          </button>
-        </div>
-      }
-    </div>
-  }
-
-  <h1>Series=>Games</h1>
-
-  @for (aSeries of series; track aSeries.id) {
-    <div cy-data="app-800">
-      <h3 cy-data="app-1600">
-        <a cy-data="app-1700" [title]="aSeries.title + ' details'">
-          {{ aSeries.title }}
-        </a>
-      </h3>
-
-      @for (game of aSeries.games; track game.id) {
-        <div cy-data="app-1800" class="card-container">
-          <button cy-data="app-1900" class="card">
-            @if (game.title) {
-              <a cy-data="app-2000" href="#">{{ game.title }}</a>
-            }
-          </button>
-          @for (dlc of game.getAllDlcForThisGame(); track dlc.id) {
-            <div cy-data="app-2100">
-              <button cy-data="app-2200" class="card card-small">
-                <a cy-data="app-2300" [title]="dlc.title + ' details'">
-                  {{ dlc.title }}
-                </a>
+    <section id="games" class="section">
+      <div class="section-header">
+        <h2>Games</h2>
+        <p class="section-subtitle">All titles and their versions</p>
+      </div>
+      <div class="grid">
+        @for (game of games; track game.id) {
+          <article class="card">
+            <div class="card-header">
+              <div class="card-cover">
+                <img
+                  [src]="'https://picsum.photos/seed/' + game.id + '/80/112'"
+                  [alt]="game.title"
+                  loading="lazy"
+                  width="80"
+                  height="112"
+                />
+              </div>
+              <div class="card-title-wrap">
+                <h3 class="card-title">{{ game.title }}</h3>
+                <div class="card-meta">
+                  <span class="tag tag-genre">{{ game.getGenre() }}</span>
+                  <span class="tag">{{ game.firstRelease }}</span>
+                  @if (game.alternativeTitles.length > 0) {
+                    <span class="tag tag-muted">a.k.a. {{ game.alternativeTitles.join(", ") }}</span>
+                  }
+                </div>
+              </div>
+              <button
+                class="favorite-btn"
+                [class.is-favorite]="isFavorite(game.id)"
+                [attr.aria-label]="isFavorite(game.id) ? 'Remove from favorites' : 'Add to favorites'"
+                (click)="toggleFavorite(game.id, $event)"
+                title="{{ isFavorite(game.id) ? 'Remove from' : 'Add to' }} favorites"
+              >
+                {{ isFavorite(game.id) ? "♥" : "♡" }}
               </button>
             </div>
-          }
-        </div>
-      }
-    </div>
-  }
-
-  <h1 cy-data="app-2400">GameVersions=>DlcVersions</h1>
-
-  @for (gameVersion of gameVersions; track gameVersion.id) {
-    <div cy-data="app-2500">
-      <h3 cy-data="app-2600">
-        @if (gameVersion.dlcVersionsThatThisCanUse.length > 0) {
-          <a cy-data="app-2700" [title]="gameVersion.superVersion.game.title + ' details'">
-            {{ gameVersion.superVersion.game.title }} ({{ gameVersion.getIntendedForTitles() }} -
-            {{ gameVersion.getProvider() }}) ({{ gameVersion.superVersion.getVersionType() }}
-            {{ gameVersion.superVersion.getVersionYear() }})
-          </a>
-        }
-      </h3>
-
-      @for (dlcVersion of gameVersion.dlcVersionsThatThisCanUse; track dlcVersion.id) {
-        <div cy-data="app-2800" class="card-container">
-          <button cy-data="app-2900" class="card card-small">
-            @if (dlcVersion.dlc.title) {
-              <a cy-data="app-3000" href="#">{{ dlcVersion.dlc.title }} ({{ dlcVersion.dlc.firstRelease }})</a>
+            <div class="card-versions">
+              @for (superVersion of game.superVersions; track superVersion.id) {
+                <div class="version-chip">
+                  <span class="version-type">{{ superVersion.getVersionType() }}</span>
+                  @if (superVersion.versionYear) {
+                    <span class="version-year">{{ superVersion.versionYear }}</span>
+                  }
+                  @if (superVersion.versionName) {
+                    <span class="version-name">{{ superVersion.versionName }}</span>
+                  }
+                  @for (gv of superVersion.gameVersions; track gv.id) {
+                    <span class="version-platform">{{ gv.getPlayableOnTitles() }}</span>
+                  }
+                </div>
+              }
+            </div>
+            @if (game.getAllDlcForThisGame().length > 0) {
+              <div class="card-dlc">
+                <span class="dlc-label">DLC:</span>
+                @for (dlc of game.getAllDlcForThisGame(); track dlc.id) {
+                  <span class="dlc-chip">{{ dlc.title }}</span>
+                }
+              </div>
             }
-          </button>
-        </div>
-      }
-    </div>
-  }
+          </article>
+        }
+      </div>
+    </section>
+
+    <section id="series" class="section">
+      <div class="section-header">
+        <h2>Series</h2>
+        <p class="section-subtitle">Game franchises and their titles</p>
+      </div>
+      <div class="grid">
+        @for (aSeries of series; track aSeries.id) {
+          <article class="card">
+            <div class="card-header">
+              <div class="card-icon">📚</div>
+              <div class="card-title-wrap">
+                <h3 class="card-title">{{ aSeries.title }}</h3>
+                <div class="card-meta">
+                  <span class="tag"
+                    >{{ aSeries.games.length }} {{ aSeries.games.length === 1 ? "title" : "titles" }}</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="card-items">
+              @for (game of aSeries.games; track game.id) {
+                <div class="mini-item">
+                  <span class="mini-label">{{ game.title }}</span>
+                  <span class="mini-detail">{{ game.firstRelease }} · {{ game.getGenre() }}</span>
+                </div>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section id="inventory" class="section">
+      <div class="section-header">
+        <h2>My Inventory</h2>
+        <p class="section-subtitle">Track your owned game copies</p>
+      </div>
+      <app-inventory></app-inventory>
+    </section>
+
+    <section id="versions" class="section">
+      <div class="section-header">
+        <h2>Game Versions & DLC</h2>
+        <p class="section-subtitle">Available DLC per version</p>
+      </div>
+      <div class="grid">
+        @for (gameVersion of gameVersions; track gameVersion.id) {
+          @if (gameVersion.dlcVersionsThatThisCanUse.length > 0) {
+            <article class="card">
+              <div class="card-header">
+                <div class="card-icon">🔖</div>
+                <div class="card-title-wrap">
+                  <h3 class="card-title">{{ gameVersion.superVersion.game.title }}</h3>
+                  <div class="card-meta">
+                    <span class="tag tag-accent">{{ gameVersion.superVersion.getVersionType() }}</span>
+                    @if (gameVersion.superVersion.getVersionYear() !== 9999) {
+                      <span class="tag">{{ gameVersion.superVersion.getVersionYear() }}</span>
+                    }
+                    <span class="tag tag-info">{{ gameVersion.getProvider() }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-platforms">
+                <span class="platforms-label">Platforms:</span>
+                <span class="platforms-list">{{ gameVersion.getPlayableOnTitles() }}</span>
+              </div>
+              <div class="card-dlc">
+                <span class="dlc-label">Compatible DLC:</span>
+                @for (dlcVersion of gameVersion.dlcVersionsThatThisCanUse; track dlcVersion.id) {
+                  <span class="dlc-chip">{{ dlcVersion.dlc.title }} ({{ dlcVersion.dlc.firstRelease }})</span>
+                }
+              </div>
+            </article>
+          }
+        }
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Game Catalog · {{ games.length }} games across {{ series.length }} series · {{ collections.length }} collections
+    </p>
+  </footer>
 </div>
+
+@if (showProfile()) {
+  <app-profile (cancel)="showProfile.set(false)" (save)="showProfile.set(false)" />
+}

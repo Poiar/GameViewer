@@ -1,12 +1,14 @@
 import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { allOwnedInstances, OwnedInstance, allGameVersions, GameVersion } from "../../classes/model";
+import { AuthComponent } from "../auth/auth.component";
+import { allGameVersions, GameVersion } from "../../classes/model";
+import { allOwnedInstances, OwnedInstance } from "../../classes/ownedInstance";
 import { AuthService } from "../auth/auth.service";
 
 @Component({
   selector: "app-inventory",
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, AuthComponent],
   templateUrl: "./inventory.component.html",
   styleUrls: ["./inventory.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,15 +64,17 @@ export class InventoryComponent {
       this.newAcquiredDate,
       this.newPurchasePrice,
     );
+    this.ownedInstances = [...allOwnedInstances];
     this.resetForm();
     this.showAddForm = false;
   }
 
   onDelete(owned: OwnedInstance): void {
-    const idx = this.ownedInstances.indexOf(owned);
+    const idx = allOwnedInstances.indexOf(owned);
     if (idx >= 0) {
-      this.ownedInstances.splice(idx, 1);
+      allOwnedInstances.splice(idx, 1);
     }
+    this.ownedInstances = [...allOwnedInstances];
     if (this.selectedOwned === owned) {
       this.selectedOwned = undefined;
     }

@@ -1,41 +1,304 @@
-<p cy-data="game-ui-1000">game-ui works!</p>
-
-<div cy-data="game-ui-2000">
-  <h3 cy-data="game-ui-3000">
-    {{ aGame.title }}
-  </h3>
-
-  <div cy-data="game-ui-4000">First release: {{ aGame.firstRelease }}</div>
-
-  <div cy-data="game-ui-5000">Genre: {{ aGame.getGenre() }}</div>
-
-  <div cy-data="game-ui-6000">
-    <h2 cy-data="game-ui-7000">Game versions:</h2>
-    @for (superVersion of aGame.superVersions; track superVersion.id) {
-      @for (gameVersion of superVersion.gameVersions; track gameVersion.id) {
-        <ul cy-data="game-ui-9000">
-          <button cy-data="game-ui-10000" type="button" (click)="onSelect(gameVersion)">
-            {{ superVersion.getVersionType() }} ({{ gameVersion.getPlayableOnTitles() }})
-          </button>
-        </ul>
+<div class="game-picker">
+  <div class="picker-sidebar">
+    <div class="sidebar-header">
+      <h3 class="sidebar-title">Games</h3>
+      <span class="sidebar-count">{{ sortedGames().length }}</span>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by title, series, alias..."
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+      />
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="clearSearch()" aria-label="Clear search">✕</button>
       }
-    }
+    </div>
+    <div class="genre-chips">
+      <button class="genre-chip" [class.active]="selectedGenre() === null" (click)="selectedGenre.set(null)">
+        All
+      </button>
+      @for (genre of allGenres(); track genre) {
+        <button
+          class="genre-chip"
+          [class.active]="selectedGenre() === genre"
+          (click)="selectedGenre.set(selectedGenre() === genre ? null : genre)"
+        >
+          {{ genre }}
+        </button>
+      }
+    </div>
+    <div class="sort-controls">
+      <span class="sort-label">Sort:</span>
+      <button class="sort-btn" [class.active]="sortKey() === 'name'" (click)="setSort('name')">
+        Name
+        @if (sortKey() === "name") {
+          {{ sortAsc() ? "↑" : "↓" }}
+        }
+      </button>
+      <button class="sort-btn" [class.active]="sortKey() === 'year'" (click)="setSort('year')">
+        Year
+        @if (sortKey() === "year") {
+          {{ sortAsc() ? "↑" : "↓" }}
+        }
+      </button>
+      <button class="sort-btn" [class.active]="sortKey() === 'genre'" (click)="setSort('genre')">
+        Genre
+        @if (sortKey() === "genre") {
+          {{ sortAsc() ? "↑" : "↓" }}
+        }
+      </button>
+    </div>
+    <div class="game-list">
+      @for (game of sortedGames(); track game.id) {
+        <button
+          class="game-list-item"
+          [class.active]="game.id === selectedGame.id"
+          [attr.data-game-id]="game.id"
+          (click)="selectGame(game)"
+        >
+          <span class="game-list-title">{{ game.title }}</span>
+          <span class="game-list-year">{{ game.firstRelease }}</span>
+        </button>
+      } @empty {
+        <div class="search-empty">No games found</div>
+      }
+    </div>
   </div>
 
-  @if (selectedGameVersion) {
-    <div cy-data="game-ui-11000">
-      <h2 cy-data="game-ui-12000">
-        {{ selectedGameVersion.superVersion.getVersionType() }} ({{ selectedGameVersion.getPlayableOnTitles() }})
-        Details
-      </h2>
-      <div cy-data="game-ui-13000">ID: {{ selectedGameVersion.id }}</div>
-      <div cy-data="game-ui-14000">Collection: {{ selectedGameVersion.getCollections() }}</div>
-      <div cy-data="game-ui-15000">Year: {{ selectedGameVersion.superVersion.getVersionYear() }}</div>
-      <div cy-data="game-ui-16000">Edition: {{ selectedGameVersion.superVersion.versionName }}</div>
-      <div cy-data="game-ui-17000">Version type: {{ selectedGameVersion.superVersion.getVersionType() }}</div>
-      <div cy-data="game-ui-18000">Provider: {{ selectedGameVersion.getProvider() }}</div>
-      <div cy-data="game-ui-19000">Playable on: {{ selectedGameVersion.getPlayableOnTitles() }}</div>
-      <div cy-data="game-ui-20000">Local Co-Op: {{ selectedGameVersion.getLocalMultiplayer() }}</div>
+  <div class="picker-detail">
+    <div class="detail-header">
+      <div class="detail-cover">
+        <img
+          [src]="'https://picsum.photos/seed/' + selectedGame.id + '/200/280'"
+          [alt]="selectedGame.title"
+          loading="lazy"
+          width="200"
+          height="280"
+        />
+      </div>
+      <div class="detail-info">
+        <div class="detail-header-top">
+          <h2 class="detail-title">{{ selectedGame.title }}</h2>
+          <button
+            class="favorite-btn detail-favorite"
+            [class.is-favorite]="isFavorite(selectedGame.id)"
+            (click)="toggleFavorite(selectedGame.id)"
+            title="{{ isFavorite(selectedGame.id) ? 'Remove from' : 'Add to' }} favorites"
+          >
+            {{ isFavorite(selectedGame.id) ? "♥" : "♡" }}
+          </button>
+        </div>
+        <div class="detail-badges">
+          <span class="badge badge-genre">{{ selectedGame.getGenre() }}</span>
+          <span class="badge">{{ selectedGame.firstRelease }}</span>
+          @if (selectedGame.alternativeTitles.length > 0) {
+            <span class="badge badge-alt">a.k.a. {{ selectedGame.alternativeTitles.join(", ") }}</span>
+          }
+        </div>
+        <p class="detail-series">Series: {{ selectedGame.series.title }}</p>
+      </div>
     </div>
-  }
+
+    <div class="versions-section">
+      <h4 class="section-label">Available Versions</h4>
+      <div class="version-grid">
+        @for (superVersion of selectedGame.superVersions; track superVersion.id) {
+          @for (gameVersion of superVersion.gameVersions; track gameVersion.id) {
+            <button
+              class="version-btn"
+              [class.selected]="selectedGameVersion?.id === gameVersion.id"
+              (click)="onSelect(gameVersion)"
+            >
+              <span class="v-type">{{ superVersion.getVersionType() }}</span>
+              <span class="v-platform">{{ gameVersion.getPlayableOnTitles() }}</span>
+              <span class="v-provider">{{ gameVersion.getProvider() }}</span>
+              <span
+                class="v-compare"
+                [class.active]="isInCompare(gameVersion)"
+                (click)="toggleCompare(gameVersion, $event)"
+              >
+                {{ isInCompare(gameVersion) ? "✓" : "⊞" }}
+              </span>
+            </button>
+          }
+        }
+      </div>
+    </div>
+
+    @if (selectedGameVersion) {
+      <div class="info-panel">
+        <div class="info-panel-header">
+          <h4 class="section-label">Version Details</h4>
+          <span class="info-panel-tag">{{ selectedGameVersion.superVersion.getVersionType() }}</span>
+        </div>
+        <dl class="info-grid">
+          <div class="info-row">
+            <dt>Game</dt>
+            <dd>{{ selectedGameVersion.superVersion.game.title }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Version</dt>
+            <dd>
+              {{ selectedGameVersion.superVersion.getVersionType() }}
+              @if (selectedGameVersion.superVersion.versionName) {
+                — {{ selectedGameVersion.superVersion.versionName }}
+              }
+            </dd>
+          </div>
+          <div class="info-row">
+            <dt>Year</dt>
+            <dd>{{ selectedGameVersion.superVersion.getVersionYear() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Genre</dt>
+            <dd>{{ selectedGameVersion.superVersion.game.getGenre() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Provider</dt>
+            <dd>{{ selectedGameVersion.getProvider() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Platforms</dt>
+            <dd>{{ selectedGameVersion.getPlayableOnTitles() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Intended For</dt>
+            <dd>{{ selectedGameVersion.getIntendedForTitles() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Local Co-Op</dt>
+            <dd>{{ selectedGameVersion.getLocalMultiplayer() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Online Multi</dt>
+            <dd>{{ selectedGameVersion.getOnlineMultiplayer() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Controller</dt>
+            <dd>{{ selectedGameVersion.getControllerSupport() }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>Collections</dt>
+            <dd>{{ selectedGameVersion.getCollections() || "None" }}</dd>
+          </div>
+          <div class="info-row">
+            <dt>ID</dt>
+            <dd>{{ selectedGameVersion.id }}</dd>
+          </div>
+        </dl>
+      </div>
+    }
+
+    @if (compareList().length === 2) {
+      <div class="compare-panel">
+        <div class="compare-header">
+          <h4 class="section-label">Compare Versions</h4>
+          <button class="compare-clear" (click)="clearCompare()">Clear</button>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <div class="compare-game-title">{{ getCompareField(compareList()[0], "title") }}</div>
+            <dl class="compare-fields">
+              <div class="compare-row">
+                <dt>Version</dt>
+                <dd [class.diff]="isCompareDifferent('version')">{{ getCompareField(compareList()[0], "version") }}</dd>
+              </div>
+              <div class="compare-row">
+                <dt>Year</dt>
+                <dd [class.diff]="isCompareDifferent('year')">{{ getCompareField(compareList()[0], "year") }}</dd>
+              </div>
+              <div class="compare-row">
+                <dt>Genre</dt>
+                <dd [class.diff]="isCompareDifferent('genre')">{{ getCompareField(compareList()[0], "genre") }}</dd>
+              </div>
+              <div class="compare-row">
+                <dt>Platform</dt>
+                <dd [class.diff]="isCompareDifferent('platform')">
+                  {{ getCompareField(compareList()[0], "platform") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Provider</dt>
+                <dd [class.diff]="isCompareDifferent('provider')">
+                  {{ getCompareField(compareList()[0], "provider") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Local Co-Op</dt>
+                <dd [class.diff]="isCompareDifferent('localCoop')">
+                  {{ getCompareField(compareList()[0], "localCoop") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Online Multi</dt>
+                <dd [class.diff]="isCompareDifferent('onlineMulti')">
+                  {{ getCompareField(compareList()[0], "onlineMulti") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Controller</dt>
+                <dd [class.diff]="isCompareDifferent('controller')">
+                  {{ getCompareField(compareList()[0], "controller") }}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div class="compare-divider">
+            <span>VS</span>
+          </div>
+          <div class="compare-col">
+            <div class="compare-game-title">{{ getCompareField(compareList()[1], "title") }}</div>
+            <dl class="compare-fields">
+              <div class="compare-row">
+                <dt>Version</dt>
+                <dd [class.diff]="isCompareDifferent('version')">{{ getCompareField(compareList()[1], "version") }}</dd>
+              </div>
+              <div class="compare-row">
+                <dt>Year</dt>
+                <dd [class.diff]="isCompareDifferent('year')">{{ getCompareField(compareList()[1], "year") }}</dd>
+              </div>
+              <div class="compare-row">
+                <dt>Genre</dt>
+                <dd [class.diff]="isCompareDifferent('genre')">{{ getCompareField(compareList()[1], "genre") }}</dd>
+              </div>
+              <div class="compare-row">
+                <dt>Platform</dt>
+                <dd [class.diff]="isCompareDifferent('platform')">
+                  {{ getCompareField(compareList()[1], "platform") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Provider</dt>
+                <dd [class.diff]="isCompareDifferent('provider')">
+                  {{ getCompareField(compareList()[1], "provider") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Local Co-Op</dt>
+                <dd [class.diff]="isCompareDifferent('localCoop')">
+                  {{ getCompareField(compareList()[1], "localCoop") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Online Multi</dt>
+                <dd [class.diff]="isCompareDifferent('onlineMulti')">
+                  {{ getCompareField(compareList()[1], "onlineMulti") }}
+                </dd>
+              </div>
+              <div class="compare-row">
+                <dt>Controller</dt>
+                <dd [class.diff]="isCompareDifferent('controller')">
+                  {{ getCompareField(compareList()[1], "controller") }}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
 </div>

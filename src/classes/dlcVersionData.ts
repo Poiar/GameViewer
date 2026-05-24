@@ -1,6 +1,5 @@
-﻿import {
-  DlcVersion,
-  allDlcVersions,
+﻿import { DlcVersion } from "./model";
+import {
   gv_PC_physical_original_heroesOfMightAndMagic2,
   gv_PC_physical_original_heroesOfMightAndMagic3,
   gv_PC_gog_original_heroesOfMightAndMagic3,
@@ -18,6 +17,8 @@
   gv_XSX_physical_enhanced_theWitcher3,
   gv_XSX_digital_enhanced_theWitcher3Goty,
   gv_XSX_physical_enhanced_theWitcher3Goty,
+} from "./gameVersionData";
+import {
   d_heroesOfMightAndMagic2_thePriceOfLoyalty,
   d_heroesOfMightAndMagic3_armageddonsBlade,
   d_heroesOfMightAndMagic3_theShadowOfDeath,
@@ -33,7 +34,7 @@
   d_redDeadRedemption_UndeadNightmare,
   d_theWitcher3_heartsOfStone,
   d_theWitcher3_bloodAndWine,
-} from "./model";
+} from "./dlcData";
 
 export const dv_PC_physical_original_heroesOfMightAndMagic2_thePriceOfLoyalty = new DlcVersion(
   [gv_PC_physical_original_heroesOfMightAndMagic2],
@@ -175,5 +176,3 @@ export const dv_XSX_Enhanced_theWitcher3goty_bloodAndWine = new DlcVersion(
   d_theWitcher3_bloodAndWine,
   true,
 );
-
-console.log({ allDlcVersions });

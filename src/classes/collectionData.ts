@@ -1,8 +1,8 @@
-﻿import {
-  Collection,
-  allCollections,
-  mediaEnum,
+﻿import { Collection, mediaEnum } from "./model";
+import {
   gv_3DS_physical_downsample_metalGearSolid3,
+  gv_PC_gog_enhanced_theWitcher3,
+  gv_PC_gog_enhanced_theWitcher3Goty,
   gv_PC_gog_original_heroesOfMightAndMagic3,
   gv_PC_physical_original_heroesOfMightAndMagic,
   gv_PC_physical_original_heroesOfMightAndMagic2,
@@ -42,6 +42,8 @@
   gv_XSX_digital_enhanced_theWitcher3Goty,
   gv_XSX_physical_enhanced_theWitcher3,
   gv_XSX_physical_enhanced_theWitcher3Goty,
+} from "./gameVersionData";
+import {
   dv_PC_gog_original_heroesOfMightAndMagic3_armageddonsBlade,
   dv_PC_gog_original_heroesOfMightAndMagic3_theShadowOfDeath,
   dv_PC_physical_original_ageOfEmpires2_theConquerors,
@@ -61,11 +63,12 @@
   dv_PC_steam_remaster2_ageOfEmpires2_theAfricanKingdoms,
   dv_PC_steam_remaster2_ageOfEmpires2_theConquerors,
   dv_PC_steam_remaster2_ageOfEmpires2_theForgotten,
+  dv_X360_physical_original_redDeadRedemption_UndeadNightmare,
   dv_XONE_original_theWitcher3goty_bloodAndWine,
   dv_XONE_original_theWitcher3goty_heartsOfStone,
   dv_XSX_Enhanced_theWitcher3goty_bloodAndWine,
   dv_XSX_Enhanced_theWitcher3goty_heartsOfStone,
-} from "./model";
+} from "./dlcVersionData";
 
 export const c_PC_none_warcraft3 = new Collection(
   "Warcraft 3: Reign of Chaos",
@@ -291,7 +294,7 @@ const c_X360_physical_redDeadRedemptionGameOfTheYearEdition = new Collection(
     gv_X360_physical_enhanced2016_redDeadRedemptionUndeadNightmare,
     gv_X360_physical_enhanced2018_redDeadRedemptionUndeadNightmare,
   ],
-  [],
+  [dv_X360_physical_original_redDeadRedemption_UndeadNightmare],
   mediaEnum.na,
   2011,
 );
@@ -335,5 +338,17 @@ const c_XONEXSXXSS_digital_TheWitcher3goty = new Collection(
 );
 const c_PS4PS5_physical_TheWitcher3 = new Collection("The Witcher 3: Wild Hunt", [], [], mediaEnum.na, 2015);
 const c_PS4PS5PS5D_digital_TheWitcher3 = new Collection("The Witcher 3: Wild Hunt", [], [], mediaEnum.na, 2015);
-
-console.log({ allCollections });
+const c_PC_gog_enhanced_TheWitcher3 = new Collection(
+  "The Witcher 3: Wild Hunt (Enhanced)",
+  [gv_PC_gog_enhanced_theWitcher3],
+  [],
+  mediaEnum.na,
+  2022,
+);
+const c_PC_gog_enhanced_TheWitcher3goty = new Collection(
+  "The Witcher 3: Wild Hunt - Game of the Year Edition (Enhanced)",
+  [gv_PC_gog_enhanced_theWitcher3Goty],
+  [dv_XSX_Enhanced_theWitcher3goty_heartsOfStone, dv_XSX_Enhanced_theWitcher3goty_bloodAndWine],
+  mediaEnum.na,
+  2022,
+);

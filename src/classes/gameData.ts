@@ -1,7 +1,5 @@
-﻿import {
-  Game,
-  allGames,
-  genreEnum,
+﻿import { Game, allGames, genreEnum } from "./model";
+import {
   s_none,
   s_warcraft,
   s_metalGearSolid,
@@ -12,7 +10,7 @@
   s_ageOfEmpires,
   s_redDead,
   s_theWitcher,
-} from "./model";
+} from "./seriesData";
 
 export const g_warcraft3 = new Game("Warcraft 3: Reign of Chaos", genreEnum.rts, 2002, s_warcraft, []);
 export const g_heroesOfMightAndMagic = new Game(
@@ -81,5 +79,3 @@ export const g_redDeadRedemptionUndeadNightmare = new Game(
   [],
 );
 export const g_theWitcher3 = new Game("The Witcher 3: Wild Hunt", genreEnum.openWorld, 2015, s_theWitcher, []);
-
-console.log({ allGames });

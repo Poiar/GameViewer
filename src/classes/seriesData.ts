@@ -10,5 +10,3 @@ export const s_teamFortress = new Series("Team Fortress");
 export const s_ageOfEmpires = new Series("Age of Empires");
 export const s_redDead = new Series("Red Dead");
 export const s_theWitcher = new Series("The Witcher");
-
-console.log({ allSeries });

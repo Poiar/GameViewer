@@ -5,7 +5,7 @@ import {
   gv_X360_physical_original_redDeadRedemption,
   gv_PC_gog_original_heroesOfMightAndMagic3,
   gv_PC_steam_original_ageOfEmpires2,
-} from "./model";
+} from "./gameVersionData";
 
 export const oi_1 = new OwnedInstance(
   gv_PC_steam_original_halfLife2,
@@ -51,5 +51,3 @@ export const oi_5 = new OwnedInstance(
   "2008-05-01",
   "19.99",
 );
-
-console.log({ allOwnedInstances });

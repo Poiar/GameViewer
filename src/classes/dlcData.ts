@@ -15,5 +15,3 @@ export const d_ageOfEmpires2_dynastiesOfIndia = new Dlc("Dynasties of India", 20
 export const d_redDeadRedemption_UndeadNightmare = new Dlc("Undead Nightmare", 2010, dlcTypeEnum.expansion);
 export const d_theWitcher3_heartsOfStone = new Dlc("Hearts of Stone", 2015, dlcTypeEnum.expansion);
 export const d_theWitcher3_bloodAndWine = new Dlc("Blood and Wine", 2016, dlcTypeEnum.expansion);
-
-console.log({ allDlcs });

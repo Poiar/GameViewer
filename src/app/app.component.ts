@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit } from "@angular/core";
-
+import { Component, ChangeDetectionStrategy, inject, signal } from "@angular/core";
 import { GameUIComponent } from "./game-ui/game-ui.component";
 import { InventoryComponent } from "./inventory/inventory.component";
 import { AuthComponent } from "./auth/auth.component";
-import { AuthService } from "./auth/auth.service";
+import { ProfileComponent } from "./profile/profile.component";
+import { FavoritesService } from "./favorites.service";
 import {
   allCollections,
   Collection,
@@ -18,24 +18,47 @@ import {
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [GameUIComponent, InventoryComponent, AuthComponent],
+  imports: [GameUIComponent, InventoryComponent, AuthComponent, ProfileComponent],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
-  private readonly authService = inject(AuthService);
-
-  title = "gameViewer";
+export class AppComponent {
+  private favoritesService = inject(FavoritesService);
 
   collections: Collection[] = allCollections;
   games: Game[] = allGames;
   series: Series[] = allSeries;
   gameVersions: GameVersion[] = allGameVersions;
 
-  ngOnInit(): void {
-    if (!this.authService.user()) {
-      this.authService.login("MM");
+  isMobileMenuOpen = signal(false);
+
+  isFavorite(gameId: number): boolean {
+    return this.favoritesService.isFavorite(gameId);
+  }
+
+  toggleFavorite(gameId: number, event: Event): void {
+    event.stopPropagation();
+    this.favoritesService.toggle(gameId);
+  }
+
+  scrollTo(event: Event, id: string): void {
+    event.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      history.pushState(null, "", `#${id}`);
     }
+    document.querySelectorAll(".nav-link").forEach((l) => l.classList.remove("active"));
+    (event.target as HTMLElement).classList.add("active");
+    this.closeMobileMenu();
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen.update((v) => !v);
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen.set(false);
   }
 }
