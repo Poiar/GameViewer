@@ -1,0 +1,161 @@
+.inventory-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.inventory-list {
+  flex: 1;
+  min-width: 300px;
+}
+
+.inventory-detail {
+  flex: 1;
+  min-width: 300px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.inventory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 4px 0;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.inventory-item:hover {
+  background: #f0f0f0;
+}
+
+.inventory-item.selected {
+  border-color: #1976d2;
+  background: #e3f2fd;
+}
+
+.item-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+}
+
+.item-title {
+  font-weight: 600;
+}
+
+.item-detail,
+.item-provider,
+.item-condition,
+.item-location {
+  font-size: 12px;
+  color: #666;
+}
+
+.item-condition::before {
+  content: "Condition: ";
+  font-weight: 500;
+}
+
+.item-location::before {
+  content: "Location: ";
+  font-weight: 500;
+}
+
+.item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.add-btn {
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-btn:hover {
+  background: #125699;
+}
+
+.add-form,
+.edit-form {
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.add-form label,
+.edit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.add-form input,
+.add-form select,
+.add-form textarea,
+.edit-form input,
+.edit-form textarea {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.add-form textarea,
+.edit-form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.delete-btn {
+  color: #c62828;
+}
+
+.delete-btn:hover {
+  background: #ffebee;
+}
+
+.empty {
+  color: #888;
+  font-style: italic;
+  padding: 16px;
+}

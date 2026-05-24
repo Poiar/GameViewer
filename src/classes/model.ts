@@ -548,7 +548,7 @@ export class Collection {
     this.releaseYear = releaseYear;
 
     this.gameVersions = gameVersions;
-    gameVersions.forEach((gameIteration) => gameIteration.collections.push(this));
+    gameVersions.forEach((gameVersion) => gameVersion.collections.push(this));
 
     this.dlcVersions = dlcVersions;
     dlcVersions.forEach((dlcVersion) => dlcVersion.collections.push(this));
@@ -593,3 +593,7 @@ export * from "./dlcData";
 export * from "./dlcVersionData";
 export * from "./gameVersionData";
 export * from "./collectionData";
+export * from "./ownedInstance";
+export * from "./ownedInstanceData";
+export * from "./ownedInstance";
+export * from "./ownedInstanceData";

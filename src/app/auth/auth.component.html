@@ -1,0 +1,29 @@
+@if (authService.user(); as user) {
+  <div class="auth-container">
+    <button
+      class="avatar-badge"
+      type="button"
+      (click)="toggleDropdown()"
+      [attr.aria-label]="user.displayName + ' menu'"
+    >
+      {{ authService.initials() }}
+    </button>
+    @if (dropdownOpen) {
+      <div class="dropdown-menu" role="menu">
+        <button class="dropdown-item" type="button" role="menuitem" disabled>Profile</button>
+        <button class="dropdown-item" type="button" role="menuitem" (click)="onLogout()">Log out</button>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="auth-container login-container">
+    <input
+      type="text"
+      class="login-input"
+      placeholder="Username"
+      [(ngModel)]="loginUsername"
+      (keyup.enter)="onLogin()"
+    />
+    <button class="login-btn" type="button" (click)="onLogin()">Log in</button>
+  </div>
+}
