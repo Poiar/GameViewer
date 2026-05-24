@@ -1,7 +1,5 @@
-﻿import {
-  SuperVersion,
-  allSuperVersions,
-  versionEnum,
+﻿import { SuperVersion, versionEnum } from "./model";
+import {
   g_warcraft3,
   g_heroesOfMightAndMagic,
   g_heroesOfMightAndMagic2,
@@ -20,7 +18,7 @@
   g_redDeadRedemption,
   g_redDeadRedemptionUndeadNightmare,
   g_theWitcher3,
-} from "./model";
+} from "./gameData";
 
 export const sv_original_warcraft3 = new SuperVersion(g_warcraft3, versionEnum.original, "", undefined);
 export const sv_original_heroesOfMightAndMagic = new SuperVersion(
@@ -95,5 +93,3 @@ export const sv_enhanced2018_redDeadRedemptionUndeadNightmare = new SuperVersion
 );
 export const sv_original_theWitcher3 = new SuperVersion(g_theWitcher3, versionEnum.original, "", 2015);
 export const sv_enhanced_theWitcher3 = new SuperVersion(g_theWitcher3, versionEnum.enhanced, "", 2022);
-
-console.log({ allSuperVersions });

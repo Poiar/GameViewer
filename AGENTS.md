@@ -4,7 +4,7 @@
 
 | Command | Description |
 |---------|-------------|
-| `ng serve` | Dev server at `http://localhost:4200/` |
+| `ng serve` | Dev server at `http://localhost:4200/` — **always use the "ng: serve" run configuration in WebStorm instead of running this in a terminal** |
 | `ng build` | Production build to `dist/game-viewer/` |
 | `npm test` | Playwright tests with UI mode |
 | `npm run test:headless` | Playwright tests headless |
@@ -21,7 +21,7 @@
 
 - **Angular v21**, standalone components, **no routing** — single-page app.
 - Strict TypeScript: `strict`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, strict template checking all enabled.
-- Two components: `AppComponent` (root), `GameUIComponent` (details panel).
+- Four components: `AppComponent` (root), `GameUIComponent` (details panel), `InventoryComponent`, `AuthComponent`.
 
 ## Data model (`src/classes/`)
 
@@ -45,9 +45,11 @@ Classes and enums live in `src/classes/model.ts`. Data instances are split acros
 
 PostgreSQL is running in Docker (`game-catalog-db` container, port 5432, database `gamedb`). The intent is to eventually migrate the hardcoded data into this database.
 
-## Linting
+## Linting & formatting
 
 ESLint + Prettier are configured for TypeScript and HTML files. Run `npm run lint` to check and `npm run lint:fix` to auto-fix. The `.editorconfig` enforces LF line endings to prevent CRLF issues.
+
+Husky + lint-staged run automatically on `git commit` — staged `*.{ts,html}` files are linted with ESLint and formatted with Prettier before the commit is allowed through. `npm run prepare` installs the hooks.
 
 ## Testing
 

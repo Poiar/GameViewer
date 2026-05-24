@@ -21,7 +21,7 @@
 
 ## Architecture
 
-- **Angular v21**, single module (`AppModule`), **no routing** — single-page app.
+- **Angular v21**, standalone components, **no routing** — single-page app.
 - Strict TypeScript: `strict`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, strict template checking all enabled.
 - Two components: `AppComponent` (root), `GameUIComponent` (details panel).
 
@@ -39,9 +39,9 @@ Content (abstract: id, title, firstRelease)
 
 **Critical convention**: every class constructor self-registers the instance into a module-level array (`allGames`, `allSeries`, `allSuperVersions`, `allGameVersions`, `allDlcs`, `allDlcVersions`, `allCollections`). Importing a module from `src/classes/` triggers all its top-level `new X(...)` calls, populating these arrays as a side effect. AppComponent binds directly to these arrays.
 
-## Linting
+## Linting & formatting
 
-ESLint + Prettier are configured for TypeScript and HTML files. Run `npm run lint` to check and `npm run lint:fix` to auto-fix. The `.editorconfig` enforces LF line endings to prevent CRLF issues.
+ESLint + Prettier are configured for TypeScript and HTML files. Run `npm run lint` to check and `npm run lint:fix` to auto-fix. The `.editorconfig` enforces LF line endings to prevent CRLF issues. Pre-commit hooks via Husky + lint-staged auto-fix staged files on commit.
 
 ## Testing
 
@@ -59,6 +59,6 @@ Test files:
 
 The Playwright config (`playwright.config.ts`) auto-starts `ng serve` on port 4200 before tests.
 
-## No typecheck script
+## Git hooks
 
-No `typecheck` npm script. Angular CLI performs type checking during `ng build` / `ng serve`.
+Husky + lint-staged run automatically on `git commit` — staged `*.{ts,html}` files are linted with ESLint and formatted with Prettier before the commit is allowed through. `npm run prepare` installs the hooks.

@@ -1,9 +1,5 @@
-﻿import {
-  GameVersion,
-  allGameVersions,
-  systemEnum,
-  unsureBoolEnum,
-  providerEnum,
+﻿import { GameVersion, systemEnum, unsureBoolEnum, providerEnum } from "./model";
+import {
   sv_original_warcraft3,
   sv_original_heroesOfMightAndMagic,
   sv_original_heroesOfMightAndMagic2,
@@ -32,7 +28,7 @@
   sv_enhanced2018_redDeadRedemptionUndeadNightmare,
   sv_original_theWitcher3,
   sv_enhanced_theWitcher3,
-} from "./model";
+} from "./superVersionData";
 
 export const gv_PC_physical_original_warcraft3 = new GameVersion(
   sv_original_warcraft3,
@@ -171,7 +167,7 @@ export const gv_PS3_physical_original_metalGearSolid4 = new GameVersion(
 );
 export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(
   sv_original_ageOfEmpires2,
-  providerEnum.physical,
+  providerEnum.steam,
   [systemEnum.windows],
   [systemEnum.windows],
   unsureBoolEnum.notApplicable,
@@ -180,7 +176,7 @@ export const gv_PC_steam_original_ageOfEmpires2 = new GameVersion(
 );
 export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(
   sv_remaster2012_ageOfEmpires2,
-  providerEnum.physical,
+  providerEnum.steam,
   [systemEnum.windows],
   [systemEnum.windows],
   unsureBoolEnum.notApplicable,
@@ -189,7 +185,7 @@ export const gv_PC_steam_remaster1_ageOfEmpires2 = new GameVersion(
 );
 export const gv_PC_steam_remaster2_ageOfEmpires2 = new GameVersion(
   sv_remaster2017_ageOfEmpires2,
-  providerEnum.physical,
+  providerEnum.steam,
   [systemEnum.windows],
   [systemEnum.windows],
   unsureBoolEnum.notApplicable,
@@ -413,5 +409,3 @@ export const gv_PC_gog_enhanced_theWitcher3Goty = new GameVersion(
   unsureBoolEnum.no,
   unsureBoolEnum.no,
 );
-
-console.log({ allGameVersions });
