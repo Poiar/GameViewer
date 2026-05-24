@@ -1,14 +1,48 @@
-<div class="profile-overlay" (click)="onCancel()">
+<div
+  class="profile-overlay"
+  (click)="onCancel()"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="profile-dialog-title"
+>
   <div class="profile-modal" (click)="$event.stopPropagation()">
-    <h2 class="profile-title">Edit Profile</h2>
+    <h2 class="profile-title" id="profile-dialog-title">Edit Profile</h2>
     <div class="profile-field">
       <label for="profile-displayName">Display Name</label>
-      <input id="profile-displayName" type="text" [(ngModel)]="displayName" placeholder="Your display name" />
+      <input
+        #firstInput
+        id="profile-displayName"
+        type="text"
+        [(ngModel)]="displayName"
+        placeholder="Your display name"
+      />
     </div>
     <div class="profile-field">
       <label for="profile-email">Email</label>
       <input id="profile-email" type="email" [(ngModel)]="email" placeholder="your@email.com" />
     </div>
+    <div class="profile-field">
+      <label for="profile-currentPassword">Current Password</label>
+      <div class="password-input-wrap">
+        <input
+          id="profile-currentPassword"
+          [type]="showCurrentPassword ? 'text' : 'password'"
+          [(ngModel)]="currentPassword"
+          placeholder="Enter your current password"
+        />
+        <button
+          type="button"
+          class="password-toggle"
+          (click)="toggleCurrentPasswordVisibility()"
+          [attr.aria-label]="showCurrentPassword ? 'Hide password' : 'Show password'"
+        >
+          {{ showCurrentPassword ? "🙈" : "👁" }}
+        </button>
+      </div>
+    </div>
+    @if (profileError) {
+      <div class="profile-error" role="alert">{{ profileError }}</div>
+    }
     <div class="profile-actions">
       <button class="btn btn-subtle" type="button" (click)="onCancel()">Cancel</button>
       <button class="btn btn-primary" type="button" (click)="onSave()">Save</button>

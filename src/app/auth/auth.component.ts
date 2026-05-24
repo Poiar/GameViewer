@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, HostListener, ElementRef, inject, output } from "@angular/core";
+import { Component, ChangeDetectionStrategy, HostListener, ElementRef, inject, OnInit, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "./auth.service";
+import { AuthUiService } from "./auth-ui.service";
 
 @Component({
   selector: "app-auth",
@@ -10,22 +11,31 @@ import { AuthService } from "./auth.service";
   styleUrls: ["./auth.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthComponent {
+export class AuthComponent implements OnInit, OnDestroy {
   protected readonly authService = inject(AuthService);
+  private readonly authUiService = inject(AuthUiService);
   private readonly elementRef = inject(ElementRef);
-
-  readonly profileRequested = output<void>();
 
   protected dropdownOpen = false;
   protected loginUsername = "";
   protected loginPassword = "";
   protected loginError = "";
+  protected showLoginPassword = false;
+
+  private keydownHandler = (e: KeyboardEvent) => this.onKeydown(e);
+
+  ngOnInit(): void {
+    document.addEventListener("keydown", this.keydownHandler);
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener("keydown", this.keydownHandler);
+  }
 
   @HostListener("document:click", ["$event"])
   onDocumentClick(event: MouseEvent): void {
     if (this.dropdownOpen && !this.elementRef.nativeElement.contains(event.target)) {
-      this.dropdownOpen = false;
-      this.loginError = "";
+      this.closeDropdown();
     }
   }
 
@@ -39,24 +49,39 @@ export class AuthComponent {
       this.dropdownOpen = false;
     } catch {
       this.loginError = "Invalid username or password";
-      this.loginPassword = "";
     }
   }
 
   protected onLogout(): void {
     this.authService.logout();
-    this.dropdownOpen = false;
+    this.closeDropdown();
   }
 
   protected onProfile(): void {
-    this.dropdownOpen = false;
-    this.profileRequested.emit();
+    this.closeDropdown();
+    this.authUiService.openProfile();
+  }
+
+  protected toggleLoginPasswordVisibility(): void {
+    this.showLoginPassword = !this.showLoginPassword;
   }
 
   protected toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;
     if (!this.dropdownOpen) {
       this.loginError = "";
+    }
+  }
+
+  private closeDropdown(): void {
+    this.dropdownOpen = false;
+    this.loginError = "";
+    this.showLoginPassword = false;
+  }
+
+  private onKeydown(e: KeyboardEvent): void {
+    if (e.key === "Escape" && this.dropdownOpen) {
+      this.closeDropdown();
     }
   }
 }

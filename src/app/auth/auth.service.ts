@@ -39,9 +39,12 @@ export class AuthService {
     localStorage.removeItem(STORAGE_KEY);
   }
 
-  updateProfile(displayName: string, email: string): void {
+  updateProfile(displayName: string, email: string, currentPassword: string): void {
     const current = this.currentUser();
     if (!current) return;
+    if (current.password !== currentPassword) {
+      throw new Error("Current password is incorrect");
+    }
     const updated = new User(current.username, displayName, email, current.password);
     const idx = validUsers.findIndex((u) => u.username === current.username);
     if (idx >= 0) {

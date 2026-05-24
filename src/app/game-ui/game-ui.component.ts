@@ -1,11 +1,14 @@
-import { Component, ChangeDetectionStrategy, signal, computed, HostListener } from "@angular/core";
-import { allGames, Game, GameVersion } from "../../classes/model";
+import { Component, ChangeDetectionStrategy, signal, computed, HostListener, inject } from "@angular/core";
+import { allGames, Game, GameVersion, allUserGamePhotos, UserGamePhoto } from "../../classes/model";
+import { FavoritesService } from "../favorites.service";
+import { ModelViewerComponent } from "../model-viewer/model-viewer.component";
 
 type SortKey = "name" | "year" | "genre";
 
 @Component({
   selector: "app-game-ui",
   standalone: true,
+  imports: [ModelViewerComponent],
   templateUrl: "./game-ui.component.html",
   styleUrls: ["./game-ui.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +27,12 @@ export class GameUIComponent {
   selectedGame: Game;
   selectedGameVersion?: GameVersion;
   compareList = signal<GameVersion[]>([]);
+  showUploadPanel = signal(false);
+
+  userPhotos = computed(() => {
+    if (!this.selectedGameVersion) return [];
+    return allUserGamePhotos.filter((p) => p.gameVersionId === this.selectedGameVersion!.id);
+  });
 
   allGenres = computed(() => {
     const genres = new Set(this.games.map((g) => g.getGenre()));
@@ -130,10 +139,13 @@ export class GameUIComponent {
     this.compareList.set([]);
     this.saveCompareList();
     this.saveLastGame();
+    this.showUploadPanel.set(false);
+    this.loadStoredPhotos();
   }
 
   onSelect(gameVersion: GameVersion): void {
     this.selectedGameVersion = gameVersion;
+    this.loadStoredPhotos();
   }
 
   toggleCompare(gv: GameVersion, event: Event): void {
@@ -252,5 +264,100 @@ export class GameUIComponent {
 
   toggleFavorite(gameId: number): void {
     this.favoritesService.toggle(gameId);
+  }
+
+  getUserPhotoUrl(photo: UserGamePhoto): string {
+    if (photo.imagePath.startsWith("data:") || photo.imagePath.startsWith("http")) {
+      return photo.imagePath;
+    }
+    return photo.imagePath;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.selectedGameVersion) return;
+
+    const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+    if (file.size > MAX_IMAGE_SIZE) {
+      alert(`Image too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 2 MB.`);
+      input.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      const photo = new UserGamePhoto(this.selectedGameVersion!.id, base64);
+
+      const storageKey = `gameExplorer.userPhotos.${this.selectedGameVersion!.id}`;
+      const existing = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      existing.push({
+        gameVersionId: photo.gameVersionId,
+        imagePath: photo.imagePath,
+        scanModelPath: photo.scanModelPath,
+        uploadedAt: photo.uploadedAt,
+      });
+      localStorage.setItem(storageKey, JSON.stringify(existing));
+    };
+    reader.readAsDataURL(file);
+    input.value = "";
+  }
+
+  onModelFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.selectedGameVersion) return;
+
+    const MAX_MODEL_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_MODEL_SIZE) {
+      alert(`3D model too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max 10 MB.`);
+      input.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const storageKey = `gameExplorer.userScans.${this.selectedGameVersion!.id}`;
+      localStorage.setItem(storageKey, dataUrl);
+
+      const photoStorageKey = `gameExplorer.userPhotos.${this.selectedGameVersion!.id}`;
+      const existing = JSON.parse(localStorage.getItem(photoStorageKey) || "[]");
+      if (existing.length > 0) {
+        existing[existing.length - 1].scanModelPath = dataUrl;
+        localStorage.setItem(photoStorageKey, JSON.stringify(existing));
+      } else {
+        const photo = new UserGamePhoto(this.selectedGameVersion!.id, "", dataUrl);
+        const newEntry = {
+          gameVersionId: photo.gameVersionId,
+          imagePath: photo.imagePath,
+          scanModelPath: photo.scanModelPath,
+          uploadedAt: photo.uploadedAt,
+        };
+        localStorage.setItem(photoStorageKey, JSON.stringify([newEntry]));
+      }
+    };
+    reader.readAsDataURL(file);
+    input.value = "";
+  }
+
+  getStoredModelPath(): string {
+    if (!this.selectedGameVersion) return "";
+    return localStorage.getItem(`gameExplorer.userScans.${this.selectedGameVersion.id}`) || "";
+  }
+
+  loadStoredPhotos(): void {
+    if (!this.selectedGameVersion) return;
+    const storageKey = `gameExplorer.userPhotos.${this.selectedGameVersion.id}`;
+    const stored = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    stored.forEach((entry: { gameVersionId: number; imagePath: string; scanModelPath: string; uploadedAt: string }) => {
+      const existing = allUserGamePhotos.some(
+        (p) => p.gameVersionId === entry.gameVersionId && p.imagePath === entry.imagePath,
+      );
+      if (!existing) {
+        new UserGamePhoto(entry.gameVersionId, entry.imagePath, entry.scanModelPath || "", new Date(entry.uploadedAt));
+      }
+    });
   }
 }

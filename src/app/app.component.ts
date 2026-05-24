@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from "@angular/core";
 import { GameUIComponent } from "./game-ui/game-ui.component";
 import { InventoryComponent } from "./inventory/inventory.component";
 import { AuthComponent } from "./auth/auth.component";
 import { ProfileComponent } from "./profile/profile.component";
+import { AuthUiService } from "./auth/auth-ui.service";
 import { FavoritesService } from "./favorites.service";
 import {
   allCollections,
@@ -25,6 +26,7 @@ import {
 })
 export class AppComponent {
   private favoritesService = inject(FavoritesService);
+  protected readonly authUiService = inject(AuthUiService);
 
   collections: Collection[] = allCollections;
   games: Game[] = allGames;
@@ -32,6 +34,16 @@ export class AppComponent {
   gameVersions: GameVersion[] = allGameVersions;
 
   isMobileMenuOpen = signal(false);
+
+  readonly collectionsPageSize = 12;
+  collectionsPage = signal(0);
+
+  collectionsTotalPages = computed(() => Math.ceil(this.collections.length / this.collectionsPageSize));
+
+  paginatedCollections = computed(() => {
+    const start = this.collectionsPage() * this.collectionsPageSize;
+    return this.collections.slice(start, start + this.collectionsPageSize);
+  });
 
   isFavorite(gameId: number): boolean {
     return this.favoritesService.isFavorite(gameId);
@@ -60,5 +72,13 @@ export class AppComponent {
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen.set(false);
+  }
+
+  nextCollectionsPage(): void {
+    this.collectionsPage.update((p) => Math.min(p + 1, this.collectionsTotalPages() - 1));
+  }
+
+  prevCollectionsPage(): void {
+    this.collectionsPage.update((p) => Math.max(p - 1, 0));
   }
 }

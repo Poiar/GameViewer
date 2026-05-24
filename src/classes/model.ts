@@ -77,11 +77,20 @@ export class Game extends Content {
   readonly superVersions: SuperVersion[];
   readonly series: Series;
   readonly alternativeTitles: string[];
+  coverImage: string;
 
-  constructor(title: string, genre: genreEnum, firstRelease: number, series: Series, alternativeTitles: string[]) {
+  constructor(
+    title: string,
+    genre: genreEnum,
+    firstRelease: number,
+    series: Series,
+    alternativeTitles: string[],
+    coverImage: string = "",
+  ) {
     super(allGames.length, title, firstRelease);
     this.genre = genre;
     this.alternativeTitles = alternativeTitles;
+    this.coverImage = coverImage;
 
     this.superVersions = [];
 
@@ -379,6 +388,7 @@ export class GameVersion {
   readonly localMultiPlayer: unsureBoolEnum;
   readonly onlineMultiPlayer: unsureBoolEnum;
   readonly dlcVersionsThatThisCanUse: DlcVersion[];
+  versionImage: string;
 
   constructor(
     superVersion: SuperVersion,
@@ -388,6 +398,7 @@ export class GameVersion {
     controllerSupport: unsureBoolEnum,
     localMultiPlayer: unsureBoolEnum,
     onlineMultiPlayer: unsureBoolEnum,
+    versionImage: string = "",
   ) {
     this.id = allGameVersions.length;
     this.provider = provider;
@@ -396,6 +407,7 @@ export class GameVersion {
     this.controllerSupport = controllerSupport;
     this.localMultiPlayer = localMultiPlayer;
     this.onlineMultiPlayer = onlineMultiPlayer;
+    this.versionImage = versionImage;
 
     this.superVersion = superVersion;
     superVersion.gameVersions.push(this);
@@ -610,6 +622,26 @@ export class Collection {
     });
 
     return [...new Set(versionTypes)].join(", ");
+  }
+}
+
+export const allUserGamePhotos: UserGamePhoto[] = [];
+
+export class UserGamePhoto {
+  readonly id: number;
+  readonly gameVersionId: number;
+  readonly imagePath: string;
+  readonly scanModelPath: string;
+  readonly uploadedAt: Date;
+
+  constructor(gameVersionId: number, imagePath: string, scanModelPath: string = "", uploadedAt?: Date) {
+    this.id = allUserGamePhotos.length;
+    this.gameVersionId = gameVersionId;
+    this.imagePath = imagePath;
+    this.scanModelPath = scanModelPath;
+    this.uploadedAt = uploadedAt ?? new Date();
+
+    allUserGamePhotos.push(this);
   }
 }
 
