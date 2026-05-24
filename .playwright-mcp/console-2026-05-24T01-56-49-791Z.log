@@ -1,0 +1,2 @@
+[24931186ms] TypeError: Series is not a constructor
+    at http://localhost:4200/main.js:11:14
