@@ -1,24 +1,6 @@
-import {
-  d_ageOfEmpires2_dawnOfTheDukes,
-  d_ageOfEmpires2_dynastiesOfIndia,
-  d_ageOfEmpires2_lordsOfTheWest,
-  d_ageOfEmpires2_riseOfTheRajas,
-  d_ageOfEmpires2_theAfricanKingdoms,
-  d_ageOfEmpires2_theConquerors,
-  d_ageOfEmpires2_theForgotten,
-  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
-  d_heroesOfMightAndMagic3_armageddonsBlade,
-  d_heroesOfMightAndMagic3_theShadowOfDeath,
-  d_heroesOfMightAndMagic4_theGatheringStorm,
-  d_heroesOfMightAndMagic4_windsOfWar,
-  d_redDeadRedemption_UndeadNightmare,
-  d_theWitcher3_bloodAndWine,
-  d_theWitcher3_heartsOfStone,
-  Dlc,
-} from "./dlc";
-import { Collection } from "./collection";
-import {
-  GameVersion,
+﻿import {
+  DlcVersion,
+  allDlcVersions,
   gv_PC_physical_original_heroesOfMightAndMagic2,
   gv_PC_physical_original_heroesOfMightAndMagic3,
   gv_PC_gog_original_heroesOfMightAndMagic3,
@@ -36,44 +18,22 @@ import {
   gv_XSX_physical_enhanced_theWitcher3,
   gv_XSX_digital_enhanced_theWitcher3Goty,
   gv_XSX_physical_enhanced_theWitcher3Goty,
-} from "./gameVersion";
-
-export const allDlcVersions: DlcVersion[] = [];
-
-export class DlcVersion {
-  readonly id: number;
-  readonly dlc: Dlc;
-  readonly gameVersionsThisCanBeUsedOn: GameVersion[];
-  readonly collections: Collection[];
-  readonly onDiscForConsoleOnly: boolean;
-
-  constructor(gameVersionsThisCanBeUsedOn: GameVersion[], dlc: Dlc, onDiscForConsoleOnly: boolean) {
-    this.id = allDlcVersions.length;
-    this.onDiscForConsoleOnly = onDiscForConsoleOnly;
-    this.gameVersionsThisCanBeUsedOn = gameVersionsThisCanBeUsedOn;
-    gameVersionsThisCanBeUsedOn.forEach((gameVersion) => gameVersion.dlcVersionsThatThisCanUse.push(this));
-
-    this.dlc = dlc;
-    dlc.dlcVersions.push(this);
-
-    this.collections = [];
-
-    allDlcVersions.push(this);
-  }
-
-  getPlayableOnTitles(): string {
-    const playableOnTitles: string[] = this.gameVersionsThisCanBeUsedOn.map((gameVersion) =>
-      gameVersion.superVersion.getVersionType(),
-    );
-
-    return [...new Set(playableOnTitles)].join(", "); //unique
-    // return playableOnTitles.join(', ');
-  }
-
-  getFirstGameVersion(): GameVersion {
-    return this.gameVersionsThisCanBeUsedOn[0];
-  }
-}
+  d_heroesOfMightAndMagic2_thePriceOfLoyalty,
+  d_heroesOfMightAndMagic3_armageddonsBlade,
+  d_heroesOfMightAndMagic3_theShadowOfDeath,
+  d_heroesOfMightAndMagic4_theGatheringStorm,
+  d_heroesOfMightAndMagic4_windsOfWar,
+  d_ageOfEmpires2_theConquerors,
+  d_ageOfEmpires2_theForgotten,
+  d_ageOfEmpires2_theAfricanKingdoms,
+  d_ageOfEmpires2_riseOfTheRajas,
+  d_ageOfEmpires2_lordsOfTheWest,
+  d_ageOfEmpires2_dawnOfTheDukes,
+  d_ageOfEmpires2_dynastiesOfIndia,
+  d_redDeadRedemption_UndeadNightmare,
+  d_theWitcher3_heartsOfStone,
+  d_theWitcher3_bloodAndWine,
+} from "./model";
 
 export const dv_PC_physical_original_heroesOfMightAndMagic2_thePriceOfLoyalty = new DlcVersion(
   [gv_PC_physical_original_heroesOfMightAndMagic2],
@@ -175,7 +135,6 @@ export const dv_X360_physical_original_redDeadRedemption_UndeadNightmare = new D
   d_redDeadRedemption_UndeadNightmare,
   false,
 );
-
 export const dv_XONE_original_theWitcher3_heartsOfStone = new DlcVersion(
   [gv_XONE_digital_original_theWitcher3, gv_XONE_physical_original_theWitcher3],
   d_theWitcher3_heartsOfStone,
@@ -196,7 +155,6 @@ export const dv_XONE_original_theWitcher3goty_bloodAndWine = new DlcVersion(
   d_theWitcher3_bloodAndWine,
   true,
 );
-
 export const dv_XSX_Enhanced_theWitcher3_heartsOfStone = new DlcVersion(
   [gv_XSX_digital_enhanced_theWitcher3, gv_XSX_physical_enhanced_theWitcher3],
   d_theWitcher3_heartsOfStone,

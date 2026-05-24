@@ -1,20 +1,4 @@
-import { Game } from "./game";
-
-export const allSeries: Series[] = [];
-
-export class Series {
-  readonly id: number;
-  readonly title: string;
-  games: Game[];
-
-  constructor(title: string) {
-    this.id = allSeries.length;
-    this.title = title;
-    this.games = [];
-
-    allSeries.push(this);
-  }
-}
+﻿import { Series, allSeries } from "./model";
 
 export const s_none = new Series("None");
 export const s_warcraft = new Series("Warcraft");

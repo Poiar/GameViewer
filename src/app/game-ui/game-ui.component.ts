@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { allGames, Game } from "../../classes/game";
-import { GameVersion } from "../../classes/gameVersion";
+import { allGames, Game, GameVersion } from "../../classes/model";
 
 @Component({
   selector: "app-game-ui",

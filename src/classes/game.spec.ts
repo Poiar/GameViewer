@@ -1,7 +1,4 @@
-import { Game, genreEnum, allGames } from "./game";
-import { Series, allSeries } from "./series";
-import { allSuperVersions } from "./superVersion";
-import { allDlcs } from "./dlc";
+import { Game, genreEnum, allGames, Series, allSeries, allSuperVersions, allDlcs } from "./model";
 
 describe("genreEnum", () => {
   it("should convert enum values to strings", () => {
@@ -57,7 +54,7 @@ describe("Game", () => {
 
 describe("Series", () => {
   it("should have all series registered", () => {
-    expect(allSeries.length).toBe(10);
+    expect(allSeries.length).toBe(20);
   });
 
   it("should assign incremental ids", () => {
