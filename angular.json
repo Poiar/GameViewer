@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gameViewer": {
+    "game-viewer": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -63,11 +63,11 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "gameViewer:build"
+            "buildTarget": "game-viewer:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "gameViewer:build:production"
+              "buildTarget": "game-viewer:build:production"
             },
             "development": {
               "buildTarget": "gameViewer:build:development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "gameViewer:build"
+            "browserTarget": "game-viewer:build"
           }
         },
         "test": {
