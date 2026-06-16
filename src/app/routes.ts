@@ -12,11 +12,6 @@ export const routes: Routes = [
     data: { title: "Dashboard" },
   },
   {
-    path: "explore",
-    loadComponent: () => import("./pages/explore-page.component").then((m) => m.ExplorePageComponent),
-    data: { title: "Explore" },
-  },
-  {
     path: "collections",
     loadComponent: () => import("./pages/collections-page.component").then((m) => m.CollectionsPageComponent),
     data: { title: "Collections" },
