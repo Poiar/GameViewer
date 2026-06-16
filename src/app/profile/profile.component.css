@@ -163,3 +163,27 @@
   background: var(--accent-hover);
   box-shadow: 0 4px 16px rgba(124, 106, 247, 0.35);
 }
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.change-password-link {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+}
+
+.change-password-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}

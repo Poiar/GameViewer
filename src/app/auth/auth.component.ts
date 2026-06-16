@@ -1,6 +1,9 @@
-import { Component, ChangeDetectionStrategy, HostListener, ElementRef, inject, OnInit, OnDestroy } from "@angular/core";
+import {
+  Component, ChangeDetectionStrategy, HostListener, ElementRef, inject,
+  OnInit, OnDestroy, computed,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../services/auth.service";
 import { AuthUiService } from "./auth-ui.service";
 
 @Component({
@@ -17,10 +20,30 @@ export class AuthComponent implements OnInit, OnDestroy {
   private readonly elementRef = inject(ElementRef);
 
   protected dropdownOpen = false;
+  protected mode: "login" | "register" = "login";
+
   protected loginUsername = "";
   protected loginPassword = "";
-  protected loginError = "";
+  protected registerUsername = "";
+  protected registerDisplayName = "";
+  protected registerEmail = "";
+  protected registerPassword = "";
+  protected authError = "";
+  protected loading = false;
+
   protected showLoginPassword = false;
+  protected showRegisterPassword = false;
+
+  protected initials = computed(() => {
+    const u = this.authService.user();
+    if (!u?.displayName) return "";
+    return u.displayName
+      .split(" ")
+      .filter((p) => p.length > 0)
+      .map((p) => p[0])
+      .join("")
+      .toUpperCase();
+  });
 
   private keydownHandler = (e: KeyboardEvent) => this.onKeydown(e);
 
@@ -41,15 +64,55 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   protected onLogin(): void {
     if (!this.loginUsername.trim() || !this.loginPassword.trim()) return;
-    try {
-      this.authService.login(this.loginUsername.trim(), this.loginPassword.trim());
-      this.loginUsername = "";
-      this.loginPassword = "";
-      this.loginError = "";
-      this.dropdownOpen = false;
-    } catch {
-      this.loginError = "Invalid username or password";
+    this.loading = true;
+    this.authError = "";
+    this.authService.login(this.loginUsername.trim(), this.loginPassword.trim()).subscribe({
+      next: () => {
+        this.loginUsername = "";
+        this.loginPassword = "";
+        this.loading = false;
+        this.dropdownOpen = false;
+      },
+      error: (err) => {
+        this.authError = err.message ?? "Invalid username or password";
+        this.loading = false;
+      },
+    });
+  }
+
+  protected onRegister(): void {
+    if (!this.registerUsername.trim() || !this.registerDisplayName.trim() ||
+        !this.registerEmail.trim() || !this.registerPassword.trim()) return;
+    if (this.registerPassword.length < 8) {
+      this.authError = "Password must be at least 8 characters";
+      return;
     }
+    this.loading = true;
+    this.authError = "";
+    this.authService.register(
+      this.registerUsername.trim(),
+      this.registerDisplayName.trim(),
+      this.registerEmail.trim(),
+      this.registerPassword.trim(),
+    ).subscribe({
+      next: () => {
+        this.registerUsername = "";
+        this.registerDisplayName = "";
+        this.registerEmail = "";
+        this.registerPassword = "";
+        this.loading = false;
+        this.dropdownOpen = false;
+      },
+      error: (err) => {
+        this.authError = err.message ?? "Registration failed";
+        this.loading = false;
+      },
+    });
+  }
+
+  protected switchMode(mode: "login" | "register"): void {
+    this.mode = mode;
+    this.authError = "";
   }
 
   protected onLogout(): void {
@@ -66,17 +129,23 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.showLoginPassword = !this.showLoginPassword;
   }
 
+  protected toggleRegisterPasswordVisibility(): void {
+    this.showRegisterPassword = !this.showRegisterPassword;
+  }
+
   protected toggleDropdown(): void {
     this.dropdownOpen = !this.dropdownOpen;
     if (!this.dropdownOpen) {
-      this.loginError = "";
+      this.authError = "";
     }
   }
 
   private closeDropdown(): void {
     this.dropdownOpen = false;
-    this.loginError = "";
+    this.authError = "";
     this.showLoginPassword = false;
+    this.showRegisterPassword = false;
+    this.mode = "login";
   }
 
   private onKeydown(e: KeyboardEvent): void {

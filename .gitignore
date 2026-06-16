@@ -43,3 +43,8 @@ Thumbs.db
 
 # User uploaded files - do not commit
 src/assets/user-uploads/**
+
+# Environment files (contain credentials)
+server/.env
+.env
+*.env.local

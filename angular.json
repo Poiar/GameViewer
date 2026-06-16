@@ -63,14 +63,15 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "game-viewer:build"
+            "buildTarget": "game-viewer:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
               "buildTarget": "game-viewer:build:production"
             },
             "development": {
-              "buildTarget": "gameViewer:build:development"
+              "buildTarget": "game-viewer:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, signal, computed, HostListener, inject } from "@angular/core";
 import { allGames, Game, GameVersion, allUserGamePhotos, UserGamePhoto } from "../../classes/model";
-import { FavoritesService } from "../favorites.service";
+import { FavoritesService } from "../services/favorites.service";
 import { ModelViewerComponent } from "../model-viewer/model-viewer.component";
 
 type SortKey = "name" | "year" | "genre";

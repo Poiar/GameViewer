@@ -1,266 +1,122 @@
-<div class="app-layout">
-  <header class="top-bar">
-    <div class="top-bar-inner">
-      <div class="brand">
-        <span class="brand-icon">🎮</span>
-        <span class="brand-text">Game Catalog</span>
-      </div>
-      <nav class="top-nav" [class.open]="isMobileMenuOpen()">
-        <a href="#explorer" class="nav-link" (click)="scrollTo($event, 'explorer'); closeMobileMenu()">Explore</a>
-        <a href="#collections" class="nav-link" (click)="scrollTo($event, 'collections'); closeMobileMenu()"
-          >Collections</a
-        >
-        <a href="#games" class="nav-link" (click)="scrollTo($event, 'games'); closeMobileMenu()">Games</a>
-        <a href="#series" class="nav-link" (click)="scrollTo($event, 'series'); closeMobileMenu()">Series</a>
-        <a href="#inventory" class="nav-link" (click)="scrollTo($event, 'inventory'); closeMobileMenu()">Inventory</a>
-        <a href="#versions" class="nav-link" (click)="scrollTo($event, 'versions'); closeMobileMenu()">Versions</a>
-      </nav>
-      <div class="stats">
-        <span class="stat">{{ games.length }} games</span>
-        <span class="stat">{{ series.length }} series</span>
+<div class="layout">
+  <!-- Mobile top bar -->
+  <header class="mobile-bar">
+    <div class="mobile-bar-inner">
+      <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [attr.aria-label]="isMobileMenuOpen() ? 'Close menu' : 'Open menu'" [attr.aria-expanded]="isMobileMenuOpen()">
+        @if (isMobileMenuOpen()) { ✕ } @else { ☰ }
+      </button>
+      <div class="mobile-brand">
+        <span>🎮</span>
+        <span class="brand-text-mobile">Game Catalog</span>
       </div>
       <app-auth></app-auth>
-      <button
-        class="mobile-menu-btn"
-        (click)="toggleMobileMenu()"
-        [attr.aria-label]="isMobileMenuOpen() ? 'Close menu' : 'Open menu'"
-        [attr.aria-expanded]="isMobileMenuOpen()"
-      >
-        @if (isMobileMenuOpen()) {
-          ✕
-        } @else {
-          ☰
-        }
-      </button>
     </div>
   </header>
 
-  <main class="main-content">
-    <section id="explorer" class="section explorer-section">
-      <div class="section-header">
-        <h2>Game Explorer</h2>
-        <p class="section-subtitle">Search, sort, and compare game versions across platforms</p>
-      </div>
-      <app-game-ui></app-game-ui>
-    </section>
+  <!-- Sidebar backdrop (mobile only) -->
+  <div class="sidebar-backdrop" [class.visible]="isMobileMenuOpen()" (click)="closeMobileMenu()"></div>
 
-    <section id="collections" class="section">
-      <div class="section-header">
-        <h2>Collections</h2>
-        <p class="section-subtitle">Grouped releases across platforms</p>
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.drawer-open]="isMobileMenuOpen()">
+    <div class="brand">
+      <div class="brand-icon-wrap">🎮</div>
+      <div>
+        <h1>Game Catalog</h1>
+        <p class="brand-sub">Your Collection Tracker</p>
       </div>
-      <div class="grid">
-        @for (collection of paginatedCollections(); track collection.id) {
-          <article class="card">
-            <div class="card-header">
-              <div class="card-icon">📦</div>
-              <div class="card-title-wrap">
-                <h3 class="card-title">{{ collection.title }}</h3>
-                <div class="card-meta">
-                  <span class="tag tag-accent">{{ collection.getVersionTypes() }}</span>
-                  @if (collection.releaseYear) {
-                    <span class="tag">{{ collection.releaseYear }}</span>
-                  }
-                </div>
-              </div>
-            </div>
-            <div class="card-platforms">
-              <span class="platforms-label">Platforms:</span>
-              <span class="platforms-list">{{ collection.getPlayableOnTitles() }}</span>
-            </div>
-            <div class="card-items">
-              @for (gameVersion of collection.gameVersions; track gameVersion.id) {
-                <div class="mini-item">
-                  <span class="mini-label">{{ gameVersion.superVersion.game.title }}</span>
-                  <span class="mini-detail"
-                    >{{ gameVersion.superVersion.getVersionType() }} · {{ gameVersion.getPlayableOnTitles() }}</span
-                  >
-                </div>
-              }
-              @for (dlcVersion of collection.dlcVersions; track dlcVersion.id) {
-                <div class="mini-item mini-dlc">
-                  <span class="mini-label">DLC: {{ dlcVersion.dlc.title }}</span>
-                  <span class="mini-detail">{{ dlcVersion.getPlayableOnTitles() }}</span>
-                </div>
-              }
-            </div>
-          </article>
-        }
+    </div>
+
+    <nav aria-label="Main navigation">
+      <!-- Collection -->
+      <div class="nav-section collection">
+        <div class="nav-section-header">Collection</div>
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="20" x2="4" y2="12"/><line x1="9" y1="20" x2="9" y2="6"/><line x1="14" y1="20" x2="14" y2="14"/><line x1="19" y1="20" x2="19" y2="9"/><line x1="2" y1="20" x2="22" y2="20"/>
+            </svg>
+          </span>
+          <span>Dashboard</span>
+        </a>
+        <a routerLink="/inventory" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </span>
+          <span>Inventory</span>
+        </a>
       </div>
-      @if (collectionsTotalPages() > 1) {
-        <div class="pagination">
-          <button class="pagination-btn" [disabled]="collectionsPage() === 0" (click)="prevCollectionsPage()">
-            ← Previous
-          </button>
-          <span class="pagination-info">Page {{ collectionsPage() + 1 }} of {{ collectionsTotalPages() }}</span>
-          <button
-            class="pagination-btn"
-            [disabled]="collectionsPage() >= collectionsTotalPages() - 1"
-            (click)="nextCollectionsPage()"
-          >
-            Next →
-          </button>
+
+      <!-- Browse -->
+      <div class="nav-section browse">
+        <div class="nav-section-header">Browse</div>
+        <a routerLink="/explore" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <span>Explore</span>
+        </a>
+        <a routerLink="/games" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="2.5"/><line x1="2" y1="8" x2="22" y2="8"/><line x1="2" y1="16" x2="22" y2="16"/><line x1="8" y1="2" x2="8" y2="22"/>
+            </svg>
+          </span>
+          <span>Games</span>
+        </a>
+        <a routerLink="/series" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </span>
+          <span>Series</span>
+        </a>
+        <a routerLink="/collections" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </span>
+          <span>Collections</span>
+        </a>
+        <a routerLink="/versions" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="nav-icon">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>
+            </svg>
+          </span>
+          <span>Versions</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      @if (authService.isLoggedIn() && authService.user(); as user) {
+        <div class="user-chip-sidebar" (click)="authUiService.openProfile()">
+          <div class="user-chip-avatar">{{ user.displayName.charAt(0).toUpperCase() }}</div>
+          <div class="user-chip-info">
+            <span class="user-chip-name">{{ user.displayName }}</span>
+            <span class="user-chip-role">Collector</span>
+          </div>
         </div>
       }
-    </section>
+      <p>Game Catalog v1.0</p>
+    </div>
+  </aside>
 
-    <section id="games" class="section">
-      <div class="section-header">
-        <h2>Games</h2>
-        <p class="section-subtitle">All titles and their versions</p>
-      </div>
-      <div class="grid">
-        @for (game of games; track game.id) {
-          <article class="card">
-            <div class="card-header">
-              <div class="card-cover">
-                @if (game.coverImage) {
-                  <img [src]="game.coverImage" [alt]="game.title" loading="lazy" width="80" height="112" />
-                } @else {
-                  <img
-                    [src]="'https://picsum.photos/seed/' + game.id + '/80/112'"
-                    [alt]="game.title"
-                    loading="lazy"
-                    width="80"
-                    height="112"
-                  />
-                }
-              </div>
-              <div class="card-title-wrap">
-                <h3 class="card-title">{{ game.title }}</h3>
-                <div class="card-meta">
-                  <span class="tag tag-genre">{{ game.getGenre() }}</span>
-                  <span class="tag">{{ game.firstRelease }}</span>
-                  @if (game.alternativeTitles.length > 0) {
-                    <span class="tag tag-muted">a.k.a. {{ game.alternativeTitles.join(", ") }}</span>
-                  }
-                </div>
-              </div>
-              <button
-                class="favorite-btn"
-                [class.is-favorite]="isFavorite(game.id)"
-                [attr.aria-label]="isFavorite(game.id) ? 'Remove from favorites' : 'Add to favorites'"
-                (click)="toggleFavorite(game.id, $event)"
-                title="{{ isFavorite(game.id) ? 'Remove from' : 'Add to' }} favorites"
-              >
-                {{ isFavorite(game.id) ? "♥" : "♡" }}
-              </button>
-            </div>
-            <div class="card-versions">
-              @for (superVersion of game.superVersions; track superVersion.id) {
-                <div class="version-chip">
-                  <span class="version-type">{{ superVersion.getVersionType() }}</span>
-                  @if (superVersion.versionYear) {
-                    <span class="version-year">{{ superVersion.versionYear }}</span>
-                  }
-                  @if (superVersion.versionName) {
-                    <span class="version-name">{{ superVersion.versionName }}</span>
-                  }
-                  @for (gv of superVersion.gameVersions; track gv.id) {
-                    <span class="version-platform">{{ gv.getPlayableOnTitles() }}</span>
-                  }
-                </div>
-              }
-            </div>
-            @if (game.getAllDlcForThisGame().length > 0) {
-              <div class="card-dlc">
-                <span class="dlc-label">DLC:</span>
-                @for (dlc of game.getAllDlcForThisGame(); track dlc.id) {
-                  <span class="dlc-chip">{{ dlc.title }}</span>
-                }
-              </div>
-            }
-          </article>
-        }
-      </div>
-    </section>
-
-    <section id="series" class="section">
-      <div class="section-header">
-        <h2>Series</h2>
-        <p class="section-subtitle">Game franchises and their titles</p>
-      </div>
-      <div class="grid">
-        @for (aSeries of series; track aSeries.id) {
-          <article class="card">
-            <div class="card-header">
-              <div class="card-icon">📚</div>
-              <div class="card-title-wrap">
-                <h3 class="card-title">{{ aSeries.title }}</h3>
-                <div class="card-meta">
-                  <span class="tag"
-                    >{{ aSeries.games.length }} {{ aSeries.games.length === 1 ? "title" : "titles" }}</span
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="card-items">
-              @for (game of aSeries.games; track game.id) {
-                <div class="mini-item">
-                  <span class="mini-label">{{ game.title }}</span>
-                  <span class="mini-detail">{{ game.firstRelease }} · {{ game.getGenre() }}</span>
-                </div>
-              }
-            </div>
-          </article>
-        }
-      </div>
-    </section>
-
-    <section id="inventory" class="section">
-      <div class="section-header">
-        <h2>My Inventory</h2>
-        <p class="section-subtitle">Track your owned game copies</p>
-      </div>
-      <app-inventory></app-inventory>
-    </section>
-
-    <section id="versions" class="section">
-      <div class="section-header">
-        <h2>Game Versions & DLC</h2>
-        <p class="section-subtitle">Available DLC per version</p>
-      </div>
-      <div class="grid">
-        @for (gameVersion of gameVersions; track gameVersion.id) {
-          @if (gameVersion.dlcVersionsThatThisCanUse.length > 0) {
-            <article class="card">
-              <div class="card-header">
-                <div class="card-icon">🔖</div>
-                <div class="card-title-wrap">
-                  <h3 class="card-title">{{ gameVersion.superVersion.game.title }}</h3>
-                  <div class="card-meta">
-                    <span class="tag tag-accent">{{ gameVersion.superVersion.getVersionType() }}</span>
-                    @if (gameVersion.superVersion.getVersionYear() !== 9999) {
-                      <span class="tag">{{ gameVersion.superVersion.getVersionYear() }}</span>
-                    }
-                    <span class="tag tag-info">{{ gameVersion.getProvider() }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="card-platforms">
-                <span class="platforms-label">Platforms:</span>
-                <span class="platforms-list">{{ gameVersion.getPlayableOnTitles() }}</span>
-              </div>
-              <div class="card-dlc">
-                <span class="dlc-label">Compatible DLC:</span>
-                @for (dlcVersion of gameVersion.dlcVersionsThatThisCanUse; track dlcVersion.id) {
-                  <span class="dlc-chip">{{ dlcVersion.dlc.title }} ({{ dlcVersion.dlc.firstRelease }})</span>
-                }
-              </div>
-            </article>
-          }
-        }
-      </div>
-    </section>
+  <!-- Content -->
+  <main class="content" id="main-content" tabindex="-1">
+    <router-outlet></router-outlet>
   </main>
-
-  <footer class="footer">
-    <p>
-      Game Catalog · {{ games.length }} games across {{ series.length }} series · {{ collections.length }} collections
-    </p>
-  </footer>
 </div>
 
 @if (authUiService.showProfile()) {
   <app-profile (cancel)="authUiService.closeProfile()" (save)="authUiService.closeProfile()" />
 }
+
+<app-error-console></app-error-console>
