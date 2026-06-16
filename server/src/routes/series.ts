@@ -1,10 +1,10 @@
 import { Router, Request, Response } from "express";
 import { db } from "../db/index.js";
-import { series, masterGames } from "../db/schema.js";
-import { authenticate } from "../middleware/auth.js";
+import { series, masterGames, releases, releaseGroups, ownedInstances } from "../db/schema.js";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import { eq, like, ilike, desc, asc, count, sql, and } from "drizzle-orm";
+import { eq, like, ilike, desc, asc, count, sql, and, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -103,7 +103,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // GET /:slug — Get series by slug with all its games
-router.get("/:slug", async (req: Request, res: Response) => {
+router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
   try {
     const slug = req.params.slug as string;
 
@@ -129,10 +129,34 @@ router.get("/:slug", async (req: Request, res: Response) => {
       .where(eq(masterGames.seriesId, s.id))
       .orderBy(asc(masterGames.firstReleaseYear));
 
+    // Batch check ownership per game
+    const ownedGameIds = new Set<number>();
+    if (req.user && games.length > 0) {
+      const gameIds = games.map((g) => g.id);
+      const gameReleases = await db
+        .select({ id: releases.id, gameId: releaseGroups.masterGameId })
+        .from(releases)
+        .innerJoin(releaseGroups, eq(releases.releaseGroupId, releaseGroups.id))
+        .where(inArray(releaseGroups.masterGameId, gameIds));
+      const releaseIds = gameReleases.map((r) => r.id);
+      if (releaseIds.length > 0) {
+        const owned = await db
+          .select({ releaseId: ownedInstances.releaseId })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, releaseIds)),
+          );
+        const ownedReleaseIds = new Set(owned.map((o) => o.releaseId!).filter(Boolean));
+        for (const gr of gameReleases) {
+          if (ownedReleaseIds.has(gr.id)) ownedGameIds.add(gr.gameId);
+        }
+      }
+    }
+
     res.json({
       data: {
         ...s,
-        games,
+        games: games.map((g) => ({ ...g, userOwns: ownedGameIds.has(g.id) })),
       },
       error: null,
     });

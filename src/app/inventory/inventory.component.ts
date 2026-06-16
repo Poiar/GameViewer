@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit, effect } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit, effect, computed } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../services/auth.service";
 import { InventoryService } from "../services/inventory.service";
@@ -23,6 +23,39 @@ export class InventoryComponent implements OnInit {
   releases = signal<Release[]>([]);
   loading = signal(false);
 
+  filter = signal("");
+  filterPlatform = signal<string | null>(null);
+  filterCondition = signal<string | null>(null);
+
+  filteredItems = computed(() => {
+    const items = this.ownedInstances();
+    const q = this.filter().trim().toLowerCase();
+    const fp = this.filterPlatform();
+    const fc = this.filterCondition();
+    return items.filter((oi) => {
+      if (q) {
+        const title = oi.release?.releaseGroup?.masterGame?.title?.toLowerCase() ?? "";
+        const dTitle = oi.dlcRelease?.dlc?.title?.toLowerCase() ?? "";
+        const loc = oi.location?.toLowerCase() ?? "";
+        if (!title.includes(q) && !dTitle.includes(q) && !loc.includes(q)) return false;
+      }
+      if (fp && !(oi.release?.playableOn ?? []).some((p) => p.toLowerCase() === fp.toLowerCase())) return false;
+      if (fc && oi.condition?.toLowerCase() !== fc.toLowerCase()) return false;
+      return true;
+    });
+  });
+
+  allPlatforms = computed(() => {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const oi of this.ownedInstances()) {
+      for (const p of (oi.release?.playableOn ?? [])) {
+        if (!seen.has(p)) { seen.add(p); result.push(p); }
+      }
+    }
+    return result.sort();
+  });
+
   selectedOwned?: OwnedInstance;
   editing?: OwnedInstance;
   showAddForm = false;
@@ -41,7 +74,7 @@ export class InventoryComponent implements OnInit {
 
   loadInventory(): void {
     this.loading.set(true);
-    this.inventoryService.getInventory().subscribe({
+    this.inventoryService.getInventory(100).subscribe({
       next: (items) => { this.ownedInstances.set(items); this.loading.set(false); },
       error: () => this.loading.set(false),
     });

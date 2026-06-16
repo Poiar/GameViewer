@@ -47,8 +47,7 @@ const createDlcReleaseSchema = z.object({
 // Routes
 // ---------------------------------------------------------------------------
 
-// GET / — List DLCs with filtering and pagination. Auth optional; when present,
-// each DLC includes whether the user owns any of its releases.
+// GET / — List DLCs with filtering and pagination. Auth optional.
 router.get("/", optionalAuth, async (req: Request, res: Response) => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
@@ -131,8 +130,8 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
   }
 });
 
-// GET /:id — Get DLC with releases and compatibility
-router.get("/:id", async (req: Request, res: Response) => {
+// GET /:id — Get DLC with releases and compatibility. Auth optional.
+router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
     if (isNaN(id)) {
@@ -171,7 +170,41 @@ router.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    res.json({ data: dlc, error: null });
+    // Check ownership per DLC release
+    const ownedDlcReleaseMap = new Map<number, { id: number; condition: string | null; location: string | null; purchasePrice: string | null }>();
+    if (req.user && dlc.dlcReleases.length > 0) {
+      const drIds = dlc.dlcReleases.map((dr) => dr.id);
+      const owned = await db
+        .select({
+          id: ownedInstances.id,
+          dlcReleaseId: ownedInstances.dlcReleaseId,
+          condition: ownedInstances.condition,
+          location: ownedInstances.location,
+          purchasePrice: ownedInstances.purchasePrice,
+        })
+        .from(ownedInstances)
+        .where(
+          and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, drIds)),
+        );
+      for (const o of owned) {
+        if (o.dlcReleaseId) ownedDlcReleaseMap.set(o.dlcReleaseId, {
+          id: o.id,
+          condition: o.condition,
+          location: o.location,
+          purchasePrice: o.purchasePrice,
+        });
+      }
+    }
+
+    const data = {
+      ...dlc,
+      dlcReleases: dlc.dlcReleases.map((dr) => ({
+        ...dr,
+        userOwns: ownedDlcReleaseMap.get(dr.id) ?? null,
+      })),
+    };
+
+    res.json({ data, error: null });
   } catch (error) {
     console.error("Get DLC error:", error);
     res.status(500).json({

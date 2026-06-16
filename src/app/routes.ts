@@ -62,6 +62,11 @@ export const routes: Routes = [
     data: { title: "DLCs" },
   },
   {
+    path: "dlc/:id",
+    loadComponent: () => import("./pages/dlc-detail-page.component").then((m) => m.DlcDetailPageComponent),
+    data: { title: "DLC Detail" },
+  },
+  {
     path: "platforms",
     loadComponent: () => import("./pages/platforms-page.component").then((m) => m.PlatformsPageComponent),
     data: { title: "Platforms" },

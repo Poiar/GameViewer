@@ -48,7 +48,7 @@ router.get("/", async (req: Request, res: Response) => {
   try {
     const userId = req.user!.userId;
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const limit = Math.min(2500, Math.max(1, parseInt(req.query.limit as string) || 20));
     const offset = (page - 1) * limit;
 
     const [{ count: total }] = await db
