@@ -46,9 +46,10 @@ export async function searchIgdb(title: string): Promise<IgdbGame | null> {
 }
 
 // ---------------------------------------------------------------------------
-// OpenCritic via RapidAPI — note: the gateway returns 500 errors (June 2026).
-// If this persists, consider scraping opencritic.com/search directly.
+// OpenCritic public API (Bearer token extracted from SPA, no RapidAPI needed).
 // ---------------------------------------------------------------------------
+
+const OC_BEARER = "Bearer R2tBRkdvUU9WSHpoUXpaSXVYa2g5cGU5NEFsWUgyeXQ=";
 
 interface OpenCriticResult {
   id: number;
@@ -60,23 +61,49 @@ interface OpenCriticResult {
 
 export async function searchOpenCritic(title: string): Promise<OpenCriticResult | null> {
   try {
-    if (!config.rapidApiKey) return null;
-    const res = await fetch(`https://opencritic-api.p.rapidapi.com/game/search?criteria=${encodeURIComponent(title)}`, {
+    // Step 1: Search by title
+    const metaUrl = `https://api.opencritic.com/api/meta/search?criteria=${encodeURIComponent(title)}`;
+    const metaRes = await fetch(metaUrl, {
       headers: {
-        "X-RapidAPI-Key": config.rapidApiKey,
-        "X-RapidAPI-Host": "opencritic-api.p.rapidapi.com",
+        Authorization: OC_BEARER,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        Accept: "application/json",
+        Origin: "https://opencritic.com",
+        Referer: "https://opencritic.com/search",
       },
     });
-    if (!res.ok) return null;
-    const data = (await res.json()) as any[];
-    if (!data?.length) return null;
-    const exact = data.find((g: any) => g.name?.toLowerCase() === title.toLowerCase());
-    const match = exact ?? data[0];
+    if (!metaRes.ok) return null;
+    const hits = (await metaRes.json()) as { id: number; name: string; relation: string; dist: number }[];
+    const games = hits.filter((h) => h.relation === "game");
+    if (!games.length) return null;
+
+    const exact = games.find((g) => g.name.toLowerCase() === title.toLowerCase());
+    const match = exact ?? games[0];
+
+    // Step 2: Get critic score
+    const ratingUrl = `https://api.opencritic.com/api/ratings/game/${match.id}`;
+    const ratingRes = await fetch(ratingUrl, {
+      headers: {
+        Authorization: OC_BEARER,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        Accept: "application/json",
+        Origin: "https://opencritic.com",
+        Referer: "https://opencritic.com/",
+      },
+    });
+    let score: number | undefined;
+    let reviewCount: number | undefined;
+    if (ratingRes.ok) {
+      const rating = (await ratingRes.json()) as { median?: number; count?: number };
+      score = rating.median;
+      reviewCount = rating.count;
+    }
+
     return {
       id: match.id,
       name: match.name,
-      score: match.topCriticScore != null ? Math.round(match.topCriticScore) : undefined,
-      reviewCount: match.reviewCount,
+      score,
+      reviewCount,
       url: `https://opencritic.com/game/${match.id}`,
     };
   } catch { return null; }
