@@ -2,7 +2,19 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { ApiBaseService } from "./api-base.service";
-import { Dlc, DlcDetail } from "../types/game.types";
+import { PaginationMeta } from "../types/api.types";
+
+export interface DlcSummary {
+  id: number;
+  title: string;
+  firstReleaseYear: number | null;
+  dlcType: string;
+  masterGameId: number;
+  createdAt: string;
+  gameTitle: string;
+  gameSlug: string;
+  releaseCount: number;
+}
 
 @Injectable({ providedIn: "root" })
 export class DlcService extends ApiBaseService {
@@ -10,11 +22,19 @@ export class DlcService extends ApiBaseService {
     super(http);
   }
 
-  getDlcs(gameId?: number): Observable<Dlc[]> {
-    return this.extractData<Dlc[]>(this.get<Dlc[]>("/dlc", gameId ? { gameId } : undefined));
+  getDlcs(params?: {
+    page?: number;
+    limit?: number;
+    gameId?: number;
+  }): Observable<{ data: DlcSummary[]; meta?: PaginationMeta }> {
+    return this.get<DlcSummary[]>("/dlc", params as Record<string, string | number | undefined>).pipe(
+      this.mapResponse,
+    );
   }
 
-  getDlcById(id: number): Observable<DlcDetail> {
-    return this.extractData<DlcDetail>(this.get<DlcDetail>(`/dlc/${id}`));
+  private mapResponse(
+    source: Observable<{ data: DlcSummary[]; meta?: PaginationMeta }>,
+  ): Observable<{ data: DlcSummary[]; meta?: PaginationMeta }> {
+    return source;
   }
 }

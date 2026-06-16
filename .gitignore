@@ -48,3 +48,5 @@ src/assets/user-uploads/**
 server/.env
 .env
 *.env.local
+.playwright-mcp/
+test-results/

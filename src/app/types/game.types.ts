@@ -14,6 +14,7 @@ export interface MasterGame {
   releaseGroups?: ReleaseGroup[];
   dlcs?: Dlc[];
   _count?: { releaseGroups: number };
+  ownedReleases?: { platforms: string[]; formats: string[] }[];
 }
 
 export interface MasterGameDetail extends MasterGame {
@@ -86,6 +87,7 @@ export interface Release {
   provider?: Provider;
   mediaFormat?: MediaFormat;
   releaseGroup?: ReleaseGroup & { masterGame?: MasterGame };
+  userOwns?: boolean;
 }
 
 export interface ReleaseDetail extends Release {
