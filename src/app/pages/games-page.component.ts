@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { FavoritesService } from "../services/favorites.service";
 import { GamesService } from "../services/games.service";
@@ -9,7 +10,7 @@ import { MasterGame, Genre } from "../types/game.types";
 @Component({
   selector: "app-games-page",
   standalone: true,
-  imports: [FormsModule],
+  imports: [RouterLink, FormsModule],
   template: `
     <div class="page-header">
       <h2>Games</h2>
@@ -54,7 +55,7 @@ import { MasterGame, Genre } from "../types/game.types";
 
     <div class="grid">
       @for (game of games(); track game.id) {
-        <article class="card">
+        <article class="card" [routerLink]="game.slug ? ['/games', game.slug] : null" [class.no-link]="!game.slug" style="cursor:pointer">
           <div class="card-header">
             <div class="card-cover">
               @if (game.coverImageUrl) {

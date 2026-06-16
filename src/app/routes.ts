@@ -22,6 +22,11 @@ export const routes: Routes = [
     data: { title: "Games" },
   },
   {
+    path: "games/:slug",
+    loadComponent: () => import("./pages/game-detail-page.component").then((m) => m.GameDetailPageComponent),
+    data: { title: "Game" },
+  },
+  {
     path: "series",
     loadComponent: () => import("./pages/series-page.component").then((m) => m.SeriesPageComponent),
     data: { title: "Series" },
