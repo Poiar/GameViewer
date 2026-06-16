@@ -10,4 +10,6 @@ export const config = {
   bcryptRounds: 12,
   corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:4200",
   sgdbApiKey: process.env.SGDB_API_KEY ?? "",
+  igdbClientId: process.env.IGDB_CLIENT_ID ?? "",
+  igdbAccessToken: process.env.IGDB_ACCESS_TOKEN ?? "",
 } as const;

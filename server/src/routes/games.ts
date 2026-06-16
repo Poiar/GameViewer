@@ -422,6 +422,10 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       alternativeTitles: game.alternativeTitles,
       series: game.series ?? null,
       genres: game.genres.map((g) => g.genre).sort((a, b) => a.name.localeCompare(b.name)),
+      igdbId: game.igdbId ?? null,
+      opencriticId: game.opencriticId ?? null,
+      hltbId: game.hltbId ?? null,
+      criticScore: game.criticScore ?? null,
       releaseGroups: game.releaseGroups
         .sort((a, b) => (a.releaseYear ?? 0) - (b.releaseYear ?? 0))
         .map((rg) => ({

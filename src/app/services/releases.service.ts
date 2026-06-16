@@ -15,6 +15,7 @@ export class ReleasesService extends ApiBaseService {
     releaseGroupId?: number;
     platform?: string;
     provider?: string;
+    search?: string;
     page?: number;
     limit?: number;
   }): Observable<Release[]> {

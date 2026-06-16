@@ -7,6 +7,10 @@ export interface MasterGame {
   coverImageUrl: string | null;
   seriesId: number | null;
   alternativeTitles: string[];
+  igdbId?: number | null;
+  opencriticId?: number | null;
+  hltbId?: number | null;
+  criticScore?: number | null;
   createdAt: string;
   updatedAt: string;
   series?: SeriesSummary;
@@ -43,6 +47,8 @@ export interface Series {
   updatedAt: string;
   games?: MasterGame[];
   gameCount?: number;
+  mainlineCount?: number;
+  ownedCount?: number;
   covers?: string[];
   _count?: { games: number };
 }
