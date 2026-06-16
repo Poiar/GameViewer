@@ -74,8 +74,15 @@ import { Series } from "../types/game.types";
             </div>
             <div class="sc-body">
               <h3 class="sc-title">{{ s.name }}</h3>
-              @if (s.description) {
-                <p class="sc-desc">{{ s.description }}</p>
+              @if ((s.ownedCount ?? 0) > 0) {
+                <div class="sc-owned-bar">
+                  <div class="scob-fill" [style.width.%]="(s.ownedCount ?? 0) / (s.gameCount ?? 1) * 100"></div>
+                </div>
+                <span class="sc-owned-text">{{ s.ownedCount ?? 0 }}/{{ s.gameCount }} owned
+                  @if ((s.mainlineCount ?? 0) > 0 && (s.mainlineCount ?? 0) < (s.gameCount ?? 0)) {
+                    · {{ s.mainlineCount }} mainline
+                  }
+                </span>
               }
             </div>
             @if (s.games?.length) {
@@ -187,6 +194,9 @@ import { Series } from "../types/game.types";
     .sc-body { flex: 1; }
     .sc-title { font-size: 17px; font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; margin-bottom: 4px; }
     .sc-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sc-owned-bar { height: 4px; background: var(--bg-tertiary); border-radius: 2px; margin: 6px 0 2px; overflow: hidden; }
+    .scob-fill { height: 100%; background: var(--accent-secondary); border-radius: 2px; transition: width .4s ease-out; min-width: 2px; }
+    .sc-owned-text { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
     .sc-games {
       border-top: 1px solid var(--border-subtle); padding-top: 10px;

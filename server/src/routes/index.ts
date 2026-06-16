@@ -9,6 +9,7 @@ import inventoryRoutes from "./inventory.js";
 import favoriteRoutes from "./favorites.js";
 import dashboardRoutes from "./dashboard.js";
 import lookupRoutes from "./lookup.js";
+import enrichmentRoutes from "./enrichment.js";
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.use("/inventory", inventoryRoutes);
 router.use("/favorites", favoriteRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/lookup", lookupRoutes);
+router.use("/enrich", enrichmentRoutes);
 
 export { router as apiRouter };
 export default router;

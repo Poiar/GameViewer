@@ -48,6 +48,27 @@ import { MasterGameDetail } from "../types/game.types";
           @if (g.description) {
             <p class="detail-desc">{{ g.description }}</p>
           }
+          <!-- External links -->
+          <div class="ext-links">
+            @if (g.igdbId) {
+              <a class="ext-link ext-igdb" href="https://www.igdb.com/games/{{ g.slug }}" target="_blank" rel="noopener" title="View on IGDB">IGDB</a>
+            } @else {
+              <a class="ext-link ext-igdb ext-search" href="https://www.igdb.com/search?type=1&q={{ g.title }}" target="_blank" rel="noopener" title="Search on IGDB">🔍 IGDB</a>
+            }
+            @if (g.opencriticId) {
+              <a class="ext-link ext-oc" href="https://opencritic.com/game/{{ g.opencriticId }}" target="_blank" rel="noopener" title="View on OpenCritic">
+                OpenCritic
+                @if (g.criticScore) { <span class="ext-score">{{ g.criticScore }}</span> }
+              </a>
+            } @else {
+              <a class="ext-link ext-oc ext-search" href="https://opencritic.com/search?q={{ g.title }}" target="_blank" rel="noopener" title="Search on OpenCritic">🔍 OpenCritic</a>
+            }
+            @if (g.hltbId) {
+              <a class="ext-link ext-hltb" href="https://howlongtobeat.com/game/{{ g.hltbId }}" target="_blank" rel="noopener" title="View on HowLongToBeat">HLTB</a>
+            } @else {
+              <a class="ext-link ext-hltb ext-search" href="https://howlongtobeat.com/search?q={{ g.title }}" target="_blank" rel="noopener" title="Search on HowLongToBeat">🔍 HLTB</a>
+            }
+          </div>
         </div>
       </div>
 
@@ -64,7 +85,8 @@ import { MasterGameDetail } from "../types/game.types";
               </div>
               <div class="rg-releases">
                 @for (rel of rg.releases; track rel.id) {
-                  <div class="release-row" [class.owned]="!!rel.userOwns">
+                  <div class="release-row" [class.owned]="!!rel.userOwns" [class.expanded]="expandedRelease() === rel.id" (click)="toggleExpand(rel.id)">
+                    <span class="rel-chevron">{{ expandedRelease() === rel.id ? '▾' : '▸' }}</span>
                     <span class="rel-platform">{{ rel.playableOn?.join(", ") ?? "—" }}</span>
                     <span class="rel-provider">{{ rel.provider?.name ?? "—" }}</span>
                     <span class="rel-format">{{ rel.mediaFormat?.name ?? "" }}</span>
@@ -94,6 +116,16 @@ import { MasterGameDetail } from "../types/game.types";
                           <button class="rel-edit-btn" (click)="startEdit(rel.userOwns)" title="Edit details">✎</button>
                         </div>
                       }
+                    }
+                    @if (expandedRelease() === rel.id) {
+                      <div class="rel-expanded">
+                        @if (rel.barcode) { <span class="re-item"><span class="re-label">Barcode</span> {{ rel.barcode }}</span> }
+                        @if (rel.catalogNumber) { <span class="re-item"><span class="re-label">Catalog #</span> {{ rel.catalogNumber }}</span> }
+                        @if (rel.publisher) { <span class="re-item"><span class="re-label">Publisher</span> {{ rel.publisher }}</span> }
+                        @if (rel.releaseDate) { <span class="re-item"><span class="re-label">Released</span> {{ rel.releaseDate }}</span> }
+                        <span class="re-item"><span class="re-label">Controller</span> {{ rel.controllerSupport }}</span>
+                        @if (rel.intendedFor?.length) { <span class="re-item"><span class="re-label">Intended for</span> {{ rel.intendedFor.join(", ") }}</span> }
+                      </div>
                     }
                   </div>
                 }
@@ -181,6 +213,20 @@ import { MasterGameDetail } from "../types/game.types";
     .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
     .detail-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 640px; }
 
+    .ext-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .ext-link {
+      padding: 3px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+      text-decoration: none; transition: all .15s; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .ext-igdb { background: rgba(145,71,255,.12); color: #9147ff; border: 1px solid rgba(145,71,255,.25); }
+    .ext-igdb:hover { background: rgba(145,71,255,.2); }
+    .ext-oc { background: rgba(247,110,110,.12); color: #f76e6e; border: 1px solid rgba(247,110,110,.25); }
+    .ext-oc:hover { background: rgba(247,110,110,.2); }
+    .ext-hltb { background: rgba(79,195,247,.12); color: var(--accent-info); border: 1px solid rgba(79,195,247,.25); }
+    .ext-hltb:hover { background: rgba(79,195,247,.2); }
+    .ext-search { opacity: .6; font-weight: 500; }
+    .ext-score { background: rgba(247,110,110,.2); padding: 0 4px; border-radius: 4px; font-size: 10px; }
+
     .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
     .tag-genre { background: rgb(6, 214, 160, 0.1); color: var(--accent-secondary); border-color: rgb(6, 214, 160, 0.25); }
     .tag-accent { background: var(--accent-glow); color: var(--accent); border-color: var(--border-accent); }
@@ -196,8 +242,14 @@ import { MasterGameDetail } from "../types/game.types";
     .rg-year { font-size: 13px; color: var(--text-muted); }
 
     .rg-releases { display: flex; flex-direction: column; gap: 6px; }
-    .release-row { display: flex; gap: 14px; align-items: center; padding: 8px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); font-size: 13px; transition: all .15s; }
+    .release-row { display: flex; gap: 14px; align-items: center; padding: 8px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); font-size: 13px; transition: all .15s; cursor: pointer; user-select: none; }
+    .release-row:hover { background: var(--bg-elevated); }
     .release-row.owned { background: rgba(6, 214, 160, 0.06); border-left: 3px solid var(--accent-secondary); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding-left: 9px; }
+    .release-row.expanded { border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: var(--bg-elevated); }
+    .rel-chevron { width: 12px; font-size: 11px; color: var(--text-muted); flex-shrink: 0; text-align: center; }
+    .rel-expanded { margin-top: -6px; padding: 10px 14px 12px 30px; background: var(--bg-elevated); border-radius: 0 0 var(--radius-sm) var(--radius-sm); display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; }
+    .re-item { color: var(--text-secondary); }
+    .re-label { font-weight: 600; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; }
     .rel-platform { font-weight: 600; color: var(--text-primary); min-width: 80px; }
     .rel-provider { color: var(--text-secondary); }
     .rel-format { color: var(--text-muted); font-size: 11px; }
@@ -278,6 +330,9 @@ export class GameDetailPageComponent implements OnInit {
   // Inline editing
   editingId = signal<number | null>(null);
   editCondition = ""; editLocation = ""; editPrice = "";
+  // Expandable release rows
+  expandedRelease = signal<number | null>(null);
+  toggleExpand(relId: number): void { this.expandedRelease.set(this.expandedRelease() === relId ? null : relId); }
 
   startEdit(owned: NonNullable<MasterGameDetail["releaseGroups"][number]["releases"][number]["userOwns"]>): void {
     this.editingId.set(owned.id);

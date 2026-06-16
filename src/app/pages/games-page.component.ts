@@ -27,7 +27,11 @@ import { MasterGame, Genre } from "../types/game.types";
           <span class="stat-label">Genres</span>
         </div>
       </div>
+      <button class="header-fetch-btn" (click)="fetchCovers()" [disabled]="fetchingCovers()">
+        {{ fetchingCovers() ? 'Fetching covers...' : '🎨 Fetch Covers' }}
+      </button>
     </div>
+    @if (coverResult()) { <div class="header-cover-result">{{ coverResult() }}</div> }
 
     <!-- Filter Bar -->
     <div class="filter-bar">
@@ -292,7 +296,17 @@ import { MasterGame, Genre } from "../types/game.types";
     .header-stats {
       display: flex;
       gap: 24px;
+      align-items: center;
     }
+    .header-fetch-btn {
+      margin-left: 8px; padding: 6px 14px; border-radius: 8px;
+      border: 1px solid var(--border-accent); background: var(--accent-glow);
+      color: var(--accent); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap;
+    }
+    .header-fetch-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+    .header-fetch-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .header-cover-result { font-size: 12px; color: var(--accent-secondary); font-weight: 600; margin-top: 6px; }
     .stat {
       display: flex;
       flex-direction: column;
@@ -771,6 +785,17 @@ export class GamesPageComponent implements OnInit {
 
   skeletonItems = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   private searchTimeout?: ReturnType<typeof setTimeout>;
+  fetchingCovers = signal(false);
+  coverResult = signal<string | null>(null);
+
+  fetchCovers(): void {
+    this.fetchingCovers.set(true);
+    this.coverResult.set(null);
+    this.gamesService.bulkFetchCovers(25).subscribe({
+      next: (d) => { this.coverResult.set(`✓ ${d.fetched} covers fetched`); this.fetchingCovers.set(false); this.loadGames(); },
+      error: () => { this.coverResult.set("Error fetching covers"); this.fetchingCovers.set(false); },
+    });
+  }
 
   ngOnInit(): void {
     this.lookupService.getGenres().subscribe((genres) => this.genres.set(genres));

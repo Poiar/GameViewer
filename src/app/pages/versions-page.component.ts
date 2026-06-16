@@ -254,10 +254,9 @@ export class VersionsPageComponent implements OnInit {
 
   fetch(): void {
     this.loading.set(true);
-    this.releasesService.getReleases({
-      page: this.page(),
-      limit: this.limit,
-    }).subscribe({
+    const params: any = { page: this.page(), limit: this.limit };
+    if (this.searchQuery.trim()) params.search = this.searchQuery.trim();
+    this.releasesService.getReleases(params).subscribe({
       next: (data) => {
         this.releases.set(data);
         this.loading.set(false);
@@ -268,8 +267,6 @@ export class VersionsPageComponent implements OnInit {
 
   onSearch(): void {
     clearTimeout(this.searchTimeout);
-    // Client-side filter: reload full page to search (simpler approach)
-    // For a real search, the backend would need a search param
     this.searchTimeout = setTimeout(() => {
       this.page.set(1);
       this.fetch();

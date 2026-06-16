@@ -13,7 +13,7 @@ import {
 import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import { eq, and, like, ilike, desc, asc, count, sql, inArray } from "drizzle-orm";
+import { eq, and, or, like, ilike, desc, asc, count, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -71,8 +71,19 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
     const releaseGroupId = parseInt(req.query.releaseGroupId as string) || undefined;
     const platformSlug = (req.query.platform as string)?.trim();
     const providerSlug = (req.query.provider as string)?.trim();
+    const search = (req.query.search as string)?.trim();
 
     const conditions: (ReturnType<typeof eq> | ReturnType<typeof like> | ReturnType<typeof sql>)[] = [];
+
+    if (search) {
+      conditions.push(
+        or(
+          ilike(masterGames.title, `%${search}%`),
+          sql`${releases.playableOn}::text ILIKE ${`%${search}%`}`,
+          sql`EXISTS (SELECT 1 FROM ${providers} p2 WHERE p2.id = ${releases.providerId} AND ${ilike(providers.name, `%${search}%`)})`,
+        )!,
+      );
+    }
 
     if (releaseGroupId) {
       conditions.push(eq(releases.releaseGroupId, releaseGroupId));
