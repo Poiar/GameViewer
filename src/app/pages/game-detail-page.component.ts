@@ -94,11 +94,11 @@ import { MasterGameDetail } from "../types/game.types";
                 @if (dlc.releases?.length) {
                   <div class="dlc-releases">
                     @for (dr of dlc.releases; track dr.id) {
-                      <div class="dlc-release-row" [class.owned]="!!(dr as any).userOwns">
-                        <span class="dr-provider">{{ (dr as any).provider?.name ?? "—" }}</span>
-                        <span class="dr-format">{{ (dr as any).mediaFormat?.name ?? "" }}</span>
-                        @if ((dr as any).onDiscForConsoleOnly) { <span class="dr-disc">💿 On Disc</span> }
-                        @if ((dr as any).userOwns) { <span class="rel-owned-badge" title="You own this">✓</span> }
+                      <div class="dlc-release-row" [class.owned]="!!$any(dr).userOwns">
+                        <span class="dr-provider">{{ $any(dr).provider?.name ?? "—" }}</span>
+                        <span class="dr-format">{{ $any(dr).mediaFormat?.name ?? "" }}</span>
+                        @if ($any(dr).onDiscForConsoleOnly) { <span class="dr-disc">💿 On Disc</span> }
+                        @if ($any(dr).userOwns) { <span class="rel-owned-badge" title="You own this">✓</span> }
                       </div>
                     }
                   </div>

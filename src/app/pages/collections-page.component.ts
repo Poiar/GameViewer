@@ -51,7 +51,7 @@ import { Collection } from "../types/game.types";
               @if (coll.releaseYear) { <span class="cc-year">{{ coll.releaseYear }}</span> }
             </div>
             <h3 class="cc-title">{{ coll.title }}</h3>
-            @if (coll.mediaFormat?.name) { <span class="cc-fmt">{{ coll.mediaFormat.name }}</span> }
+            @if (coll.mediaFormat?.name) { <span class="cc-fmt">{{ coll.mediaFormat?.name }}</span> }
             <div class="cc-platforms">
               @for (p of platforms(coll); track p) { <span class="cc-chip">{{ p }}</span> }
             </div>

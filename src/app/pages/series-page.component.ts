@@ -59,7 +59,7 @@ import { Series } from "../types/game.types";
     } @else {
       <div class="s-grid">
         @for (s of series(); track s.id; let i = $index) {
-          <article class="s-card" [style.--idx]="i">
+          <a class="s-card" [routerLink]="['/series', s.slug]" [style.--idx]="i">
             <div class="sc-top">
               <div class="sc-icon">📚</div>
               <div class="sc-count">{{ s._count?.games ?? s.games?.length ?? 0 }}</div>
@@ -83,7 +83,7 @@ import { Series } from "../types/game.types";
                 }
               </div>
             }
-          </article>
+          </a>
         }
       </div>
     }
@@ -150,6 +150,7 @@ import { Series } from "../types/game.types";
       animation: in 350ms ease-out both;
       animation-delay: calc(var(--idx, 0) * 30ms);
       display: flex; flex-direction: column; gap: 12px;
+      cursor: pointer; text-decoration: none; color: inherit;
     }
     .s-card:hover {
       transform: translateY(-3px);
