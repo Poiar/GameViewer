@@ -61,7 +61,15 @@ import { Series } from "../types/game.types";
         @for (s of series(); track s.id; let i = $index) {
           <a class="s-card" [routerLink]="['/series', s.slug]" [style.--idx]="i">
             <div class="sc-top">
-              <div class="sc-icon">📚</div>
+              @if (s.covers?.length) {
+                <div class="sc-covers">
+                  @for (c of s.covers; track c) {
+                    <img class="sc-cover" [src]="c" alt="" loading="lazy" />
+                  }
+                </div>
+              } @else {
+                <div class="sc-icon">📚</div>
+              }
               <div class="sc-count">{{ s.gameCount ?? s._count?.games ?? 0 }}</div>
             </div>
             <div class="sc-body">
@@ -162,11 +170,15 @@ import { Series } from "../types/game.types";
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .sc-top { display: flex; align-items: center; justify-content: space-between; }
+    .sc-top { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
     .sc-icon {
       width: 44px; height: 44px; border-radius: 12px; background: rgba(79,195,247,.12);
       display: flex; align-items: center; justify-content: center; font-size: 22px;
+      flex-shrink: 0;
     }
+    .sc-covers { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-radius: 8px; overflow: hidden; width: 64px; height: 64px; flex-shrink: 0; }
+    .sc-cover { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .sc-cover:nth-child(n+5) { display: none; }
     .sc-count {
       padding: 4px 12px; border-radius: 20px; background: var(--accent-glow);
       color: var(--accent); font-size: 13px; font-weight: 800; border: 1px solid var(--border-accent);

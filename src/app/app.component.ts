@@ -32,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     totalReleases: number;
     totalSeries: number;
     totalCollections: number;
+    totalFavorites: number;
   } | null>(null);
 
   private keyHandler = (e: KeyboardEvent) => {
@@ -56,6 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
             totalReleases: s.totalReleases,
             totalSeries: s.totalSeries,
             totalCollections: s.totalCollections,
+            totalFavorites: s.totalFavorites,
           }),
         error: () => {},
       });

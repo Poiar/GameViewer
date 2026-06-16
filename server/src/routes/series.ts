@@ -83,8 +83,31 @@ router.get("/", async (req: Request, res: Response) => {
       .limit(limit)
       .offset(offset);
 
+    // Batch fetch preview covers (first 4 games per series, ordered by year)
+    const seriesIds = rows.map((r) => r.id);
+    const coverMap: Record<number, string[]> = {};
+    if (seriesIds.length > 0) {
+      // Get first 4 game IDs per series (ordered by year)
+      const previewGames = await db
+        .select({
+          seriesId: masterGames.seriesId,
+          coverImageUrl: masterGames.coverImageUrl,
+        })
+        .from(masterGames)
+        .where(and(inArray(masterGames.seriesId, seriesIds), sql`${masterGames.coverImageUrl} IS NOT NULL AND ${masterGames.coverImageUrl} != ''`))
+        .orderBy(asc(masterGames.firstReleaseYear))
+        .limit(seriesIds.length * 4);
+      for (const g of previewGames) {
+        if (!g.seriesId || !g.coverImageUrl) continue;
+        if (!coverMap[g.seriesId]) coverMap[g.seriesId] = [];
+        if (coverMap[g.seriesId].length < 4) coverMap[g.seriesId].push(g.coverImageUrl);
+      }
+    }
+
+    const data = rows.map((r) => ({ ...r, covers: coverMap[r.id] ?? [] }));
+
     res.json({
-      data: rows,
+      data,
       meta: {
         page,
         limit,
@@ -127,7 +150,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       })
       .from(masterGames)
       .where(eq(masterGames.seriesId, s.id))
-      .orderBy(asc(masterGames.firstReleaseYear));
+      .orderBy(desc(masterGames.firstReleaseYear));
 
     // Batch check ownership per game
     const ownedGameIds = new Set<number>();
