@@ -146,7 +146,7 @@ async function main() {
   console.log(`[scrape-all] OpenCritic: ${SCRAPE_OC ? "ON" : "OFF"} | HLTB: ${SCRAPE_HLTB ? "ON" : "OFF"}`);
 
   // Launch one browser, two tabs — one per site
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: false });
 
   let ocPage: any = null;
   if (SCRAPE_OC) {
