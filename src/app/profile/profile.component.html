@@ -40,12 +40,41 @@
         </button>
       </div>
     </div>
+
+    @if (!showPasswordChange) {
+      <button class="change-password-link" type="button" (click)="showPasswordChange = true">
+        Change password
+      </button>
+    } @else {
+      <div class="profile-field">
+        <label for="profile-newPassword">New Password</label>
+        <div class="password-input-wrap">
+          <input
+            id="profile-newPassword"
+            [type]="showNewPassword ? 'text' : 'password'"
+            [(ngModel)]="newPassword"
+            placeholder="Enter new password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="toggleNewPasswordVisibility()"
+            [attr.aria-label]="showNewPassword ? 'Hide password' : 'Show password'"
+          >
+            {{ showNewPassword ? "🙈" : "👁" }}
+          </button>
+        </div>
+      </div>
+    }
+
     @if (profileError) {
       <div class="profile-error" role="alert">{{ profileError }}</div>
     }
     <div class="profile-actions">
       <button class="btn btn-subtle" type="button" (click)="onCancel()">Cancel</button>
-      <button class="btn btn-primary" type="button" (click)="onSave()">Save</button>
+      <button class="btn btn-primary" type="button" (click)="onSave()" [disabled]="loading">
+        {{ loading ? "Saving..." : "Save" }}
+      </button>
     </div>
   </div>
 </div>

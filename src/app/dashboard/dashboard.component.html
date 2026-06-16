@@ -1,0 +1,188 @@
+<section id="dashboard" class="section">
+  <div class="section-header">
+    <h2>Dashboard</h2>
+    <p class="section-subtitle">Your collection at a glance</p>
+  </div>
+
+  @if (!authService.isLoggedIn()) {
+    <app-empty-state
+      icon="🔐"
+      title="Sign in to see your dashboard"
+      message="Log in or create an account to track your collection, favorites, and discover patterns."
+    />
+  } @else if (loading()) {
+    <app-loading-spinner message="Loading your dashboard..." />
+  } @else if (error()) {
+    <app-error-state [message]="error()!" (retry)="loadStats()" />
+  } @else if (stats(); as s) {
+    <!-- Stats cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ s.totalGames }}</div>
+        <div class="stat-label">Total Games</div>
+        <div class="stat-icon">🎮</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ s.totalReleases }}</div>
+        <div class="stat-label">Releases</div>
+        <div class="stat-icon">💿</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ s.totalSeries }}</div>
+        <div class="stat-label">Series</div>
+        <div class="stat-icon">📚</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ s.totalCollections }}</div>
+        <div class="stat-label">Collections</div>
+        <div class="stat-icon">📦</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-value">{{ s.totalUserOwned }}</div>
+        <div class="stat-label">You Own</div>
+        <div class="stat-icon">🏆</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-value">{{ s.totalFavorites }}</div>
+        <div class="stat-label">Favorites</div>
+        <div class="stat-icon">⭐</div>
+      </div>
+      @if (s.totalValue > 0) {
+        <div class="stat-card accent-green">
+          <div class="stat-value">${{ s.totalValue.toFixed(2) }}</div>
+          <div class="stat-label">Collection Value</div>
+          <div class="stat-icon">💰</div>
+        </div>
+      }
+    </div>
+
+    <div class="dashboard-panels">
+      <!-- Platform distribution -->
+      <div class="panel">
+        <h3 class="panel-title">Platform Distribution</h3>
+        @if (s.platformDistribution.length > 0) {
+          <div class="bar-chart">
+            @for (item of s.platformDistribution; track item.slug) {
+              <div class="bar-row">
+                <span class="bar-label">{{ item.name }}</span>
+                <div class="bar-track">
+                  <div
+                    class="bar-fill"
+                    [style.width.%]="(item.count / maxPlatformCount()) * 100"
+                  ></div>
+                </div>
+                <span class="bar-value">{{ item.count }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="panel-empty">Add games to your inventory to see platform stats.</p>
+        }
+      </div>
+
+      <!-- Genre breakdown -->
+      <div class="panel">
+        <h3 class="panel-title">Genre Breakdown</h3>
+        @if (s.genreBreakdown.length > 0) {
+          <div class="bar-chart">
+            @for (item of s.genreBreakdown; track item.slug) {
+              <div class="bar-row">
+                <span class="bar-label">{{ item.name }}</span>
+                <div class="bar-track">
+                  <div
+                    class="bar-fill genre"
+                    [style.width.%]="(item.count / maxGenreCount()) * 100"
+                  ></div>
+                </div>
+                <span class="bar-value">{{ item.count }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="panel-empty">Add favorites to see genre distribution.</p>
+        }
+      </div>
+    </div>
+
+    <!-- Cover Art Management -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <h3 class="panel-title">Cover Art</h3>
+        <button class="fetch-covers-btn" (click)="bulkFetchCovers()" [disabled]="fetchingCovers()">
+          {{ fetchingCovers() ? "Fetching..." : "Fetch Covers from SteamGridDB" }}
+        </button>
+      </div>
+      @if (coverFetchResult()) {
+        <p class="cover-result">{{ coverFetchResult() }}</p>
+      }
+      <p class="cover-hint">
+        Requires <code>SGDB_API_KEY</code> in <code>server/.env</code>. Get one at
+        <a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank" rel="noopener">steamgriddb.com</a>.
+      </p>
+    </div>
+
+    <!-- Recently added -->
+    <div class="panel">
+      <h3 class="panel-title">Recently Added</h3>
+      @if (s.recentlyAdded.length > 0) {
+        <div class="recent-list">
+          @for (item of s.recentlyAdded; track item.id) {
+            <div class="recent-item">
+              @if (item.release?.releaseGroup?.masterGame?.coverImageUrl) {
+                <img
+                  class="recent-cover"
+                  [src]="item.release.releaseGroup.masterGame.coverImageUrl"
+                  [alt]="item.release.releaseGroup.masterGame.title"
+                  loading="lazy"
+                />
+              }
+              <div class="recent-info">
+                <span class="recent-title">{{ item.release?.releaseGroup?.masterGame?.title ?? item.release?.title ?? "Unknown" }}</span>
+                <span class="recent-meta">
+                  {{ item.release?.releaseGroup?.editionType?.name ?? "" }}
+                  {{ item.release?.playableOn?.join(", ") ?? "" }}
+                  ·
+                  {{ item.condition ?? "Unknown condition" }}
+                </span>
+              </div>
+              <div class="recent-extra">
+                @if (item.purchasePrice) {
+                  <span class="recent-price">${{ item.purchasePrice }}</span>
+                }
+                @if (item.acquiredDate) {
+                  <span class="recent-date">{{ item.acquiredDate | slice:0:10 }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="panel-empty">Your recently added items will appear here.</p>
+      }
+    </div>
+
+    <!-- Collection completeness -->
+    @if (s.collectionCompleteness.length > 0) {
+      <div class="panel">
+        <h3 class="panel-title">Collection Progress</h3>
+        <div class="completeness-grid">
+          @for (coll of s.collectionCompleteness; track coll.collectionId) {
+            <div class="completeness-item">
+              <div class="completeness-header">
+                <span class="completeness-title">{{ coll.title }}</span>
+                <span class="completeness-count">{{ coll.owned }}/{{ coll.total }}</span>
+              </div>
+              <div class="completeness-track">
+                <div
+                  class="completeness-fill"
+                  [style.width.%]="coll.total > 0 ? (coll.owned / coll.total) * 100 : 0"
+                  [class.complete]="coll.owned === coll.total && coll.total > 0"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</section>

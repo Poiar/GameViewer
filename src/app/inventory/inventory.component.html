@@ -1,4 +1,4 @@
-@if (authService.user()) {
+@if (authService.isLoggedIn()) {
   <h1>My Inventory</h1>
 
   <div class="inventory-layout">
@@ -10,9 +10,10 @@
           <h3>Add Owned Copy</h3>
           <label>
             Game Version:
-            <select [(ngModel)]="newGameVersionId">
-              @for (gv of gameVersions; track gv.id) {
-                <option [value]="gv.id">{{ getGameVersionLabel(gv) }}</option>
+            <select [(ngModel)]="newReleaseId">
+              <option [ngValue]="null">Select a version...</option>
+              @for (r of releases(); track r.id) {
+                <option [ngValue]="r.id">{{ getReleaseLabel(r) }}</option>
               }
             </select>
           </label>
@@ -43,51 +44,77 @@
         </div>
       }
 
-      @for (owned of ownedInstances; track owned.id) {
-        <div class="inventory-item" [class.selected]="selectedOwned === owned">
-          <div class="item-summary" (click)="onSelect(owned)">
-            <span class="item-title">{{ owned.getGameTitle() }}</span>
-            <span class="item-detail">{{ owned.getVersionType() }} ({{ owned.getPlayableOnTitles() }})</span>
-            <span class="item-provider">{{ owned.getProvider() }}</span>
-            @if (owned.condition) {
-              <span class="item-condition">{{ owned.condition }}</span>
-            }
-            @if (owned.location) {
-              <span class="item-location">{{ owned.location }}</span>
-            }
+      @if (loading()) {
+        <app-loading-spinner [inline]="true" message="Loading inventory..." />
+      } @else {
+        @for (owned of ownedInstances(); track owned.id) {
+          <div class="inventory-item" [class.selected]="selectedOwned === owned">
+            <div class="item-summary" (click)="onSelect(owned)">
+              <span class="item-title">
+                {{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? "Unknown" }}
+              </span>
+              <span class="item-detail">
+                {{ owned.release?.releaseGroup?.editionType?.name ?? "" }}
+                ({{ owned.release?.playableOn?.join(", ") ?? "" }})
+              </span>
+              <span class="item-provider">{{ owned.release?.provider?.name ?? "" }}</span>
+              @if (owned.condition) {
+                <span class="item-condition">{{ owned.condition }}</span>
+              }
+              @if (owned.location) {
+                <span class="item-location">{{ owned.location }}</span>
+              }
+            </div>
+            <div class="item-actions">
+              <button (click)="onEdit(owned)">Edit</button>
+              <button class="delete-btn" (click)="onDelete(owned)">Delete</button>
+            </div>
           </div>
-          <div class="item-actions">
-            <button (click)="onEdit(owned)">Edit</button>
-            <button class="delete-btn" (click)="onDelete(owned)">Delete</button>
-          </div>
-        </div>
-      } @empty {
-        <p class="empty">No items in your inventory yet. Click "Add to Inventory" to get started.</p>
+        } @empty {
+          <p class="empty">No items in your inventory yet. Click "Add to Inventory" to get started.</p>
+        }
       }
     </div>
 
     @if (selectedOwned) {
       <div class="inventory-detail">
-        <h2>{{ selectedOwned.getGameTitle() }}</h2>
+        <h2>{{ selectedOwned.release?.releaseGroup?.masterGame?.title ?? selectedOwned.release?.title ?? "Item Details" }}</h2>
         <div class="detail-grid">
           <div class="detail-row">
-            <span class="label">Version:</span> {{ selectedOwned.getVersionType() }} ({{
-              selectedOwned.getVersionYear()
-            }})
+            <span class="label">Version:</span>
+            {{ selectedOwned.release?.releaseGroup?.editionType?.name ?? "—" }}
           </div>
-          <div class="detail-row"><span class="label">Platform:</span> {{ selectedOwned.getPlayableOnTitles() }}</div>
-          <div class="detail-row"><span class="label">Provider:</span> {{ selectedOwned.getProvider() }}</div>
-          <div class="detail-row"><span class="label">Condition:</span> {{ selectedOwned.condition || "—" }}</div>
-          <div class="detail-row"><span class="label">Location:</span> {{ selectedOwned.location || "—" }}</div>
-          <div class="detail-row"><span class="label">Acquired:</span> {{ selectedOwned.acquiredDate || "—" }}</div>
+          <div class="detail-row">
+            <span class="label">Platform:</span>
+            {{ selectedOwned.release?.playableOn?.join(", ") ?? "—" }}
+          </div>
+          <div class="detail-row">
+            <span class="label">Provider:</span>
+            {{ selectedOwned.release?.provider?.name ?? "—" }}
+          </div>
+          <div class="detail-row">
+            <span class="label">Condition:</span>
+            {{ selectedOwned.condition || "—" }}
+          </div>
+          <div class="detail-row">
+            <span class="label">Location:</span>
+            {{ selectedOwned.location || "—" }}
+          </div>
+          <div class="detail-row">
+            <span class="label">Acquired:</span>
+            {{ (selectedOwned.acquiredDate | slice:0:10) || "—" }}
+          </div>
           <div class="detail-row">
             <span class="label">Price:</span>
             {{ selectedOwned.purchasePrice ? "$" + selectedOwned.purchasePrice : "—" }}
           </div>
-          <div class="detail-row"><span class="label">Notes:</span> {{ selectedOwned.notes || "—" }}</div>
+          <div class="detail-row">
+            <span class="label">Notes:</span>
+            {{ selectedOwned.notes || "—" }}
+          </div>
         </div>
 
-        @if (editing === selectedOwned) {
+        @if (editing) {
           <div class="edit-form">
             <h3>Edit</h3>
             <label>
@@ -100,7 +127,8 @@
             </label>
             <label>
               Acquired:
-              <input type="date" [(ngModel)]="editing.acquiredDate" />
+              <input type="date" [ngModel]="(editing.acquiredDate | slice:0:10) || ''"
+                     (ngModelChange)="editing.acquiredDate = $event" />
             </label>
             <label>
               Price:
@@ -120,7 +148,6 @@
   </div>
 } @else {
   <div class="inventory-login">
-    <p class="empty">Log in to see your inventory.</p>
-    <app-auth></app-auth>
+    <p class="empty">Log in to manage your inventory.</p>
   </div>
 }

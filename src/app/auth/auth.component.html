@@ -1,4 +1,4 @@
-@if (authService.user(); as user) {
+@if (authService.isLoggedIn() && authService.user(); as user) {
   <div class="auth-inline">
     <button
       class="avatar-badge"
@@ -8,10 +8,11 @@
       [attr.aria-expanded]="dropdownOpen"
       aria-haspopup="true"
     >
-      {{ authService.initials() }}
+      {{ initials() }}
     </button>
     @if (dropdownOpen) {
       <div class="dropdown-menu" role="menu">
+        <div class="dropdown-user">{{ user.displayName }}</div>
         <button class="dropdown-item" type="button" role="menuitem" (click)="onProfile()">Profile</button>
         <button class="dropdown-item" type="button" role="menuitem" (click)="onLogout()">Log out</button>
       </div>
@@ -30,38 +31,94 @@
     </button>
     @if (dropdownOpen) {
       <div class="dropdown-menu login-dropdown" role="menu">
-        <div class="login-fields">
-          <input
-            type="text"
-            class="login-input"
-            placeholder="Username"
-            [(ngModel)]="loginUsername"
-            (keyup.enter)="onLogin()"
-            autocomplete="username"
-          />
-          <div class="password-input-wrap">
+        <div class="auth-tabs">
+          <button class="tab-btn" [class.active]="mode === 'login'" (click)="switchMode('login')">Sign In</button>
+          <button class="tab-btn" [class.active]="mode === 'register'" (click)="switchMode('register')">Register</button>
+        </div>
+
+        @if (mode === "login") {
+          <div class="login-fields">
             <input
+              type="text"
               class="login-input"
-              placeholder="Password"
-              [type]="showLoginPassword ? 'text' : 'password'"
-              [(ngModel)]="loginPassword"
+              placeholder="Username"
+              [(ngModel)]="loginUsername"
               (keyup.enter)="onLogin()"
-              autocomplete="current-password"
+              autocomplete="username"
             />
-            <button
-              type="button"
-              class="password-toggle"
-              (click)="toggleLoginPasswordVisibility()"
-              [attr.aria-label]="showLoginPassword ? 'Hide password' : 'Show password'"
-            >
-              {{ showLoginPassword ? "🙈" : "👁" }}
+            <div class="password-input-wrap">
+              <input
+                class="login-input"
+                placeholder="Password"
+                [type]="showLoginPassword ? 'text' : 'password'"
+                [(ngModel)]="loginPassword"
+                (keyup.enter)="onLogin()"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="toggleLoginPasswordVisibility()"
+                [attr.aria-label]="showLoginPassword ? 'Hide password' : 'Show password'"
+              >
+                {{ showLoginPassword ? "🙈" : "👁" }}
+              </button>
+            </div>
+            @if (authError) {
+              <div class="login-error" role="alert">{{ authError }}</div>
+            }
+            <button class="login-submit" type="button" (click)="onLogin()" [disabled]="loading">
+              {{ loading ? "Signing in..." : "Sign in" }}
             </button>
           </div>
-          @if (loginError) {
-            <div class="login-error" role="alert">{{ loginError }}</div>
-          }
-          <button class="login-submit" type="button" (click)="onLogin()">Sign in</button>
-        </div>
+        } @else {
+          <div class="login-fields">
+            <input
+              type="text"
+              class="login-input"
+              placeholder="Username"
+              [(ngModel)]="registerUsername"
+              autocomplete="username"
+            />
+            <input
+              type="text"
+              class="login-input"
+              placeholder="Display Name"
+              [(ngModel)]="registerDisplayName"
+            />
+            <input
+              type="email"
+              class="login-input"
+              placeholder="Email"
+              [(ngModel)]="registerEmail"
+              autocomplete="email"
+            />
+            <div class="password-input-wrap">
+              <input
+                class="login-input"
+                placeholder="Password (8+ characters)"
+                [type]="showRegisterPassword ? 'text' : 'password'"
+                [(ngModel)]="registerPassword"
+                (keyup.enter)="onRegister()"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="toggleRegisterPasswordVisibility()"
+                [attr.aria-label]="showRegisterPassword ? 'Hide password' : 'Show password'"
+              >
+                {{ showRegisterPassword ? "🙈" : "👁" }}
+              </button>
+            </div>
+            @if (authError) {
+              <div class="login-error" role="alert">{{ authError }}</div>
+            }
+            <button class="login-submit" type="button" (click)="onRegister()" [disabled]="loading">
+              {{ loading ? "Creating account..." : "Create account" }}
+            </button>
+          </div>
+        }
       </div>
     }
   </div>
