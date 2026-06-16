@@ -105,7 +105,15 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  transition: background .15s;
+  padding: 2px 6px;
+  margin: 0 -6px;
+  cursor: pointer;
 }
+a.bar-row:hover { background: var(--bg-elevated); }
 
 .bar-label {
   font-size: 13px;

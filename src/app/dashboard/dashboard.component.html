@@ -63,13 +63,13 @@
         @if (s.platformDistribution.length > 0) {
           <div class="bar-chart">
             @for (item of s.platformDistribution; track item.slug) {
-              <div class="bar-row">
+              <a class="bar-row" [routerLink]="['/games']" [queryParams]="{platform: item.slug}">
                 <span class="bar-label">{{ item.name }}</span>
                 <div class="bar-track">
                   <div class="bar-fill" [style.width.%]="(item.count / maxPlatformCount()) * 100"></div>
                 </div>
                 <span class="bar-value">{{ item.count }}</span>
-              </div>
+              </a>
             }
           </div>
         } @else {
@@ -83,13 +83,13 @@
         @if (s.genreBreakdown.length > 0) {
           <div class="bar-chart">
             @for (item of s.genreBreakdown; track item.slug) {
-              <div class="bar-row">
+              <a class="bar-row" [routerLink]="['/games']" [queryParams]="{genre: item.slug}">
                 <span class="bar-label">{{ item.name }}</span>
                 <div class="bar-track">
                   <div class="bar-fill genre" [style.width.%]="(item.count / maxGenreCount()) * 100"></div>
                 </div>
                 <span class="bar-value">{{ item.count }}</span>
-              </div>
+              </a>
             }
           </div>
         } @else {

@@ -195,6 +195,19 @@ import { MasterGame, Genre } from "../types/game.types";
                       <span class="overlay-tag">{{ g.name }}</span>
                     }
                   </div>
+                  @if ((game.ownedReleases ?? []).length > 0) {
+                    <div class="overlay-owned">
+                      @for (rel of (game.ownedReleases ?? []).slice(0, 4); track $index) {
+                        <span class="overlay-owned-chip">
+                          {{ rel.platforms.join("/") }}
+                          @if (rel.formats[0]) { <span class="ooc-fmt">· {{ rel.formats[0] }}</span> }
+                        </span>
+                      }
+                      @if ((game.ownedReleases ?? []).length > 4) {
+                        <span class="overlay-owned-chip">+{{ (game.ownedReleases ?? []).length - 4 }}</span>
+                      }
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -611,6 +624,13 @@ import { MasterGame, Genre } from "../types/game.types";
 
     .overlay-bottom { display: flex; flex-direction: column; gap: 4px; }
     .overlay-genres { display: flex; flex-wrap: wrap; gap: 4px; }
+    .overlay-owned { display: flex; flex-wrap: wrap; gap: 3px; }
+    .overlay-owned-chip {
+      padding: 1px 6px; border-radius: 8px; font-size: 9px; font-weight: 700;
+      background: rgba(79,195,247,.2); color: var(--accent-info);
+      border: 1px solid rgba(79,195,247,.3);
+    }
+    .ooc-fmt { opacity: .7; }
     .overlay-tag {
       padding: 2px 8px;
       border-radius: 10px;
