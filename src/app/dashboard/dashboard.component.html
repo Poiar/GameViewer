@@ -126,8 +126,8 @@
               @if (item.release?.releaseGroup?.masterGame?.coverImageUrl) {
                 <img
                   class="recent-cover"
-                  [src]="item.release.releaseGroup.masterGame.coverImageUrl"
-                  [alt]="item.release.releaseGroup.masterGame.title"
+                  [src]="$any(item.release).releaseGroup.masterGame.coverImageUrl"
+                  [alt]="$any(item.release).releaseGroup.masterGame.title"
                   loading="lazy"
                 />
               }
