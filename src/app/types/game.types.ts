@@ -223,6 +223,8 @@ export interface GameQueryParams {
   search?: string;
   genre?: string;
   seriesId?: number;
+  platform?: string;
+  provider?: string;
   sort?: "name" | "year" | "genre";
   order?: "asc" | "desc";
   page?: number;

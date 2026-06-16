@@ -71,6 +71,8 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
     const search = (req.query.search as string)?.trim();
     const genreSlug = (req.query.genre as string)?.trim();
     const seriesId = parseInt(req.query.seriesId as string) || undefined;
+    const platformSlug = (req.query.platform as string)?.trim();
+    const providerSlug = (req.query.provider as string)?.trim();
     const sortBy = (req.query.sort as string) || "name";
     const order = (req.query.order as string)?.toLowerCase() === "desc" ? "desc" : "asc";
 
@@ -98,6 +100,28 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
 
     if (seriesId) {
       conditions.push(eq(masterGames.seriesId, seriesId));
+    }
+
+    if (platformSlug) {
+      conditions.push(
+        sql`EXISTS (
+          SELECT 1 FROM ${releaseGroups} rg
+          JOIN ${releases} r ON r.release_group_id = rg.id
+          WHERE rg.master_game_id = ${masterGames.id}
+          AND ${releases.playableOn}::text ILIKE ${`%\"${platformSlug}\"%`}
+        )`,
+      );
+    }
+
+    if (providerSlug) {
+      conditions.push(
+        sql`EXISTS (
+          SELECT 1 FROM ${releaseGroups} rg
+          JOIN ${releases} r ON r.release_group_id = rg.id
+          JOIN ${providers} p ON p.id = r.provider_id
+          WHERE rg.master_game_id = ${masterGames.id} AND p.slug = ${providerSlug}
+        )`,
+      );
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
