@@ -1,6 +1,8 @@
-import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@angular/core";
 import { FavoritesService } from "../services/favorites.service";
-import { allGames, Game } from "../../classes/model";
+import { GamesService } from "../services/games.service";
+import { AuthService } from "../services/auth.service";
+import { MasterGame } from "../types/game.types";
 
 @Component({
   selector: "app-games-page",
@@ -10,13 +12,19 @@ import { allGames, Game } from "../../classes/model";
       <h2>Games</h2>
       <p>All titles and their versions</p>
     </div>
+    @if (loading()) {
+      <div class="center-message">
+        <div class="spinner"></div>
+        <p>Loading games...</p>
+      </div>
+    }
     <div class="grid">
-      @for (game of games; track game.id) {
+      @for (game of games(); track game.id) {
         <article class="card">
           <div class="card-header">
             <div class="card-cover">
-              @if (game.coverImage) {
-                <img [src]="game.coverImage" [alt]="game.title" loading="lazy" width="80" height="112" />
+              @if (game.coverImageUrl) {
+                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy" width="80" height="112" />
               } @else {
                 <img
                   [src]="'https://picsum.photos/seed/' + game.id + '/80/112'"
@@ -30,9 +38,9 @@ import { allGames, Game } from "../../classes/model";
             <div class="card-title-wrap">
               <h3 class="card-title">{{ game.title }}</h3>
               <div class="card-meta">
-                <span class="tag tag-genre">{{ game.getGenre() }}</span>
-                <span class="tag">{{ game.firstRelease }}</span>
-                @if (game.alternativeTitles.length > 0) {
+                <span class="tag tag-genre">{{ names(game.genres) }}</span>
+                <span class="tag">{{ game.firstReleaseYear }}</span>
+                @if (game.alternativeTitles.length) {
                   <span class="tag tag-muted">a.k.a. {{ game.alternativeTitles.join(", ") }}</span>
                 }
               </div>
@@ -47,39 +55,46 @@ import { allGames, Game } from "../../classes/model";
               {{ isFavorite(game.id) ? "♥" : "♡" }}
             </button>
           </div>
-          <div class="card-versions">
-            @for (superVersion of game.superVersions; track superVersion.id) {
-              <div class="version-chip">
-                <span class="version-type">{{ superVersion.getVersionType() }}</span>
-                @if (superVersion.versionYear) {
-                  <span class="version-year">{{ superVersion.versionYear }}</span>
-                }
-                @if (superVersion.versionName) {
-                  <span class="version-name">{{ superVersion.versionName }}</span>
-                }
-                @for (gv of superVersion.gameVersions; track gv.id) {
-                  <span class="version-platform">{{ gv.getPlayableOnTitles() }}</span>
-                }
-              </div>
-            }
-          </div>
-          @if (game.getAllDlcForThisGame().length > 0) {
-            <div class="card-dlc">
-              <span class="dlc-label">DLC:</span>
-              @for (dlc of game.getAllDlcForThisGame(); track dlc.id) {
-                <span class="dlc-chip">{{ dlc.title }}</span>
-              }
-            </div>
-          }
         </article>
       }
     </div>
   `,
+  styles: [`
+    .center-message { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 60px 0; color: var(--text-muted); }
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--bg-tertiary); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GamesPageComponent {
+export class GamesPageComponent implements OnInit {
   private favoritesService = inject(FavoritesService);
-  games: Game[] = allGames;
+  private gamesService = inject(GamesService);
+  private auth = inject(AuthService);
+
+  games = signal<MasterGame[]>([]);
+  loading = signal(true);
+
+  ngOnInit(): void {
+    // Wait for auth then load
+    const load = () => {
+      if (this.auth.isLoggedIn()) {
+        this.gamesService.getGames({ limit: 500, sort: "name" }).subscribe({
+          next: (res) => {
+            this.games.set(res.data);
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false),
+        });
+      } else {
+        setTimeout(load, 500);
+      }
+    };
+    load();
+  }
+
+  names(arr?: Array<{ name: string }>): string {
+    return arr?.map((g) => g.name).join(", ") ?? "";
+  }
 
   isFavorite(gameId: number): boolean {
     return this.favoritesService.isFavorite(gameId);
