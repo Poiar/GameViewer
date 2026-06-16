@@ -63,6 +63,12 @@
   letter-spacing: 0.02em;
 }
 
+/* ── Sidebar search ── */
+.sidebar-search {
+  padding: 0 12px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
 /* ── Sidebar nav ── */
 .sidebar nav {
   flex: 1;

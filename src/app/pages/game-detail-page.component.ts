@@ -86,9 +86,23 @@ import { MasterGameDetail } from "../types/game.types";
           <div class="dlc-grid">
             @for (dlc of g.dlcs; track dlc.id) {
               <div class="dlc-card">
-                <span class="dlc-title">{{ dlc.title }}</span>
-                <span class="dlc-year">{{ dlc.firstReleaseYear }}</span>
-                <span class="dlc-type">{{ dlc.dlcType }}</span>
+                <div class="dlc-card-main">
+                  <span class="dlc-title">{{ dlc.title }}</span>
+                  <span class="dlc-year">{{ dlc.firstReleaseYear }}</span>
+                  <span class="dlc-type">{{ dlc.dlcType }}</span>
+                </div>
+                @if (dlc.releases?.length) {
+                  <div class="dlc-releases">
+                    @for (dr of dlc.releases; track dr.id) {
+                      <div class="dlc-release-row" [class.owned]="!!(dr as any).userOwns">
+                        <span class="dr-provider">{{ (dr as any).provider?.name ?? "—" }}</span>
+                        <span class="dr-format">{{ (dr as any).mediaFormat?.name ?? "" }}</span>
+                        @if ((dr as any).onDiscForConsoleOnly) { <span class="dr-disc">💿 On Disc</span> }
+                        @if ((dr as any).userOwns) { <span class="rel-owned-badge" title="You own this">✓</span> }
+                      </div>
+                    }
+                  </div>
+                }
               </div>
             }
           </div>
@@ -144,11 +158,18 @@ import { MasterGameDetail } from "../types/game.types";
       flex-shrink: 0; line-height: 1;
     }
 
-    .dlc-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-    .dlc-card { display: flex; gap: 10px; align-items: center; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+    .dlc-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .dlc-card { padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 8px; }
+    .dlc-card-main { display: flex; gap: 10px; align-items: center; }
     .dlc-title { font-weight: 600; color: var(--text-primary); }
     .dlc-year { color: var(--text-secondary); font-size: 12px; }
     .dlc-type { color: var(--text-muted); font-size: 11px; margin-left: auto; }
+    .dlc-releases { display: flex; flex-direction: column; gap: 4px; }
+    .dlc-release-row { display: flex; align-items: center; gap: 8px; padding: 4px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; transition: all .15s; }
+    .dlc-release-row.owned { background: rgba(6,214,160,.06); border-left: 3px solid var(--accent-secondary); border-radius: 0 6px 6px 0; padding-left: 7px; }
+    .dr-provider { color: var(--text-secondary); font-weight: 500; }
+    .dr-format { color: var(--text-muted); }
+    .dr-disc { color: var(--accent-info); font-size: 11px; }
 
     @media (width <= 768px) {
       .detail-hero { flex-direction: column; align-items: center; text-align: center; }

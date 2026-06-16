@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { AuthComponent } from "./auth/auth.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { ErrorConsoleComponent } from "./shared/error-console.component";
+import { GlobalSearchComponent } from "./shared/global-search.component";
 import { AuthUiService } from "./auth/auth-ui.service";
 import { AuthService } from "./services/auth.service";
 import { DashboardService } from "./services/dashboard.service";
@@ -11,7 +12,7 @@ import { FavoritesService } from "./services/favorites.service";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, AuthComponent, ProfileComponent, ErrorConsoleComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, AuthComponent, ProfileComponent, ErrorConsoleComponent, GlobalSearchComponent],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,

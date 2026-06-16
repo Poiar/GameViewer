@@ -319,25 +319,45 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       return;
     }
 
-    // Collect all release IDs from this game
+    // Collect all release IDs + DLC release IDs from this game
     const allReleaseIds: number[] = [];
+    const allDlcReleaseIds: number[] = [];
     for (const rg of game.releaseGroups) {
       for (const r of rg.releases) {
         allReleaseIds.push(r.id);
       }
     }
+    for (const dlc of game.dlcs) {
+      for (const dr of dlc.dlcReleases) {
+        allDlcReleaseIds.push(dr.id);
+      }
+    }
 
-    // If user is authenticated, determine which releases they own
+    // If user is authenticated, determine which releases/DLC releases they own
     let ownedReleaseIds: Set<number> = new Set();
-    if (req.user && allReleaseIds.length > 0) {
-      const owned = await db
-        .select({ releaseId: ownedInstances.releaseId })
-        .from(ownedInstances)
-        .where(
-          and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
-        );
-      for (const o of owned) {
-        if (o.releaseId) ownedReleaseIds.add(o.releaseId);
+    let ownedDlcReleaseIds: Set<number> = new Set();
+    if (req.user) {
+      if (allReleaseIds.length > 0) {
+        const owned = await db
+          .select({ releaseId: ownedInstances.releaseId })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
+          );
+        for (const o of owned) {
+          if (o.releaseId) ownedReleaseIds.add(o.releaseId);
+        }
+      }
+      if (allDlcReleaseIds.length > 0) {
+        const ownedDlc = await db
+          .select({ dlcReleaseId: ownedInstances.dlcReleaseId })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, allDlcReleaseIds)),
+          );
+        for (const o of ownedDlc) {
+          if (o.dlcReleaseId) ownedDlcReleaseIds.add(o.dlcReleaseId);
+        }
       }
     }
 
@@ -393,6 +413,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
           onDiscForConsoleOnly: dr.onDiscForConsoleOnly,
           provider: dr.provider ?? null,
           mediaFormat: dr.mediaFormat ?? null,
+          userOwns: ownedDlcReleaseIds.has(dr.id),
           compatibleWith: dr.compatibility.map((c) => ({
             releaseId: c.release?.id,
             releaseTitle: c.release?.title,

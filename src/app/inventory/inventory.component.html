@@ -1,13 +1,17 @@
 @if (authService.isLoggedIn()) {
-  <div class="inventory-layout">
-    <div class="inventory-list">
-      <button class="add-btn" (click)="onToggleAdd()">+ Add to Inventory</button>
+  <div class="inv-layout">
+    <div class="inv-header">
+      <h2>My Inventory</h2>
+      <p>{{ ownedInstances().length }} items owned</p>
+    </div>
 
-      @if (showAddForm) {
-        <div class="add-form">
-          <h3>Add Owned Copy</h3>
-          <label>
-            Game Version:
+    <button class="inv-add-btn" (click)="onToggleAdd()">{{ showAddForm ? '✕ Cancel' : '+ Add to Inventory' }}</button>
+
+    @if (showAddForm) {
+      <div class="inv-add">
+        <h3>Add Owned Copy</h3>
+        <div class="inv-add-grid">
+          <label>Game Version:
             <select [(ngModel)]="newReleaseId">
               <option [ngValue]="null">Select a version...</option>
               @for (r of releases(); track r.id) {
@@ -15,146 +19,133 @@
               }
             </select>
           </label>
-          <label>
-            Condition:
-            <input type="text" [(ngModel)]="newCondition" placeholder="e.g. Mint, Good, Fair" />
-          </label>
-          <label>
-            Location:
-            <input type="text" [(ngModel)]="newLocation" placeholder="e.g. Shelf, Steam Library" />
-          </label>
-          <label>
-            Acquired:
-            <input type="date" [(ngModel)]="newAcquiredDate" />
-          </label>
-          <label>
-            Price:
-            <input type="text" [(ngModel)]="newPurchasePrice" placeholder="e.g. 19.99" />
-          </label>
-          <label>
-            Notes:
-            <textarea [(ngModel)]="newNotes" placeholder="Any notes..."></textarea>
-          </label>
-          <div class="form-actions">
-            <button (click)="onAdd()">Save</button>
-            <button (click)="onToggleAdd()">Cancel</button>
-          </div>
+          <label>Condition: <input type="text" [(ngModel)]="newCondition" placeholder="Mint, Good, Fair..." /></label>
+          <label>Location: <input type="text" [(ngModel)]="newLocation" placeholder="Shelf, Steam Library..." /></label>
+          <label>Acquired: <input type="date" [(ngModel)]="newAcquiredDate" /></label>
+          <label>Price: <input type="text" [(ngModel)]="newPurchasePrice" placeholder="19.99" /></label>
+          <label>Notes: <input type="text" [(ngModel)]="newNotes" placeholder="Any notes..." /></label>
         </div>
-      }
+        <div class="inv-add-actions">
+          <button class="inv-btn inv-btn--primary" (click)="onAdd()">Save</button>
+          <button class="inv-btn" (click)="onToggleAdd()">Cancel</button>
+        </div>
+      </div>
+    }
 
-      @if (loading()) {
-        <app-loading-spinner [inline]="true" message="Loading inventory..." />
-      } @else {
-        @for (owned of ownedInstances(); track owned.id) {
-          <div class="inventory-item" [class.selected]="selectedOwned === owned">
-            <div class="item-summary" (click)="onSelect(owned)">
-              <span class="item-title">
-                {{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? owned.dlcRelease?.dlc?.title ?? "Unknown" }}
-              </span>
-              <span class="item-detail">
-                @if (owned.release) {
-                  {{ owned.release.releaseGroup?.editionType?.name ?? "" }}
-                  ({{ owned.release.playableOn?.join(", ") ?? "" }})
-                } @else if (owned.dlcRelease) {
-                  {{ owned.dlcRelease.dlc?.dlcType ?? "DLC" }}
+    @if (loading()) {
+      <div class="inv-skel">
+        @for (i of [0,1,2,3,4]; track i) {
+          <div class="inv-skel-row"><div class="iskel-cover"></div><div class="iskel-l iskel-l--t"></div><div class="iskel-l iskel-l--m"></div></div>
+        }
+      </div>
+    } @else if (ownedInstances().length === 0) {
+      <div class="inv-empty">
+        <div class="inv-empty-icon">📦</div>
+        <h3>Your inventory is empty</h3>
+        <p>Click "Add to Inventory" to start tracking your collection.</p>
+      </div>
+    } @else {
+      <div class="inv-list">
+        @for (owned of ownedInstances(); track owned.id; let i = $index) {
+          <div
+            class="inv-row"
+            [class.inv-row--selected]="selectedOwned === owned"
+            [style.--idx]="i"
+          >
+            <div class="inv-row-main" (click)="selectedOwned === owned ? selectedOwned = undefined : onSelect(owned)">
+              <div class="ir-cover">
+                @if (owned.release?.releaseGroup?.masterGame?.coverImageUrl) {
+                  <img [src]="owned.release.releaseGroup.masterGame.coverImageUrl" alt="" loading="lazy" />
+                } @else {
+                  <span class="ir-cover-ph">🎮</span>
                 }
-              </span>
-              <span class="item-provider">{{ owned.release?.provider?.name ?? owned.dlcRelease?.provider?.name ?? "" }}</span>
-              @if (owned.condition) {
-                <span class="item-condition">{{ owned.condition }}</span>
-              }
-              @if (owned.location) {
-                <span class="item-location">{{ owned.location }}</span>
-              }
+              </div>
+              <div class="ir-info">
+                <h3 class="ir-title">{{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? owned.dlcRelease?.dlc?.title ?? "Unknown" }}</h3>
+                <div class="ir-badges">
+                  @if (owned.release?.releaseGroup?.editionType?.name) {
+                    <span class="irb irb-edition">{{ owned.release.releaseGroup.editionType.name }}</span>
+                  }
+                  @if (owned.release?.mediaFormat?.name) {
+                    <span class="irb irb-format">{{ owned.release.mediaFormat.name }}</span>
+                  }
+                  @if (owned.dlcRelease?.dlc?.dlcType) {
+                    <span class="irb irb-dlc">{{ owned.dlcRelease.dlc.dlcType }}</span>
+                  }
+                </div>
+                <div class="ir-platforms">
+                  @for (p of (owned.release?.playableOn ?? []); track p) {
+                    <span class="irb irb-plat">{{ p }}</span>
+                  }
+                  @if (owned.release?.region) {
+                    <span class="irb irb-region">{{ owned.release.region }}</span>
+                  }
+                </div>
+              </div>
+              <div class="ir-meta">
+                @if (owned.condition) {
+                  <div class="irm-stat">
+                    <span class="irms-lbl">Condition</span>
+                    <span class="irms-val irm-cond" [class.irm-cond--mint]="owned.condition.toLowerCase() === 'mint'">{{ owned.condition }}</span>
+                  </div>
+                }
+                @if (owned.location) {
+                  <div class="irm-stat">
+                    <span class="irms-lbl">Location</span>
+                    <span class="irms-val">{{ owned.location }}</span>
+                  </div>
+                }
+                @if (owned.acquiredDate) {
+                  <div class="irm-stat">
+                    <span class="irms-lbl">Acquired</span>
+                    <span class="irms-val">{{ (owned.acquiredDate | slice : 0 : 10) }}</span>
+                  </div>
+                }
+                @if (owned.purchasePrice) {
+                  <div class="irm-stat">
+                    <span class="irms-lbl">Paid</span>
+                    <span class="irms-val irm-price">\${{ owned.purchasePrice }}</span>
+                  </div>
+                }
+                @if (owned.release?.provider?.name) {
+                  <div class="irm-stat">
+                    <span class="irms-lbl">Provider</span>
+                    <span class="irms-val">{{ owned.release.provider.name }}</span>
+                  </div>
+                }
+              </div>
             </div>
-            <div class="item-actions">
-              <button (click)="onEdit(owned)">Edit</button>
-              <button class="delete-btn" (click)="onDelete(owned)">Delete</button>
+            <div class="ir-actions">
+              <button class="inv-btn inv-btn--small" (click)="onEdit(owned)">Edit</button>
+              <button class="inv-btn inv-btn--small inv-btn--danger" (click)="onDelete(owned)">Delete</button>
             </div>
           </div>
-        } @empty {
-          <p class="empty">No items in your inventory yet. Click "Add to Inventory" to get started.</p>
-        }
-      }
-    </div>
+        } @empty {}
+      </div>
+    }
 
-    @if (selectedOwned) {
-      <div class="inventory-detail">
-        <h2>
-          {{ selectedOwned.release?.releaseGroup?.masterGame?.title ?? selectedOwned.release?.title ?? selectedOwned.dlcRelease?.dlc?.title ?? "Item Details" }}
-        </h2>
-        <div class="detail-grid">
-          <div class="detail-row">
-            <span class="label">Version:</span>
-            {{ selectedOwned.release?.releaseGroup?.editionType?.name ?? "—" }}
+    @if (editing && selectedOwned) {
+      <div class="inv-edit-overlay" (click)="editing = undefined">
+        <div class="inv-edit" (click)="$event.stopPropagation()">
+          <h3>Edit Item</h3>
+          <div class="inv-add-grid">
+            <label>Condition: <input type="text" [(ngModel)]="editing.condition" /></label>
+            <label>Location: <input type="text" [(ngModel)]="editing.location" /></label>
+            <label>Acquired: <input type="date" [ngModel]="(editing.acquiredDate | slice : 0 : 10) || ''" (ngModelChange)="editing.acquiredDate = $event" /></label>
+            <label>Price: <input type="text" [(ngModel)]="editing.purchasePrice" /></label>
+            <label>Notes: <input type="text" [(ngModel)]="editing.notes" /></label>
           </div>
-          <div class="detail-row">
-            <span class="label">Platform:</span>
-            {{ selectedOwned.release?.playableOn?.join(", ") ?? "—" }}
-          </div>
-          <div class="detail-row">
-            <span class="label">Provider:</span>
-            {{ selectedOwned.release?.provider?.name ?? "—" }}
-          </div>
-          <div class="detail-row">
-            <span class="label">Condition:</span>
-            {{ selectedOwned.condition || "—" }}
-          </div>
-          <div class="detail-row">
-            <span class="label">Location:</span>
-            {{ selectedOwned.location || "—" }}
-          </div>
-          <div class="detail-row">
-            <span class="label">Acquired:</span>
-            {{ (selectedOwned.acquiredDate | slice: 0 : 10) || "—" }}
-          </div>
-          <div class="detail-row">
-            <span class="label">Price:</span>
-            {{ selectedOwned.purchasePrice ? "$" + selectedOwned.purchasePrice : "—" }}
-          </div>
-          <div class="detail-row">
-            <span class="label">Notes:</span>
-            {{ selectedOwned.notes || "—" }}
+          <div class="inv-add-actions">
+            <button class="inv-btn inv-btn--primary" (click)="onSaveEdit()">Save</button>
+            <button class="inv-btn" (click)="editing = undefined">Cancel</button>
           </div>
         </div>
-
-        @if (editing) {
-          <div class="edit-form">
-            <h3>Edit</h3>
-            <label>
-              Condition:
-              <input type="text" [(ngModel)]="editing.condition" />
-            </label>
-            <label>
-              Location:
-              <input type="text" [(ngModel)]="editing.location" />
-            </label>
-            <label>
-              Acquired:
-              <input
-                type="date"
-                [ngModel]="(editing.acquiredDate | slice: 0 : 10) || ''"
-                (ngModelChange)="editing.acquiredDate = $event"
-              />
-            </label>
-            <label>
-              Price:
-              <input type="text" [(ngModel)]="editing.purchasePrice" />
-            </label>
-            <label>
-              Notes:
-              <textarea [(ngModel)]="editing.notes"></textarea>
-            </label>
-            <div class="form-actions">
-              <button (click)="onSaveEdit()">Done</button>
-            </div>
-          </div>
-        }
       </div>
     }
   </div>
 } @else {
-  <div class="inventory-login">
-    <p class="empty">Log in to manage your inventory.</p>
+  <div class="inv-empty">
+    <div class="inv-empty-icon">🔐</div>
+    <h3>Sign in to manage your inventory</h3>
   </div>
 }

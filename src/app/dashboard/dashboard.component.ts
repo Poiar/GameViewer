@@ -51,6 +51,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadStats(): void {
+    // Guard: don't fire if not logged in yet
+    if (!this.authService.isLoggedIn()) {
+      setTimeout(() => this.loadStats(), 500);
+      return;
+    }
     this.loading.set(true);
     this.error.set(null);
     this.sub = this.dashboardService.getStats().subscribe({
@@ -59,7 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err.message ?? "Failed to load dashboard");
+        this.error.set(err.message ?? "Failed to load dashboard stats. Please try again.");
         this.loading.set(false);
       },
     });
