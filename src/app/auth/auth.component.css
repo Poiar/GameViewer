@@ -27,7 +27,7 @@
 
 .avatar-badge:hover {
   background: var(--accent-hover);
-  box-shadow: 0 2px 12px rgba(124, 106, 247, 0.35);
+  box-shadow: 0 2px 12px rgb(124, 106, 247, 0.35);
 }
 
 .avatar-badge:focus-visible {
@@ -50,7 +50,7 @@
 
 .login-btn:hover {
   background: var(--accent-hover);
-  box-shadow: 0 2px 12px rgba(124, 106, 247, 0.35);
+  box-shadow: 0 2px 12px rgb(124, 106, 247, 0.35);
 }
 
 .login-btn:focus-visible {
@@ -66,7 +66,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgb(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   padding: 4px 0;
@@ -79,6 +79,7 @@
     opacity: 0;
     transform: translateY(-6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -161,12 +162,6 @@
   cursor: not-allowed;
 }
 
-.login-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .login-input {
   padding: 8px 12px;
   background: var(--bg-tertiary);
@@ -242,7 +237,7 @@
 
 .login-submit:hover {
   background: var(--accent-hover);
-  box-shadow: 0 2px 8px rgba(124, 106, 247, 0.3);
+  box-shadow: 0 2px 8px rgb(124, 106, 247, 0.3);
 }
 
 .login-submit:focus-visible {
@@ -250,7 +245,7 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .login-dropdown {
     position: fixed;
     top: auto;
