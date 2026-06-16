@@ -111,7 +111,7 @@ import { MasterGameDetail } from "../types/game.types";
             @for (dlc of g.dlcs; track dlc.id) {
               <div class="dlc-card">
                 <div class="dlc-card-main">
-                  <span class="dlc-title">{{ dlc.title }}</span>
+                  <a class="dlc-title" [routerLink]="['/dlc', dlc.id]">{{ dlc.title }}</a>
                   <span class="dlc-year">{{ dlc.firstReleaseYear }}</span>
                   <span class="dlc-type">{{ dlc.dlcType }}</span>
                 </div>
@@ -243,7 +243,8 @@ import { MasterGameDetail } from "../types/game.types";
     .dlc-grid { display: flex; flex-wrap: wrap; gap: 12px; }
     .dlc-card { padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 8px; }
     .dlc-card-main { display: flex; gap: 10px; align-items: center; }
-    .dlc-title { font-weight: 600; color: var(--text-primary); }
+    .dlc-title { font-weight: 600; color: var(--text-primary); text-decoration: none; transition: color .15s; }
+    .dlc-title:hover { color: var(--accent); text-decoration: underline; }
     .dlc-year { color: var(--text-secondary); font-size: 12px; }
     .dlc-type { color: var(--text-muted); font-size: 11px; margin-left: auto; }
     .dlc-releases { display: flex; flex-direction: column; gap: 4px; }

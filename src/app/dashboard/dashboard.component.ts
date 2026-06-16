@@ -3,6 +3,7 @@ import { DashboardService } from "../services/dashboard.service";
 import { AuthService } from "../services/auth.service";
 import { GamesService } from "../services/games.service";
 import { SlicePipe } from "@angular/common";
+import { RouterLink } from "@angular/router";
 import { LoadingSpinnerComponent } from "../shared/loading-spinner.component";
 import { ErrorStateComponent } from "../shared/error-state.component";
 import { EmptyStateComponent } from "../shared/empty-state.component";
@@ -12,7 +13,7 @@ import { Subscription } from "rxjs";
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [LoadingSpinnerComponent, ErrorStateComponent, EmptyStateComponent, SlicePipe],
+  imports: [LoadingSpinnerComponent, ErrorStateComponent, EmptyStateComponent, SlicePipe, RouterLink],
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,
