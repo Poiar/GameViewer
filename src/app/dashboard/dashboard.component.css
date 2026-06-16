@@ -25,13 +25,13 @@
 }
 
 .stat-card.accent {
-  border-color: rgba(124, 106, 247, 0.25);
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(124, 106, 247, 0.06) 100%);
+  border-color: rgb(124, 106, 247, 0.25);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgb(124, 106, 247, 0.06) 100%);
 }
 
 .stat-card.accent-green {
-  border-color: rgba(6, 214, 160, 0.25);
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(6, 214, 160, 0.06) 100%);
+  border-color: rgb(6, 214, 160, 0.25);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgb(6, 214, 160, 0.06) 100%);
 }
 
 .stat-value {
@@ -66,7 +66,7 @@
   margin-bottom: 24px;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .dashboard-panels {
     grid-template-columns: 1fr;
   }

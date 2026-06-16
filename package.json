@@ -9,8 +9,10 @@
     "test": "npx playwright test --ui",
     "test:headless": "npx playwright test",
     "test:unit": "npx vitest run",
-    "lint": "eslint \"src/**/*.{ts,html}\" \"server/src/**/*.ts\" \"scripts/**/*.ts\"",
-    "lint:fix": "eslint \"src/**/*.{ts,html}\" \"server/src/**/*.ts\" \"scripts/**/*.ts\" --fix",
+    "lint": "npm run lint:ts && npm run lint:css",
+    "lint:ts": "eslint \"**/*.{ts,mjs}\" \"src/**/*.html\" --ignore-pattern \"node_modules/**\" --ignore-pattern \"dist/**\" --ignore-pattern \".playwright-mcp/**\"",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:fix": "eslint \"**/*.{ts,mjs}\" \"src/**/*.html\" --ignore-pattern \"node_modules/**\" --ignore-pattern \"dist/**\" --ignore-pattern \".playwright-mcp/**\" --fix && stylelint \"src/**/*.css\" --fix",
     "format": "prettier --write \"**/*.{ts,html,css,scss,json,mjs,md}\" \"!openRouterModels.json\" \"!.playwright-mcp/**\"",
     "format:check": "prettier --check \"**/*.{ts,html,css,scss,json,mjs,md}\" \"!openRouterModels.json\" \"!.playwright-mcp/**\"",
     "typecheck": "tsc --noEmit",
@@ -19,11 +21,15 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{ts,html}": [
+    "**/*.{ts,mjs,html}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "**/*.{css,scss,json,mjs,md}": [
+    "**/*.css": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "**/*.{scss,json,md}": [
       "prettier --write"
     ]
   },
@@ -60,6 +66,8 @@
     "lint-staged": "^17.0.5",
     "playwright": "^1.60.0",
     "prettier": "^3.8.3",
+    "stylelint": "^17.13.0",
+    "stylelint-config-standard": "^40.0.0",
     "typescript": "~5.9.0"
   }
 }

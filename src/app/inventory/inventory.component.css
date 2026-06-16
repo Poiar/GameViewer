@@ -124,8 +124,8 @@
 }
 
 .delete-btn:hover {
-  background: rgba(247, 110, 110, 0.1) !important;
-  border-color: rgba(247, 110, 110, 0.3) !important;
+  background: rgb(247, 110, 110, 0.1) !important;
+  border-color: rgb(247, 110, 110, 0.3) !important;
 }
 
 .detail-grid {
@@ -256,6 +256,7 @@
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -274,7 +275,7 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .inventory-layout {
     grid-template-columns: 1fr;
   }
