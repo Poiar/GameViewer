@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { FavoritesService } from "../services/favorites.service";
 import { GamesService } from "../services/games.service";
@@ -48,6 +48,23 @@ import { MasterGame, Genre } from "../types/game.types";
           </button>
         }
       </div>
+
+      <!-- Active filter pills -->
+      @if (selectedPlatform() || selectedProvider()) {
+        <div class="active-filters">
+          <span class="af-label">Active filters:</span>
+          @if (selectedPlatform()) {
+            <span class="af-chip">🖥️ {{ selectedPlatform() }}
+              <button class="af-remove" (click)="selectedPlatform.set(null); page.set(1); loadGames()">✕</button>
+            </span>
+          }
+          @if (selectedProvider()) {
+            <span class="af-chip">🏪 {{ selectedProvider() }}
+              <button class="af-remove" (click)="selectedProvider.set(null); page.set(1); loadGames()">✕</button>
+            </span>
+          }
+        </div>
+      }
 
       <div class="filter-controls">
         <div class="filter-group">
@@ -316,6 +333,22 @@ import { MasterGame, Genre } from "../types/game.types";
       font-family: inherit;
     }
     .search-input::placeholder { color: var(--text-muted); }
+
+    /* Active filter pills */
+    .active-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .af-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); }
+    .af-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 12px;
+      border-radius: 20px; background: var(--accent-glow); border: 1px solid var(--border-accent);
+      color: var(--accent); font-size: 12px; font-weight: 600;
+    }
+    .af-remove {
+      background: none; border: none; color: var(--accent); cursor: pointer;
+      font-size: 12px; padding: 0 2px; line-height: 1; font-family: inherit;
+      opacity: .6; transition: opacity .15s;
+    }
+    .af-remove:hover { opacity: 1; }
+
     .search-clear {
       background: none;
       border: none;
@@ -699,6 +732,7 @@ export class GamesPageComponent implements OnInit {
   private gamesService = inject(GamesService);
   private lookupService = inject(LookupService);
   private auth = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   games = signal<MasterGame[]>([]);
   genres = signal<Genre[]>([]);
@@ -710,6 +744,8 @@ export class GamesPageComponent implements OnInit {
 
   searchQuery = "";
   selectedGenre = signal<string | null>(null);
+  selectedPlatform = signal<string | null>(null);
+  selectedProvider = signal<string | null>(null);
   sort = signal<"name" | "year">("name");
   order = signal<"asc" | "desc">("asc");
 
@@ -718,6 +754,12 @@ export class GamesPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.lookupService.getGenres().subscribe((genres) => this.genres.set(genres));
+    // Read query params for platform/provider filters
+    this.route.queryParams.subscribe((params) => {
+      if (params["platform"]) this.selectedPlatform.set(params["platform"]);
+      if (params["provider"]) this.selectedProvider.set(params["provider"]);
+      if (params["genre"]) this.selectedGenre.set(params["genre"]);
+    });
     const load = () => {
       if (this.auth.isLoggedIn()) { this.loadGames(); }
       else { setTimeout(load, 500); }
@@ -730,6 +772,8 @@ export class GamesPageComponent implements OnInit {
     this.gamesService.getGames({
       search: this.searchQuery || undefined,
       genre: this.selectedGenre() ?? undefined,
+      platform: this.selectedPlatform() ?? undefined,
+      provider: this.selectedProvider() ?? undefined,
       sort: this.sort(),
       order: this.order(),
       page: this.page(),

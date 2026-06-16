@@ -17,6 +17,11 @@ export const routes: Routes = [
     data: { title: "Collections" },
   },
   {
+    path: "collections/:id",
+    loadComponent: () => import("./pages/collection-detail-page.component").then((m) => m.CollectionDetailPageComponent),
+    data: { title: "Collection Detail" },
+  },
+  {
     path: "games",
     loadComponent: () => import("./pages/games-page.component").then((m) => m.GamesPageComponent),
     data: { title: "Games" },
@@ -65,5 +70,15 @@ export const routes: Routes = [
     path: "providers",
     loadComponent: () => import("./pages/providers-page.component").then((m) => m.ProvidersPageComponent),
     data: { title: "Providers" },
+  },
+  {
+    path: "stats",
+    loadComponent: () => import("./pages/stats-page.component").then((m) => m.StatsPageComponent),
+    data: { title: "Stats & Analytics" },
+  },
+  {
+    path: "timeline",
+    loadComponent: () => import("./pages/timeline-page.component").then((m) => m.TimelinePageComponent),
+    data: { title: "Timeline" },
   },
 ];
