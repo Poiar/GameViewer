@@ -38,10 +38,11 @@ import { AuthService } from "../services/auth.service";
     } @else {
       <div class="dlc-list">
         @for (dlc of filtered(); track dlc.id; let i = $index) {
-          <a class="dlc-row" [routerLink]="['/games', dlc.gameSlug]" [style.--idx]="i">
+          <a class="dlc-row" [routerLink]="['/games', dlc.gameSlug]" [style.--idx]="i" [class.owned]="!!dlc.userOwns">
             <div class="dlc-left">
               <span class="dlc-type-badge" [class]="'type-' + dlc.dlcType.toLowerCase()">{{ dlc.dlcType }}</span>
               <h3 class="dlc-title">{{ dlc.title }}</h3>
+              @if (dlc.userOwns) { <span class="dlc-owned">✓ Owned</span> }
             </div>
             <div class="dlc-center">
               <span class="dlc-game">{{ dlc.gameTitle }}</span>
@@ -111,6 +112,8 @@ import { AuthService } from "../services/auth.service";
       animation-delay: calc(var(--idx, 0) * 15ms);
     }
     .dlc-row:hover { background: var(--bg-elevated); }
+    .dlc-row.owned { background: rgba(6,214,160,.03); }
+    .dlc-row.owned:hover { background: rgba(6,214,160,.06); }
     .dlc-row + .dlc-row { border-top: 1px solid var(--border-subtle); }
     @keyframes rowIn {
       from { opacity: 0; transform: translateX(-8px); }
@@ -131,6 +134,7 @@ import { AuthService } from "../services/auth.service";
       font-size: 14px; font-weight: 600; color: var(--text-primary);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .dlc-owned { color: var(--accent-secondary); font-size: 11px; font-weight: 700; flex-shrink: 0; }
     .dlc-center { flex: 1; min-width: 0; display: flex; align-items: center; }
     .dlc-game {
       font-size: 12px; color: var(--text-muted); white-space: nowrap;

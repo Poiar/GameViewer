@@ -358,12 +358,13 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
     }
 
     // If user is authenticated, fetch owned instance details
-    const ownedReleaseMap = new Map<number, { condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
-    const ownedDlcReleaseMap = new Map<number, { condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
+    const ownedReleaseMap = new Map<number, { id: number; condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
+    const ownedDlcReleaseMap = new Map<number, { id: number; condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
     if (req.user) {
       if (allReleaseIds.length > 0) {
         const owned = await db
           .select({
+            id: ownedInstances.id,
             releaseId: ownedInstances.releaseId,
             condition: ownedInstances.condition,
             location: ownedInstances.location,
@@ -376,6 +377,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
           );
         for (const o of owned) {
           if (o.releaseId) ownedReleaseMap.set(o.releaseId, {
+            id: o.id,
             condition: o.condition,
             location: o.location,
             purchasePrice: o.purchasePrice,
@@ -386,6 +388,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       if (allDlcReleaseIds.length > 0) {
         const ownedDlc = await db
           .select({
+            id: ownedInstances.id,
             dlcReleaseId: ownedInstances.dlcReleaseId,
             condition: ownedInstances.condition,
             location: ownedInstances.location,
@@ -398,6 +401,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
           );
         for (const o of ownedDlc) {
           if (o.dlcReleaseId) ownedDlcReleaseMap.set(o.dlcReleaseId, {
+            id: o.id,
             condition: o.condition,
             location: o.location,
             purchasePrice: o.purchasePrice,

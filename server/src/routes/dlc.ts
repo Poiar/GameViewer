@@ -8,8 +8,9 @@ import {
   providers,
   mediaFormats,
   masterGames,
+  ownedInstances,
 } from "../db/schema.js";
-import { authenticate } from "../middleware/auth.js";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
 import { eq, and, desc, asc, count, sql, inArray } from "drizzle-orm";
@@ -46,8 +47,9 @@ const createDlcReleaseSchema = z.object({
 // Routes
 // ---------------------------------------------------------------------------
 
-// GET / — List DLCs with filtering and pagination
-router.get("/", async (req: Request, res: Response) => {
+// GET / — List DLCs with filtering and pagination. Auth optional; when present,
+// each DLC includes whether the user owns any of its releases.
+router.get("/", optionalAuth, async (req: Request, res: Response) => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
@@ -85,8 +87,33 @@ router.get("/", async (req: Request, res: Response) => {
       .limit(limit)
       .offset(offset);
 
+    // Batch check DLC release ownership
+    const ownedDlcIds = new Set<number>();
+    if (req.user && rows.length > 0) {
+      const dlcIds = rows.map((r) => r.id);
+      const dlcReleaseRows = await db
+        .select({ id: dlcReleases.id, dlcId: dlcReleases.dlcId })
+        .from(dlcReleases)
+        .where(inArray(dlcReleases.dlcId, dlcIds));
+      const dlcReleaseIds = dlcReleaseRows.map((dr) => dr.id);
+      if (dlcReleaseIds.length > 0) {
+        const owned = await db
+          .select({ dlcReleaseId: ownedInstances.dlcReleaseId })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, dlcReleaseIds)),
+          );
+        const ownedDrIds = new Set(owned.map((o) => o.dlcReleaseId!).filter(Boolean));
+        for (const dr of dlcReleaseRows) {
+          if (ownedDrIds.has(dr.id)) ownedDlcIds.add(dr.dlcId);
+        }
+      }
+    }
+
+    const data = rows.map((r) => ({ ...r, userOwns: ownedDlcIds.has(r.id) }));
+
     res.json({
-      data: rows,
+      data,
       meta: {
         page,
         limit,
@@ -309,8 +336,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
 });
 
 // ---------------------------------------------------------------------------
-// DLC Release sub-routes (mounted under /dlc by parent router? No, separate)
-// These are convenience routes for creating DLC releases
+// DLC Release sub-routes
 // ---------------------------------------------------------------------------
 
 // POST /:dlcId/releases — Create a release for a DLC (auth required)
