@@ -324,6 +324,48 @@ a.bar-row:hover { background: var(--bg-elevated); }
   margin-bottom: 4px;
 }
 
+/* ── Enrichment Coverage ── */
+.enrich-coverage {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+@media (width <= 640px) {
+  .enrich-coverage { grid-template-columns: repeat(2, 1fr); }
+}
+
+.ec-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  opacity: 0.5;
+  transition: all .2s;
+}
+
+.ec-item.ec-active { opacity: 1; }
+
+.ec-icon { font-size: 14px; flex-shrink: 0; }
+
+.ec-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex: 1;
+}
+
+.ec-count {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ec-active .ec-count { color: var(--accent); }
+
 .cover-hint {
   font-size: 11px;
   color: var(--text-muted);

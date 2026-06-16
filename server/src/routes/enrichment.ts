@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { db } from "../db/index.js";
-import { masterGames } from "../db/schema.js";
+import { masterGames, masterGameGenres, genres } from "../db/schema.js";
 import { authenticate } from "../middleware/auth.js";
 import { enrichGame } from "../services/enrichment.js";
 import { eq, and, isNull, sql } from "drizzle-orm";
@@ -12,8 +12,10 @@ async function updateGame(gameId: number, enrichment: Awaited<ReturnType<typeof 
     igdbId: enrichment.igdbId ?? undefined,
     opencriticId: enrichment.opencriticId ?? undefined,
     hltbId: enrichment.hltbId ?? undefined,
+    hltbTime: enrichment.hltbTime ?? undefined,
     criticScore: enrichment.opencriticScore ?? undefined,
     summary: enrichment.igdbSummary ?? undefined,
+    screenshots: enrichment.igdbScreenshots?.length ? enrichment.igdbScreenshots : undefined,
     updatedAt: new Date(),
   };
   // Use IGDB cover if no cover exists
@@ -25,6 +27,33 @@ async function updateGame(gameId: number, enrichment: Awaited<ReturnType<typeof 
     }
   }
   await db.update(masterGames).set(setData as any).where(eq(masterGames.id, gameId));
+
+  // Link IGDB genres if game has no genres yet
+  if (enrichment.igdbGenres?.length) {
+    const existing = await db
+      .select({ id: masterGameGenres.genreId })
+      .from(masterGameGenres)
+      .where(eq(masterGameGenres.gameId, gameId));
+
+    if (!existing.length) {
+      // Find matching local genres
+      const localGenres = await db.select().from(genres);
+      const toLink: number[] = [];
+
+      for (const igdbName of enrichment.igdbGenres) {
+        const match = localGenres.find(
+          (g) => g.name.toLowerCase() === igdbName.toLowerCase(),
+        );
+        if (match) toLink.push(match.id);
+      }
+
+      if (toLink.length > 0) {
+        await db
+          .insert(masterGameGenres)
+          .values(toLink.map((genreId) => ({ gameId, genreId })));
+      }
+    }
+  }
 }
 
 // POST /batch — Batch enrich games without external IDs (MUST be before /:id)

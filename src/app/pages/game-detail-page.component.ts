@@ -65,13 +65,38 @@ import { MasterGameDetail } from "../types/game.types";
               <a class="ext-link ext-oc ext-search" href="https://opencritic.com/search?q={{ g.title }}" target="_blank" rel="noopener" title="Search on OpenCritic">🔍 OpenCritic</a>
             }
             @if (g.hltbId) {
-              <a class="ext-link ext-hltb" href="https://howlongtobeat.com/game/{{ g.hltbId }}" target="_blank" rel="noopener" title="View on HowLongToBeat">HLTB</a>
+              <a class="ext-link ext-hltb" href="https://howlongtobeat.com/game/{{ g.hltbId }}" target="_blank" rel="noopener" title="View on HowLongToBeat">
+                HLTB
+                @if (g.hltbTime) { <span class="ext-score ext-hltb-time">~{{ g.hltbTime }}h</span> }
+              </a>
             } @else {
               <a class="ext-link ext-hltb ext-search" href="https://howlongtobeat.com/search?q={{ g.title }}" target="_blank" rel="noopener" title="Search on HowLongToBeat">🔍 HLTB</a>
             }
+            <button class="ext-link ext-enrich-btn" (click)="enrichGame(g.id)" [disabled]="enriching()">
+              {{ enriching() ? "..." : "🔗 Enrich" }}
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- Screenshots -->
+      @if (g.screenshots?.length) {
+        <div class="section">
+          <h2 class="section-title">Screenshots</h2>
+          <div class="screenshot-strip">
+            @for (url of g.screenshots; track url) {
+              <img class="screenshot-thumb" [src]="url" alt="" loading="lazy" (click)="lightboxUrl.set(url)" />
+            }
+          </div>
+        </div>
+        <!-- Lightbox -->
+        @if (lightboxUrl()) {
+          <div class="lightbox" (click)="lightboxUrl.set(null)">
+            <img class="lightbox-img" [src]="lightboxUrl()" alt="" />
+            <button class="lightbox-close" (click)="lightboxUrl.set(null)">✕</button>
+          </div>
+        }
+      }
 
       <!-- Release Groups -->
       @if (g.releaseGroups?.length) {
@@ -228,6 +253,14 @@ import { MasterGameDetail } from "../types/game.types";
     .ext-hltb:hover { background: rgba(79,195,247,.2); }
     .ext-search { opacity: .6; font-weight: 500; }
     .ext-score { background: rgba(247,110,110,.2); padding: 0 4px; border-radius: 4px; font-size: 10px; }
+    .ext-hltb-time { background: rgba(79,195,247,.2); color: var(--accent-info); }
+    .ext-enrich-btn {
+      background: rgba(145,71,255,.08); color: #9147ff; border: 1px dashed rgba(145,71,255,.2);
+      cursor: pointer; font-family: inherit; margin-left: auto; font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 8px; transition: all .15s; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .ext-enrich-btn:hover:not(:disabled) { background: #9147ff; color: #fff; border-color: #9147ff; }
+    .ext-enrich-btn:disabled { opacity: .4; cursor: not-allowed; }
 
     .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
     .tag-genre { background: rgb(6, 214, 160, 0.1); color: var(--accent-secondary); border-color: rgb(6, 214, 160, 0.25); }
@@ -308,6 +341,15 @@ import { MasterGameDetail } from "../types/game.types";
     .dr-format { color: var(--text-muted); }
     .dr-disc { color: var(--accent-info); font-size: 11px; }
 
+    .screenshot-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+    .screenshot-thumb { width: 220px; height: 124px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: transform .15s, box-shadow .15s; flex-shrink: 0; }
+    .screenshot-thumb:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 9999; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .lightbox-img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,.8); }
+    .lightbox-close { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.1); border: none; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .lightbox-close:hover { background: rgba(255,255,255,.2); }
+
     @media (width <= 768px) {
       .detail-hero { flex-direction: column; align-items: center; text-align: center; }
       .release-row { flex-wrap: wrap; }
@@ -335,6 +377,31 @@ export class GameDetailPageComponent implements OnInit {
   // Expandable release rows
   expandedRelease = signal<number | null>(null);
   toggleExpand(relId: number): void { this.expandedRelease.set(this.expandedRelease() === relId ? null : relId); }
+  // Per-game enrichment
+  enriching = signal(false);
+  // Lightbox
+  lightboxUrl = signal<string | null>(null);
+
+  enrichGame(gameId: number): void {
+    this.enriching.set(true);
+    this.http.post(`/api/enrich/${gameId}`, {}).subscribe({
+      next: (res: any) => {
+        const d = res.data ?? res;
+        const g = this.game();
+        if (g) {
+          if (d.igdbId) { (g as any).igdbId = d.igdbId; (g as any).igdbUrl = d.igdbUrl; }
+          if (d.opencriticId) { (g as any).opencriticId = d.opencriticId; }
+          if (d.opencriticScore) { (g as any).criticScore = d.opencriticScore; }
+          if (d.hltbId) { (g as any).hltbId = d.hltbId; }
+          if (d.hltbTime) { (g as any).hltbTime = d.hltbTime; }
+          if (d.igdbSummary) { (g as any).summary = d.igdbSummary; }
+          if (d.igdbCoverUrl && !g.coverImageUrl) { (g as any).coverImageUrl = d.igdbCoverUrl; }
+        }
+        this.enriching.set(false);
+      },
+      error: () => this.enriching.set(false),
+    });
+  }
 
   startEdit(owned: NonNullable<MasterGameDetail["releaseGroups"][number]["releases"][number]["userOwns"]>): void {
     this.editingId.set(owned.id);

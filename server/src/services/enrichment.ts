@@ -13,6 +13,7 @@ interface IgdbGame {
   first_release_date?: number;
   cover?: { id: number; url: string };
   genres?: { id: number; name: string }[];
+  screenshots?: { id: number; url: string }[];
 }
 
 async function igdbQuery<T>(endpoint: string, body: string): Promise<T | null> {
@@ -30,22 +31,23 @@ async function igdbQuery<T>(endpoint: string, body: string): Promise<T | null> {
   return (await res.json()) as T;
 }
 
-export function getIgdbCoverUrl(coverUrl: string | undefined): string | null {
-  if (!coverUrl) return null;
+export function getIgdbCoverUrl(coverUrl: string | undefined): string | undefined {
+  if (!coverUrl) return undefined;
   // IGDB cover URLs: //images.igdb.com/igdb/image/upload/t_thumb/co2r2r.jpg
   // Replace t_thumb with t_cover_big for high-res
   return coverUrl.startsWith("//") ? "https:" + coverUrl.replace("t_thumb", "t_cover_big") : coverUrl;
 }
 
 export async function searchIgdb(title: string): Promise<IgdbGame | null> {
-  const results = await igdbQuery<IgdbGame[]>("games", `search "${title}"; fields name,slug,summary,first_release_date,cover.url,genres.name; limit 3;`);
+  const results = await igdbQuery<IgdbGame[]>("games", `search "${title}"; fields name,slug,summary,first_release_date,cover.url,genres.name,screenshots.url; limit 3;`);
   if (!results?.length) return null;
   const exact = results.find((g) => g.name.toLowerCase() === title.toLowerCase());
   return exact ?? results[0];
 }
 
 // ---------------------------------------------------------------------------
-// OpenCritic
+// OpenCritic via RapidAPI — note: the gateway returns 500 errors (June 2026).
+// If this persists, consider scraping opencritic.com/search directly.
 // ---------------------------------------------------------------------------
 
 interface OpenCriticResult {
@@ -58,7 +60,13 @@ interface OpenCriticResult {
 
 export async function searchOpenCritic(title: string): Promise<OpenCriticResult | null> {
   try {
-    const res = await fetch(`https://api.opencritic.com/api/game/search?criteria=${encodeURIComponent(title)}`);
+    if (!config.rapidApiKey) return null;
+    const res = await fetch(`https://opencritic-api.p.rapidapi.com/game/search?criteria=${encodeURIComponent(title)}`, {
+      headers: {
+        "X-RapidAPI-Key": config.rapidApiKey,
+        "X-RapidAPI-Host": "opencritic-api.p.rapidapi.com",
+      },
+    });
     if (!res.ok) return null;
     const data = (await res.json()) as any[];
     if (!data?.length) return null;
@@ -86,15 +94,52 @@ interface HltbResult {
 
 export async function searchHltb(title: string): Promise<HltbResult | null> {
   try {
-    const res = await fetch("https://howlongtobeat.com/api/search", {
+    const hltbHeaders = {
+      "Referer": "https://howlongtobeat.com/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "Accept": "application/json",
+      "Origin": "https://howlongtobeat.com",
+    };
+
+    // Step 1: Get auth token from init endpoint
+    const initRes = await fetch(`https://howlongtobeat.com/api/bleed/init?t=${Date.now()}`, {
+      headers: hltbHeaders,
+    });
+    if (!initRes.ok) return null;
+    const initData = (await initRes.json()) as { token?: string; hpKey?: string; hpVal?: string };
+    if (!initData.token) return null;
+
+    // Step 2: Search with the token
+    const searchBody: Record<string, unknown> = {
+      searchType: "games",
+      searchTerms: title.split(" "),
+      searchPage: 1,
+      size: 5,
+      searchOptions: {
+        games: { userId: 0, platform: "", sortCategory: "popular", rangeCategory: "main",
+          rangeTime: { min: null, max: null },
+          gameplay: { perspective: "", flow: "", genre: "", difficulty: "" },
+          rangeYear: { min: "", max: "" }, modifier: "" },
+        users: { sortCategory: "postcount" },
+        lists: { sortCategory: "follows" },
+        filter: "", sort: 0, randomizer: 0,
+      },
+      useCache: true,
+    };
+    if (initData.hpKey) { searchBody[initData.hpKey] = initData.hpVal; }
+
+    const res = await fetch("https://howlongtobeat.com/api/bleed", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Referer": "https://howlongtobeat.com" },
-      body: JSON.stringify({
-        searchType: "games",
-        searchTerms: title.split(" "),
-        searchPage: 1,
-        size: 5,
-      }),
+      headers: {
+        "Content-Type": "application/json",
+        ...hltbHeaders,
+        "x-auth-token": initData.token,
+        ...(initData.hpKey && initData.hpVal ? {
+          "x-hp-key": initData.hpKey,
+          "x-hp-val": initData.hpVal,
+        } : {}),
+      },
+      body: JSON.stringify(searchBody),
     });
     if (!res.ok) return null;
     const json = (await res.json()) as any;
@@ -119,6 +164,8 @@ export interface EnrichmentResult {
   igdbUrl?: string;
   igdbCoverUrl?: string;
   igdbSummary?: string;
+  igdbGenres?: string[];
+  igdbScreenshots?: string[];
   opencriticId?: number;
   opencriticScore?: number;
   hltbId?: number;
@@ -135,6 +182,10 @@ export async function enrichGame(title: string): Promise<EnrichmentResult> {
     result.igdbUrl = `https://www.igdb.com/games/${igdb.slug}`;
     result.igdbCoverUrl = getIgdbCoverUrl(igdb.cover?.url);
     result.igdbSummary = igdb.summary ?? undefined;
+    result.igdbGenres = igdb.genres?.map((g) => g.name).filter((n): n is string => !!n) as string[] | undefined;
+    result.igdbScreenshots = igdb.screenshots
+      ?.map((s) => s.url?.startsWith("//") ? "https:" + s.url.replace("t_thumb", "t_screenshot_big") : s.url)
+      .filter((u): u is string => !!u && !u.includes("nocover"));
   }
 
   // OpenCritic

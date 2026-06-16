@@ -1,10 +1,16 @@
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value && !process.env.CI) {
+    console.warn(`[config] Missing env var: ${key} — set it in server/.env`);
+  }
+  return value ?? "";
+}
+
 export const config = {
-  port: parseInt(process.env.PORT ?? "3000", 10),
-  databaseUrl:
-    process.env.DATABASE_URL ??
-    "postgresql://neondb_owner:npg_rn8FBu7UXHag@ep-summer-queen-a2tlqgvn-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
-  jwtSecret: process.env.JWT_SECRET ?? "gameviewer-jwt-secret-change-in-production",
-  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? "gameviewer-jwt-refresh-secret-change-in-production",
+  port: parseInt(process.env.PORT ?? "3001", 10),
+  databaseUrl: requireEnv("DATABASE_URL"),
+  jwtSecret: requireEnv("JWT_SECRET"),
+  jwtRefreshSecret: requireEnv("JWT_REFRESH_SECRET"),
   jwtExpiresIn: "15m",
   jwtRefreshExpiresIn: "7d",
   bcryptRounds: 12,
@@ -12,4 +18,5 @@ export const config = {
   sgdbApiKey: process.env.SGDB_API_KEY ?? "",
   igdbClientId: process.env.IGDB_CLIENT_ID ?? "",
   igdbAccessToken: process.env.IGDB_ACCESS_TOKEN ?? "",
+  rapidApiKey: process.env.RAPIDAPI_KEY ?? "",
 } as const;
