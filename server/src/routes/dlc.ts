@@ -13,7 +13,7 @@ import {
 import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import { eq, and, desc, asc, count, sql, inArray } from "drizzle-orm";
+import { eq, and, desc, asc, count, sql, inArray, ilike } from "drizzle-orm";
 
 const router = Router();
 
@@ -54,10 +54,14 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
     const offset = (page - 1) * limit;
     const gameId = parseInt(req.query.gameId as string) || undefined;
+    const search = (req.query.search as string)?.trim();
 
     const conditions: ReturnType<typeof eq>[] = [];
     if (gameId) {
       conditions.push(eq(dlcs.masterGameId, gameId));
+    }
+    if (search) {
+      conditions.push(ilike(dlcs.title, `%${search}%`));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;

@@ -58,14 +58,14 @@ router.get("/", async (req: Request, res: Response) => {
     const [{ count: total }] = await db.select({ count: count() }).from(series).where(whereClause);
 
     // Select series with game count via subquery
-    const orderByClause =
-      sortBy === "name"
-        ? order === "desc"
-          ? desc(series.name)
-          : asc(series.name)
-        : order === "desc"
-          ? desc(series.createdAt)
-          : asc(series.createdAt);
+    let orderByClause;
+    if (sortBy === "name") {
+      orderByClause = order === "desc" ? desc(series.name) : asc(series.name);
+    } else {
+      // "games" — sort by the subquery value
+      const gameCountSql = sql<number>`(SELECT COUNT(*) FROM ${masterGames} WHERE ${masterGames.seriesId} = ${series.id})`;
+      orderByClause = order === "desc" ? desc(gameCountSql) : asc(gameCountSql);
+    }
 
     const rows = await db
       .select({

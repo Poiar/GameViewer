@@ -194,11 +194,11 @@ export class GlobalSearchComponent {
     if (!q) { this.results.set([]); return; }
     this.searching.set(true);
     this.searchTimeout = setTimeout(() => {
-      this.http.get<any>(`/api/games?search=${encodeURIComponent(q)}&limit=5`).subscribe({
+      this.http.get<any>(`/api/games?search=${encodeURIComponent(q)}&limit=4`).subscribe({
         next: (res) => {
           const items: SearchResult[] = [];
           const games = res.data ?? res;
-          (Array.isArray(games) ? games.slice(0, 5) : []).forEach((g: any) => {
+          (Array.isArray(games) ? games.slice(0, 4) : []).forEach((g: any) => {
             items.push({ type: "game", id: g.id, title: g.title, subtitle: String(g.firstReleaseYear ?? ""), slug: g.slug, url: g.slug ? `/games/${g.slug}` : `/games` });
           });
           // Also search series
@@ -208,11 +208,21 @@ export class GlobalSearchComponent {
               (Array.isArray(seriesList) ? seriesList.slice(0, 3) : []).forEach((s: any) => {
                 items.push({ type: "series", id: s.id, title: s.name, subtitle: `${s.gameCount ?? s._count?.games ?? 0} games`, url: s.slug ? `/series/${s.slug}` : `/series` });
               });
-              this.results.set(items);
-              this.activeIdx.set(0);
-              this.searching.set(false);
+              // Also search DLCs
+              this.http.get<any>(`/api/dlc?search=${encodeURIComponent(q)}&limit=3`).subscribe({
+                next: (dRes) => {
+                  const dlcList = dRes.data ?? dRes;
+                  (Array.isArray(dlcList) ? dlcList.slice(0, 3) : []).forEach((d: any) => {
+                    items.push({ type: "dlc", id: d.id, title: d.title, subtitle: d.gameTitle ?? "", url: `/dlc/${d.id}` });
+                  });
+                  this.results.set(items);
+                  this.activeIdx.set(0);
+                  this.searching.set(false);
+                },
+                error: () => { this.results.set(items); this.activeIdx.set(0); this.searching.set(false); },
+              });
             },
-            error: () => { this.results.set(items); this.activeIdx.set(0); this.searching.set(false); },
+            error: () => this.searching.set(false),
           });
         },
         error: () => this.searching.set(false),

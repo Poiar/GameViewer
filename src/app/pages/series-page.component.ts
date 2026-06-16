@@ -62,7 +62,7 @@ import { Series } from "../types/game.types";
           <a class="s-card" [routerLink]="['/series', s.slug]" [style.--idx]="i">
             <div class="sc-top">
               <div class="sc-icon">📚</div>
-              <div class="sc-count">{{ s._count?.games ?? s.games?.length ?? 0 }}</div>
+              <div class="sc-count">{{ s.gameCount ?? s._count?.games ?? 0 }}</div>
             </div>
             <div class="sc-body">
               <h3 class="sc-title">{{ s.name }}</h3>

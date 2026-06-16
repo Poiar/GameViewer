@@ -42,6 +42,7 @@ export interface Series {
   createdAt: string;
   updatedAt: string;
   games?: MasterGame[];
+  gameCount?: number;
   _count?: { games: number };
 }
 
