@@ -16,9 +16,9 @@ interface SeriesDetail { id: number; name: string; slug: string; description: st
       <div class="sd-hero">
         <h1>{{ s.name }}</h1>
         @if (s.description) { <p class="sd-desc">{{ s.description }}</p> }
-        <span class="sd-count">{{ s.games?.length ?? 0 }} games</span>
+        <span class="sd-count">{{ s.games.length }} games</span>
       </div>
-      @if (s.games?.length) {
+      @if (s.games.length) {
         <div class="sd-grid">
           @for (game of s.games; track game.id; let i = $index) {
             <a class="sd-card" [class.owned]="!!game.userOwns" [routerLink]="['/games', game.slug]" [style.--idx]="i">
