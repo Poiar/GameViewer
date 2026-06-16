@@ -2,7 +2,48 @@
   <div class="inv-layout">
     <div class="inv-header">
       <h2>My Inventory</h2>
-      <p>{{ ownedInstances().length }} items owned</p>
+      <p>{{ ownedInstances().length }} items &middot; {{ filteredItems().length }} shown</p>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="inv-filter-bar">
+      <div class="inv-search-wrap">
+        <svg class="inv-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input class="inv-search-input" type="text" placeholder="Search by title, location..." [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
+        @if (filter()) {
+          <button class="inv-clear" (click)="filter.set('')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        }
+      </div>
+      <div class="inv-filter-chips">
+        @if (filterPlatform()) {
+          <span class="ifc-chip">🖥️ {{ filterPlatform() }}
+            <button class="ifc-remove" (click)="filterPlatform.set(null)">✕</button>
+          </span>
+        }
+        @if (filterCondition()) {
+          <span class="ifc-chip">📋 {{ filterCondition() }}
+            <button class="ifc-remove" (click)="filterCondition.set(null)">✕</button>
+          </span>
+        }
+        <div class="ifc-dropdowns">
+          <select class="ifc-select" [ngModel]="filterPlatform() ?? ''" (ngModelChange)="filterPlatform.set($event || null)">
+            <option value="">All platforms</option>
+            @for (p of allPlatforms(); track p) { <option [value]="p">{{ p }}</option> }
+          </select>
+          <select class="ifc-select" [ngModel]="filterCondition() ?? ''" (ngModelChange)="filterCondition.set($event || null)">
+            <option value="">All conditions</option>
+            <option value="Mint">Mint</option>
+            <option value="CIB">CIB</option>
+            <option value="Good">Good</option>
+            <option value="Fair">Fair</option>
+            <option value="Poor">Poor</option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <button class="inv-add-btn" (click)="onToggleAdd()">{{ showAddForm ? '✕ Cancel' : '+ Add to Inventory' }}</button>
@@ -45,8 +86,15 @@
         <p>Click "Add to Inventory" to start tracking your collection.</p>
       </div>
     } @else {
+      @if (filteredItems().length === 0) {
+        <div class="inv-empty">
+          <div class="inv-empty-icon">🔍</div>
+          <h3>No items match your filter</h3>
+          <p>Try adjusting your search or filters.</p>
+        </div>
+      }
       <div class="inv-list">
-        @for (owned of ownedInstances(); track owned.id; let i = $index) {
+        @for (owned of filteredItems(); track owned.id; let i = $index) {
           <div
             class="inv-row"
             [class.inv-row--selected]="selectedOwned === owned"

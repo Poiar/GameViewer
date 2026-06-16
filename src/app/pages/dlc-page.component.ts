@@ -38,7 +38,7 @@ import { AuthService } from "../services/auth.service";
     } @else {
       <div class="dlc-list">
         @for (dlc of filtered(); track dlc.id; let i = $index) {
-          <a class="dlc-row" [routerLink]="['/games', dlc.gameSlug]" [style.--idx]="i" [class.owned]="!!dlc.userOwns">
+          <a class="dlc-row" [routerLink]="['/dlc', dlc.id]" [style.--idx]="i" [class.owned]="!!dlc.userOwns">
             <div class="dlc-left">
               <span class="dlc-type-badge" [class]="'type-' + dlc.dlcType.toLowerCase()">{{ dlc.dlcType }}</span>
               <h3 class="dlc-title">{{ dlc.title }}</h3>

@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@ang
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 
-interface SeriesDetail { id: number; name: string; slug: string; description: string | null; games: Array<{ id: number; title: string; slug: string; firstReleaseYear: number; coverImageUrl: string | null }>; }
+interface SeriesDetail { id: number; name: string; slug: string; description: string | null; games: Array<{ id: number; title: string; slug: string; firstReleaseYear: number; coverImageUrl: string | null; userOwns?: boolean }>; }
 
 @Component({
   selector: "app-series-detail-page", standalone: true, imports: [RouterLink],
@@ -21,10 +21,11 @@ interface SeriesDetail { id: number; name: string; slug: string; description: st
       @if (s.games?.length) {
         <div class="sd-grid">
           @for (game of s.games; track game.id; let i = $index) {
-            <a class="sd-card" [routerLink]="['/games', game.slug]" [style.--idx]="i">
+            <a class="sd-card" [class.owned]="!!game.userOwns" [routerLink]="['/games', game.slug]" [style.--idx]="i">
               <div class="sdc-cover">
                 @if (game.coverImageUrl) { <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy" /> }
                 @else { <span class="sdc-ph">🎮</span> }
+                @if (game.userOwns) { <span class="sdc-owned">✓</span> }
               </div>
               <div class="sdc-body"><h3 class="sdc-title">{{ game.title }}</h3><span class="sdc-year">{{ game.firstReleaseYear }}</span></div>
             </a>
@@ -44,8 +45,17 @@ interface SeriesDetail { id: number; name: string; slug: string; description: st
     .sd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 18px; }
     .sd-card { border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-subtle); text-decoration: none; display: block; transition: transform .25s, box-shadow .25s; animation: in 350ms ease-out both; animation-delay: calc(var(--idx, 0) * 35ms); }
     .sd-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 16px 32px rgba(0,0,0,.5); }
+    .sd-card.owned { border-color: rgba(6,214,160,.25); }
     @keyframes in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    .sdc-cover { width: 100%; aspect-ratio: 2/3; overflow: hidden; background: var(--bg-tertiary); }
+    .sdc-cover { width: 100%; aspect-ratio: 2/3; overflow: hidden; background: var(--bg-tertiary); position: relative; }
+    .sdc-owned {
+      position: absolute; top: 6px; right: 6px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent-secondary); color: #000;
+      font-size: 11px; font-weight: 800; display: flex;
+      align-items: center; justify-content: center;
+      z-index: 2;
+    }
     .sdc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
     .sd-card:hover .sdc-cover img { transform: scale(1.06); }
     .sdc-ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 40px; opacity: .3; }

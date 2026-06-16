@@ -10,8 +10,10 @@ export class InventoryService extends ApiBaseService {
     super(http);
   }
 
-  getInventory(): Observable<OwnedInstance[]> {
-    return this.extractData<OwnedInstance[]>(this.get<OwnedInstance[]>("/inventory"));
+  getInventory(limit?: number): Observable<OwnedInstance[]> {
+    const params: Record<string, string | number> = {};
+    if (limit) params["limit"] = limit;
+    return this.extractData<OwnedInstance[]>(this.get<OwnedInstance[]>("/inventory", params));
   }
 
   addItem(item: {
