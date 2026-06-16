@@ -380,6 +380,7 @@ async function main() {
     {
       title: string;
       normalizedTitle: string;
+      rawTitle: string;
       firstReleaseYear: number | null;
       seriesName: string;
       genreName: string;
@@ -419,8 +420,9 @@ async function main() {
       const normalized = normalizeGameTitle(row.game);
       if (!gameMap.has(normalized.toLowerCase())) {
         gameMap.set(normalized.toLowerCase(), {
-          title: row.game,
+          title: normalized,
           normalizedTitle: normalized,
+          rawTitle: row.game,
           firstReleaseYear: row.firstReleaseYear,
           seriesName: row.series,
           genreName: row.genre,
@@ -435,8 +437,8 @@ async function main() {
           existing.firstReleaseYear = row.firstReleaseYear;
         }
         // Use the shorter title (without edition suffixes)
-        if (row.game.length < existing.title.length) {
-          existing.title = row.game;
+        if (normalized.length < existing.title.length) {
+          existing.title = normalized;
         }
       }
     }
@@ -613,7 +615,7 @@ async function main() {
           slug: slug(g.normalizedTitle),
           firstReleaseYear: g.firstReleaseYear ?? 0,
           seriesId,
-          alternativeTitles: g.title !== g.normalizedTitle ? [g.normalizedTitle] : [],
+          alternativeTitles: g.rawTitle !== g.normalizedTitle ? [g.rawTitle] : [],
         })
         .returning({ id: s.masterGames.id });
 
