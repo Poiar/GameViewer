@@ -41,4 +41,14 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/versions-page.component").then((m) => m.VersionsPageComponent),
     data: { title: "Versions" },
   },
+  {
+    path: "favorites",
+    loadComponent: () => import("./pages/favorites-page.component").then((m) => m.FavoritesPageComponent),
+    data: { title: "Favorites" },
+  },
+  {
+    path: "dlc",
+    loadComponent: () => import("./pages/dlc-page.component").then((m) => m.DlcPageComponent),
+    data: { title: "DLCs" },
+  },
 ];

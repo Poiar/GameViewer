@@ -59,7 +59,7 @@ import { MasterGameDetail } from "../types/game.types";
               </div>
               <div class="rg-releases">
                 @for (rel of rg.releases; track rel.id) {
-                  <div class="release-row">
+                  <div class="release-row" [class.owned]="!!rel.userOwns">
                     <span class="rel-platform">{{ rel.playableOn?.join(", ") ?? "—" }}</span>
                     <span class="rel-provider">{{ rel.provider?.name ?? "—" }}</span>
                     <span class="rel-format">{{ rel.mediaFormat?.name ?? "" }}</span>
@@ -68,6 +68,9 @@ import { MasterGameDetail } from "../types/game.types";
                       @if (rel.localMultiplayer === 'Yes') { 🎮 Local }
                       @if (rel.onlineMultiplayer === 'Yes') { 🌐 Online }
                     </span>
+                    @if (rel.userOwns) {
+                      <span class="rel-owned-badge" title="You own this">✓</span>
+                    }
                   </div>
                 }
               </div>
@@ -127,12 +130,19 @@ import { MasterGameDetail } from "../types/game.types";
     .rg-year { font-size: 13px; color: var(--text-muted); }
 
     .rg-releases { display: flex; flex-direction: column; gap: 6px; }
-    .release-row { display: flex; gap: 14px; align-items: center; padding: 8px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); font-size: 13px; }
+    .release-row { display: flex; gap: 14px; align-items: center; padding: 8px 12px; background: var(--bg-tertiary); border-radius: var(--radius-sm); font-size: 13px; transition: all .15s; }
+    .release-row.owned { background: rgba(6, 214, 160, 0.06); border-left: 3px solid var(--accent-secondary); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding-left: 9px; }
     .rel-platform { font-weight: 600; color: var(--text-primary); min-width: 80px; }
     .rel-provider { color: var(--text-secondary); }
     .rel-format { color: var(--text-muted); font-size: 11px; }
     .rel-region { background: var(--bg-card); padding: 1px 8px; border-radius: 10px; font-size: 11px; color: var(--text-muted); }
     .rel-multiplayer { margin-left: auto; font-size: 12px; color: var(--text-muted); }
+    .rel-owned-badge {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent-secondary); color: #000;
+      font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; line-height: 1;
+    }
 
     .dlc-grid { display: flex; flex-wrap: wrap; gap: 10px; }
     .dlc-card { display: flex; gap: 10px; align-items: center; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
@@ -164,7 +174,10 @@ export class GameDetailPageComponent implements OnInit {
       return;
     }
     this.gamesService.getGameBySlug(slug).subscribe({
-      next: (g) => { this.game.set(g); this.loading.set(false); },
+      next: (g) => {
+        this.game.set(g);
+        this.loading.set(false);
+      },
       error: () => { this.error.set("Game not found"); this.loading.set(false); },
     });
   }

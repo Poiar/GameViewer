@@ -13,8 +13,9 @@ import {
   dlcReleaseCompatibility,
   providers,
   mediaFormats,
+  ownedInstances,
 } from "../db/schema.js";
-import { authenticate } from "../middleware/auth.js";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
 import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
@@ -60,8 +61,9 @@ const updateGameSchema = z.object({
 // Routes
 // ---------------------------------------------------------------------------
 
-// GET / — List master games with search, filters, pagination
-router.get("/", async (req: Request, res: Response) => {
+// GET / — List master games with search, filters, pagination. Auth is optional; when
+// present each game includes a summary of the releases the user owns.
+router.get("/", optionalAuth, async (req: Request, res: Response) => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
@@ -178,6 +180,58 @@ router.get("/", async (req: Request, res: Response) => {
       }
     }
 
+    // Batch fetch owned release summaries (when user is authenticated)
+    const ownedMap: Record<number, { platforms: string[]; formats: string[] }[]> = {};
+
+    if (req.user && gameIds.length > 0) {
+      // Get all release IDs that belong to games in this page
+      const pageReleaseIds: { id: number; gameId: number }[] = await db
+        .select({ id: releases.id, gameId: releaseGroups.masterGameId })
+        .from(releases)
+        .innerJoin(releaseGroups, eq(releases.releaseGroupId, releaseGroups.id))
+        .where(inArray(releaseGroups.masterGameId, gameIds));
+
+      const releaseToGame = new Map(pageReleaseIds.map((r) => [r.id, r.gameId]));
+      const allReleaseIds = [...releaseToGame.keys()];
+
+      if (allReleaseIds.length > 0) {
+        // Get owned instances for current user
+        const owned = await db
+          .select({
+            releaseId: ownedInstances.releaseId,
+          })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user!.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
+          );
+
+        const ownedReleaseIds = new Set(owned.map((o) => o.releaseId!).filter(Boolean));
+
+        if (ownedReleaseIds.size > 0) {
+          // Fetch release details (platforms, format) for owned releases
+          const ownedReleases = await db
+            .select({
+              id: releases.id,
+              playableOn: releases.playableOn,
+              mediaFormatName: mediaFormats.name,
+            })
+            .from(releases)
+            .leftJoin(mediaFormats, eq(releases.mediaFormatId, mediaFormats.id))
+            .where(inArray(releases.id, [...ownedReleaseIds]));
+
+          for (const rel of ownedReleases) {
+            const gameId = releaseToGame.get(rel.id);
+            if (!gameId) continue;
+            if (!ownedMap[gameId]) ownedMap[gameId] = [];
+            ownedMap[gameId].push({
+              platforms: (rel.playableOn as string[]) ?? [],
+              formats: rel.mediaFormatName ? [rel.mediaFormatName] : [],
+            });
+          }
+        }
+      }
+    }
+
     // Assemble response
     const data = gameRows.map((g) => ({
       id: g.id,
@@ -190,6 +244,7 @@ router.get("/", async (req: Request, res: Response) => {
       alternativeTitles: g.alternativeTitles,
       genres: genreMap[g.id] || [],
       releaseGroupsCount: rgCountMap[g.id] || 0,
+      ownedReleases: ownedMap[g.id] || [],
       createdAt: g.createdAt,
     }));
 
@@ -212,8 +267,9 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// GET /:slug — Get master game by slug with full detail
-router.get("/:slug", async (req: Request, res: Response) => {
+// GET /:slug — Get master game by slug with full detail. Auth optional; when
+// present, each release includes whether the user owns it.
+router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
   try {
     const slug = req.params.slug as string;
 
@@ -263,6 +319,28 @@ router.get("/:slug", async (req: Request, res: Response) => {
       return;
     }
 
+    // Collect all release IDs from this game
+    const allReleaseIds: number[] = [];
+    for (const rg of game.releaseGroups) {
+      for (const r of rg.releases) {
+        allReleaseIds.push(r.id);
+      }
+    }
+
+    // If user is authenticated, determine which releases they own
+    let ownedReleaseIds: Set<number> = new Set();
+    if (req.user && allReleaseIds.length > 0) {
+      const owned = await db
+        .select({ releaseId: ownedInstances.releaseId })
+        .from(ownedInstances)
+        .where(
+          and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
+        );
+      for (const o of owned) {
+        if (o.releaseId) ownedReleaseIds.add(o.releaseId);
+      }
+    }
+
     // Shape the response: flatten genres, ensure sort orders
     const data = {
       id: game.id,
@@ -300,6 +378,7 @@ router.get("/:slug", async (req: Request, res: Response) => {
               versionImageUrl: r.versionImageUrl,
               provider: r.provider ?? null,
               mediaFormat: r.mediaFormat ?? null,
+              userOwns: ownedReleaseIds.has(r.id),
             })),
         })),
       dlcs: game.dlcs.map((dlc) => ({
