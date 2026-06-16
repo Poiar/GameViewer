@@ -4,7 +4,7 @@ import { ownedInstances, releases, releaseGroups, masterGames, dlcReleases, dlcs
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import { eq, and, desc, count, sql } from "drizzle-orm";
+import { eq, and, desc, count, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -56,7 +56,7 @@ router.get("/", async (req: Request, res: Response) => {
       .from(ownedInstances)
       .where(eq(ownedInstances.userId, userId));
 
-    // Fetch base owned instances without joins
+    // Fetch base owned instances
     const baseRows = await db
       .select()
       .from(ownedInstances)
@@ -65,101 +65,61 @@ router.get("/", async (req: Request, res: Response) => {
       .limit(limit)
       .offset(offset);
 
-    const data = await Promise.all(
-      baseRows.map(async (row) => {
-        // Fetch release data if present
-        let releaseData = null;
-        if (row.releaseId) {
-          const rel = await db.query.releases.findFirst({
-            where: eq(releases.id, row.releaseId),
-            with: {
-              releaseGroup: {
-                with: {
-                  masterGame: {
-                    columns: {
-                      id: true,
-                      title: true,
-                      slug: true,
-                      coverImageUrl: true,
-                      firstReleaseYear: true,
-                    },
-                  },
-                },
-              },
-              provider: true,
-              mediaFormat: true,
-            },
-          });
+    // Collect IDs for batch queries
+    const releaseIds = baseRows.map((r) => r.releaseId).filter(Boolean) as number[];
+    const dlcReleaseIds = baseRows.map((r) => r.dlcReleaseId).filter(Boolean) as number[];
 
-          if (rel) {
-            releaseData = {
-              id: rel.id,
-              title: rel.title,
-              barcode: rel.barcode,
-              catalogNumber: rel.catalogNumber,
-              publisher: rel.publisher,
-              region: rel.region,
-              releaseDate: rel.releaseDate,
-              controllerSupport: rel.controllerSupport,
-              localMultiplayer: rel.localMultiplayer,
-              onlineMultiplayer: rel.onlineMultiplayer,
-              intendedFor: rel.intendedFor,
-              playableOn: rel.playableOn,
-              versionImageUrl: rel.versionImageUrl,
-              provider: rel.provider ?? null,
-              mediaFormat: rel.mediaFormat ?? null,
-              masterGame: rel.releaseGroup?.masterGame ?? null,
-              releaseGroup: rel.releaseGroup
-                ? {
-                    id: rel.releaseGroup.id,
-                    editionName: rel.releaseGroup.editionName,
-                    releaseYear: rel.releaseGroup.releaseYear,
-                  }
-                : null,
-            };
-          }
-        }
+    // Batch query releases with full joins
+    const releaseDataMap = new Map<number, any>();
+    const dlcReleaseDataMap = new Map<number, any>();
 
-        // Fetch DLC release data if present
-        let dlcReleaseData = null;
-        if (row.dlcReleaseId) {
-          const dr = await db.query.dlcReleases.findFirst({
-            where: eq(dlcReleases.id, row.dlcReleaseId),
-            with: {
-              dlc: {
-                columns: { id: true, title: true, dlcType: true },
-              },
-              provider: true,
-              mediaFormat: true,
-            },
-          });
+    if (releaseIds.length > 0) {
+      const rels = await db.query.releases.findMany({
+        where: inArray(releases.id, releaseIds),
+        with: {
+          releaseGroup: { with: { masterGame: { columns: { id: true, title: true, slug: true, coverImageUrl: true, firstReleaseYear: true } } } },
+          provider: true,
+          mediaFormat: true,
+        },
+      });
+      for (const rel of rels) {
+        releaseDataMap.set(rel.id, {
+          id: rel.id, title: rel.title, barcode: rel.barcode, catalogNumber: rel.catalogNumber,
+          publisher: rel.publisher, region: rel.region, releaseDate: rel.releaseDate,
+          controllerSupport: rel.controllerSupport, localMultiplayer: rel.localMultiplayer,
+          onlineMultiplayer: rel.onlineMultiplayer, intendedFor: rel.intendedFor,
+          playableOn: rel.playableOn, versionImageUrl: rel.versionImageUrl,
+          provider: rel.provider ?? null, mediaFormat: rel.mediaFormat ?? null,
+          masterGame: rel.releaseGroup?.masterGame ?? null,
+          releaseGroup: rel.releaseGroup ? { id: rel.releaseGroup.id, editionName: rel.releaseGroup.editionName, releaseYear: rel.releaseGroup.releaseYear } : null,
+        });
+      }
+    }
 
-          if (dr) {
-            dlcReleaseData = {
-              id: dr.id,
-              releaseDate: dr.releaseDate,
-              onDiscForConsoleOnly: dr.onDiscForConsoleOnly,
-              dlc: dr.dlc ?? null,
-              provider: dr.provider ?? null,
-              mediaFormat: dr.mediaFormat ?? null,
-            };
-          }
-        }
+    if (dlcReleaseIds.length > 0) {
+      const drs = await db.query.dlcReleases.findMany({
+        where: inArray(dlcReleases.id, dlcReleaseIds),
+        with: {
+          dlc: { columns: { id: true, title: true, dlcType: true } },
+          provider: true,
+          mediaFormat: true,
+        },
+      });
+      for (const dr of drs) {
+        dlcReleaseDataMap.set(dr.id, {
+          id: dr.id, releaseDate: dr.releaseDate, onDiscForConsoleOnly: dr.onDiscForConsoleOnly,
+          dlc: dr.dlc ?? null, provider: dr.provider ?? null, mediaFormat: dr.mediaFormat ?? null,
+        });
+      }
+    }
 
-        return {
-          id: row.id,
-          condition: row.condition,
-          location: row.location,
-          notes: row.notes,
-          acquiredDate: row.acquiredDate,
-          purchasePrice: row.purchasePrice,
-          createdAt: row.createdAt,
-          updatedAt: row.updatedAt,
-          release: releaseData,
-          dlcRelease: dlcReleaseData,
-        };
-      }),
-    );
+    const data = baseRows.map((row) => ({
+      id: row.id, condition: row.condition, location: row.location,
+      notes: row.notes, acquiredDate: row.acquiredDate, purchasePrice: row.purchasePrice,
+      createdAt: row.createdAt, updatedAt: row.updatedAt,
+      release: row.releaseId ? releaseDataMap.get(row.releaseId) ?? null : null,
+      dlcRelease: row.dlcReleaseId ? dlcReleaseDataMap.get(row.dlcReleaseId) ?? null : null,
+    }));
 
     res.json({
       data,

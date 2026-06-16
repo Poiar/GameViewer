@@ -74,7 +74,7 @@ export class InventoryComponent implements OnInit {
 
   loadInventory(): void {
     this.loading.set(true);
-    this.inventoryService.getInventory(100).subscribe({
+    this.inventoryService.getInventory(500).subscribe({
       next: (items) => { this.ownedInstances.set(items); this.loading.set(false); },
       error: () => this.loading.set(false),
     });

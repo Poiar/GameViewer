@@ -8,8 +8,9 @@ import {
   mediaFormats,
   editionTypes,
   dlcReleaseCompatibility,
+  ownedInstances,
 } from "../db/schema.js";
-import { authenticate } from "../middleware/auth.js";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
 import { eq, and, like, ilike, desc, asc, count, sql, inArray } from "drizzle-orm";
@@ -61,7 +62,7 @@ const updateReleaseSchema = z.object({
 // ---------------------------------------------------------------------------
 
 // GET / — List releases with filtering and pagination
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", optionalAuth, async (req: Request, res: Response) => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
@@ -162,8 +163,23 @@ router.get("/", async (req: Request, res: Response) => {
       .limit(limit)
       .offset(offset);
 
+    // Batch check ownership
+    const ownedReleaseIds = new Set<number>();
+    if (req.user && rows.length > 0) {
+      const rIds = rows.map((r) => r.id);
+      const owned = await db
+        .select({ releaseId: ownedInstances.releaseId })
+        .from(ownedInstances)
+        .where(
+          and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, rIds)),
+        );
+      for (const o of owned) { if (o.releaseId) ownedReleaseIds.add(o.releaseId); }
+    }
+
+    const data = rows.map((r) => ({ ...r, userOwns: ownedReleaseIds.has(r.id) }));
+
     res.json({
-      data: rows,
+      data,
       meta: {
         page,
         limit,

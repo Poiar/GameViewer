@@ -86,6 +86,8 @@ export interface Release {
   createdAt: string;
   provider?: Provider;
   mediaFormat?: MediaFormat;
+  masterGame?: { id: number; title: string; slug: string } | null;
+  editionType?: EditionType | null;
   releaseGroup?: ReleaseGroup & { masterGame?: MasterGame };
   userOwns?: { id: number; condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null } | null;
 }
