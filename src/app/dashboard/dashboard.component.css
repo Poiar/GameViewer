@@ -213,7 +213,14 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  transition: background .15s;
+  padding: 4px 8px;
+  margin: 0 -8px;
 }
+.completeness-item:hover { background: var(--bg-elevated); }
 
 .completeness-header {
   display: flex;

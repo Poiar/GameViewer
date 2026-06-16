@@ -164,7 +164,7 @@
         <h3 class="panel-title">Collection Progress</h3>
         <div class="completeness-grid">
           @for (coll of s.collectionCompleteness; track coll.collectionId) {
-            <div class="completeness-item">
+            <a class="completeness-item" [routerLink]="['/collections', coll.collectionId]">
               <div class="completeness-header">
                 <span class="completeness-title">{{ coll.title }}</span>
                 <span class="completeness-count">{{ coll.owned }}/{{ coll.total }}</span>
@@ -176,7 +176,7 @@
                   [class.complete]="coll.owned === coll.total && coll.total > 0"
                 ></div>
               </div>
-            </div>
+            </a>
           }
         </div>
       </div>
