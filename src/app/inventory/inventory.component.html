@@ -1,6 +1,4 @@
 @if (authService.isLoggedIn()) {
-  <h1>My Inventory</h1>
-
   <div class="inventory-layout">
     <div class="inventory-list">
       <button class="add-btn" (click)="onToggleAdd()">+ Add to Inventory</button>
@@ -51,13 +49,17 @@
           <div class="inventory-item" [class.selected]="selectedOwned === owned">
             <div class="item-summary" (click)="onSelect(owned)">
               <span class="item-title">
-                {{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? "Unknown" }}
+                {{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? owned.dlcRelease?.dlc?.title ?? "Unknown" }}
               </span>
               <span class="item-detail">
-                {{ owned.release?.releaseGroup?.editionType?.name ?? "" }}
-                ({{ owned.release?.playableOn?.join(", ") ?? "" }})
+                @if (owned.release) {
+                  {{ owned.release.releaseGroup?.editionType?.name ?? "" }}
+                  ({{ owned.release.playableOn?.join(", ") ?? "" }})
+                } @else if (owned.dlcRelease) {
+                  {{ owned.dlcRelease.dlc?.dlcType ?? "DLC" }}
+                }
               </span>
-              <span class="item-provider">{{ owned.release?.provider?.name ?? "" }}</span>
+              <span class="item-provider">{{ owned.release?.provider?.name ?? owned.dlcRelease?.provider?.name ?? "" }}</span>
               @if (owned.condition) {
                 <span class="item-condition">{{ owned.condition }}</span>
               }
@@ -79,7 +81,7 @@
     @if (selectedOwned) {
       <div class="inventory-detail">
         <h2>
-          {{ selectedOwned.release?.releaseGroup?.masterGame?.title ?? selectedOwned.release?.title ?? "Item Details" }}
+          {{ selectedOwned.release?.releaseGroup?.masterGame?.title ?? selectedOwned.release?.title ?? selectedOwned.dlcRelease?.dlc?.title ?? "Item Details" }}
         </h2>
         <div class="detail-grid">
           <div class="detail-row">
