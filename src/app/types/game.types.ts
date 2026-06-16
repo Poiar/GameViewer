@@ -43,6 +43,7 @@ export interface Series {
   updatedAt: string;
   games?: MasterGame[];
   gameCount?: number;
+  covers?: string[];
   _count?: { games: number };
 }
 

@@ -18,10 +18,11 @@ import { HttpClient } from "@angular/common/http";
                   <h4 class="tl-year-title">{{ year }} <span class="tly-count">{{ gamesByYear()[year].length }} games</span></h4>
                   <div class="tl-grid">
                     @for (game of gamesByYear()[year]; track game.id; let i = $index) {
-                      <a class="tl-card" [routerLink]="['/games', game.slug]" [style.--idx]="i">
+                      <a class="tl-card" [class.owned]="$any(game).ownedReleases?.length > 0" [routerLink]="['/games', game.slug]" [style.--idx]="i">
                         <div class="tlc-cover">
                           @if (game.coverImageUrl) { <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy" /> }
                           @else { <span class="tlc-ph">🎮</span> }
+                          @if ($any(game).ownedReleases?.length > 0) { <span class="tlc-owned">✓</span> }
                         </div>
                         <div class="tlc-body"><span class="tlc-title">{{ game.title }}</span></div>
                       </a>
@@ -46,12 +47,15 @@ import { HttpClient } from "@angular/common/http";
     .tl-year-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
     .tly-count { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-left: 8px; }
     .tl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-    .tl-card { border-radius: var(--radius-md); overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-subtle); text-decoration: none; display: block; transition: transform .2s; animation: in 300ms ease-out both; animation-delay: calc(var(--idx)*25ms); }
+    .tl-card { border-radius: var(--radius-md); overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-subtle); text-decoration: none; display: block; transition: transform .2s; animation: in 300ms ease-out both; animation-delay: calc(var(--idx)*25ms); position: relative; }
     .tl-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.4); }
+    .tl-card.owned { border-color: rgba(6,214,160,.25); }
+    .tl-card.owned:hover { box-shadow: 0 8px 20px rgba(6,214,160,.1); }
     @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .tlc-cover { width: 100%; aspect-ratio: 2/3; overflow: hidden; background: var(--bg-tertiary); }
+    .tlc-cover { width: 100%; aspect-ratio: 2/3; overflow: hidden; background: var(--bg-tertiary); position: relative; }
     .tlc-cover img { width: 100%; height: 100%; object-fit: cover; }
     .tlc-ph { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 28px; opacity: .3; }
+    .tlc-owned { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-secondary); color: #000; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 2; }
     .tlc-body { padding: 6px 8px; }
     .tlc-title { font-size: 11px; font-weight: 600; color: var(--text-primary); line-height: 1.3; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .tl-load { display: flex; justify-content: center; padding: 80px 0; }

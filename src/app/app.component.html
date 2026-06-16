@@ -98,6 +98,9 @@
         <a routerLink="/favorites" routerLinkActive="active" (click)="closeMobileMenu()">
           <span class="nav-icon">⭐</span>
           <span>Favorites</span>
+          @if (navCounts(); as c) {
+            <span class="nav-count">{{ c.totalFavorites }}</span>
+          }
         </a>
       </div>
 
