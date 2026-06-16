@@ -75,8 +75,16 @@ GameViewer/
 | `app-game-ui` | `game-ui` |
 | `app-inventory` | `inventory` |
 | `app-model-viewer` | `model-viewer` |
+| `app-collections-page` | `pages` |
+| `app-dashboard-page` | `pages` |
+| `app-explore-page` | `pages` |
+| `app-games-page` | `pages` |
+| `app-inventory-page` | `pages` |
+| `app-series-page` | `pages` |
+| `app-versions-page` | `pages` |
 | `app-profile` | `profile` |
 | `app-empty-state` | `shared` |
+| `app-error-console` | `shared` |
 | `app-error-state` | `shared` |
 | `app-loading-spinner` | `shared` |
 
@@ -88,6 +96,8 @@ GameViewer/
 | `collections.service.ts` | Collection/compilation management |
 | `dashboard.service.ts` | Dashboard statistics |
 | `dlc.service.ts` | DLC and DLC release management |
+| `error-console.service.spec.ts.service.ts` |  |
+| `error-console.service.ts` |  |
 | `favorites.service.ts` | Favorites/wishlist |
 | `games.service.ts` | Master game queries and CRUD |
 | `inventory.service.ts` | Owned instances (your collection) |
@@ -128,6 +138,7 @@ All endpoints are prefixed with `/api`. Auth-required endpoints marked with 🔒
 | `GET` | `/api/auth/me` | 🔒 |
 | `PUT` | `/api/auth/me` | 🔒 |
 | `PUT` | `/api/auth/me/password` | 🔒 |
+| `POST` | `/api/auth/dev-login` |  |
 
 ### Compilations & box sets
 
@@ -179,6 +190,8 @@ All endpoints are prefixed with `/api`. Auth-required endpoints marked with 🔒
 | `POST` | `/api/games/` | 🔒 |
 | `PUT` | `/api/games/:id` | 🔒 |
 | `DELETE` | `/api/games/:id` | 🔒 |
+| `POST` | `/api/games/:id/cover` | 🔒 |
+| `POST` | `/api/games/bulk-cover` | 🔒 |
 
 ### Your owned collection
 
@@ -462,12 +475,14 @@ All endpoints are prefixed with `/api`. Auth-required endpoints marked with 🔒
 | `watch` | Build in watch mode (development) |
 | `test` | Playwright E2E tests (UI mode) |
 | `test:headless` | Playwright E2E tests (headless) |
+| `test:unit` | npx vitest run |
 | `lint` | Lint TypeScript + HTML (ESLint + Prettier) |
 | `lint:fix` | Lint and auto-fix issues |
 | `format` | Format source files with Prettier |
 | `format:check` | Check formatting without fixing |
 | `typecheck` | TypeScript type checking (tsc --noEmit) |
 | `build-readme` | tsx scripts/build-readme.ts |
+| `check` | npm run lint && npm run format:check && npm run test:unit && npm run build-readme |
 | `prepare` | Install Husky git hooks |
 
 ### Backend (`cd server && npm run ...`)
@@ -586,6 +601,6 @@ The importer handles:
 
 ---
 
-*Auto-generated README built 2026-06-15.*
+*Auto-generated README built 2026-06-16.*
 
 *Run `npm run build-readme` to regenerate.*

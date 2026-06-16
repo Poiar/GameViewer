@@ -32,9 +32,7 @@ function createErrorConsole() {
       return open;
     },
 
-    push(
-      partial: Partial<CapturedError> & { message: string },
-    ): CapturedError {
+    push(partial: Partial<CapturedError> & { message: string }): CapturedError {
       const entry: CapturedError = {
         id: nextId++,
         time: new Date().toLocaleTimeString(),
@@ -68,9 +66,7 @@ function createErrorConsole() {
           (e, i) =>
             `#${i + 1} ${e.time}\n` +
             `${e.message}\n` +
-            `${e.source || "inline/runtime"} ${e.line ? "line " + e.line : ""}${
-              e.col ? ":" + e.col : ""
-            }\n` +
+            `${e.source || "inline/runtime"} ${e.line ? "line " + e.line : ""}${e.col ? ":" + e.col : ""}\n` +
             `${e.stack}`,
         )
         .join("\n\n");

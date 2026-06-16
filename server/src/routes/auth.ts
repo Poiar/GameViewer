@@ -121,15 +121,12 @@ router.post("/register", validate(registerSchema), async (req: Request, res: Res
 
     const passwordHash = await bcrypt.hash(password, config.bcryptRounds);
 
-    const [newUser] = await db
-      .insert(users)
-      .values({ username, displayName, email, passwordHash })
-      .returning({
-        id: users.id,
-        username: users.username,
-        displayName: users.displayName,
-        email: users.email,
-      });
+    const [newUser] = await db.insert(users).values({ username, displayName, email, passwordHash }).returning({
+      id: users.id,
+      username: users.username,
+      displayName: users.displayName,
+      email: users.email,
+    });
 
     const accessToken = generateAccessToken(newUser.id, newUser.username);
     const refreshToken = await createRefreshToken(newUser.id);
@@ -156,11 +153,7 @@ router.post("/login", validate(loginSchema), async (req: Request, res: Response)
   try {
     const { username, password } = req.body;
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.username, username))
-      .limit(1);
+    const [user] = await db.select().from(users).where(eq(users.username, username)).limit(1);
 
     if (!user) {
       res.status(401).json({
@@ -218,11 +211,7 @@ router.post("/refresh", async (req: Request, res: Response) => {
 
     const tokenHash = hashRefreshToken(token);
 
-    const [stored] = await db
-      .select()
-      .from(refreshTokens)
-      .where(eq(refreshTokens.tokenHash, tokenHash))
-      .limit(1);
+    const [stored] = await db.select().from(refreshTokens).where(eq(refreshTokens.tokenHash, tokenHash)).limit(1);
 
     if (!stored) {
       res.status(401).json({
@@ -334,11 +323,7 @@ router.put("/me", authenticate, validate(updateProfileSchema), async (req: Reque
   try {
     const { displayName, email, currentPassword } = req.body;
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, req.user!.userId))
-      .limit(1);
+    const [user] = await db.select().from(users).where(eq(users.id, req.user!.userId)).limit(1);
 
     if (!user) {
       res.status(404).json({
@@ -381,16 +366,12 @@ router.put("/me", authenticate, validate(updateProfileSchema), async (req: Reque
       updateData.email = email;
     }
 
-    const [updated] = await db
-      .update(users)
-      .set(updateData)
-      .where(eq(users.id, req.user!.userId))
-      .returning({
-        id: users.id,
-        username: users.username,
-        displayName: users.displayName,
-        email: users.email,
-      });
+    const [updated] = await db.update(users).set(updateData).where(eq(users.id, req.user!.userId)).returning({
+      id: users.id,
+      username: users.username,
+      displayName: users.displayName,
+      email: users.email,
+    });
 
     res.json({ data: updated, error: null });
   } catch (error) {
@@ -432,10 +413,7 @@ router.put("/me/password", authenticate, validate(changePasswordSchema), async (
 
     const passwordHash = await bcrypt.hash(newPassword, config.bcryptRounds);
 
-    await db
-      .update(users)
-      .set({ passwordHash, updatedAt: new Date() })
-      .where(eq(users.id, req.user!.userId));
+    await db.update(users).set({ passwordHash, updatedAt: new Date() }).where(eq(users.id, req.user!.userId));
 
     res.json({ data: { message: "Password updated successfully" }, error: null });
   } catch (error) {
@@ -455,11 +433,7 @@ router.post("/dev-login", async (_req: Request, res: Response) => {
     let [user] = await db.select().from(users).where(eq(users.id, 1)).limit(1);
 
     if (!user) {
-      [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.username, "dev"))
-        .limit(1);
+      [user] = await db.select().from(users).where(eq(users.username, "dev")).limit(1);
     }
 
     if (!user) {

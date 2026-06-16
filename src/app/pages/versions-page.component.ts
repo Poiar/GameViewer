@@ -1,8 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import {
-  allGameVersions,
-  GameVersion,
-} from "../../classes/model";
+import { allGameVersions, GameVersion } from "../../classes/model";
 
 @Component({
   selector: "app-versions-page",

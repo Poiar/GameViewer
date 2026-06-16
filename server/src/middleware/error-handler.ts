@@ -14,9 +14,8 @@ export function errorHandler(err: AppError, _req: Request, res: Response, _next:
 
   const statusCode = err.statusCode ?? 500;
   const code = err.code ?? "INTERNAL_SERVER_ERROR";
-  const message = statusCode === 500 && process.env.NODE_ENV !== "development"
-    ? "An unexpected error occurred"
-    : err.message;
+  const message =
+    statusCode === 500 && process.env.NODE_ENV !== "development" ? "An unexpected error occurred" : err.message;
 
   res.status(statusCode).json({
     data: null,

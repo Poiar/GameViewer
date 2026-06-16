@@ -15,15 +15,7 @@ import {
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import {
-  eq,
-  and,
-  desc,
-  asc,
-  count,
-  sql,
-  inArray,
-} from "drizzle-orm";
+import { eq, and, desc, asc, count, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -54,9 +46,7 @@ router.get("/", async (req: Request, res: Response) => {
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
     const offset = (page - 1) * limit;
 
-    const [{ count: total }] = await db
-      .select({ count: count() })
-      .from(collectionsTable);
+    const [{ count: total }] = await db.select({ count: count() }).from(collectionsTable);
 
     const rows = await db
       .select({
@@ -263,11 +253,7 @@ router.put("/:id", authenticate, validate(updateCollectionSchema), async (req: R
       return;
     }
 
-    const [updated] = await db
-      .update(collectionsTable)
-      .set(updateData)
-      .where(eq(collectionsTable.id, id))
-      .returning();
+    const [updated] = await db.update(collectionsTable).set(updateData).where(eq(collectionsTable.id, id)).returning();
 
     res.json({ data: updated, error: null });
   } catch (error) {
@@ -335,10 +321,7 @@ router.post("/:id/releases/:releaseId", authenticate, async (req: Request, res: 
       return;
     }
 
-    await db
-      .insert(collectionReleases)
-      .values({ collectionId, releaseId })
-      .onConflictDoNothing();
+    await db.insert(collectionReleases).values({ collectionId, releaseId }).onConflictDoNothing();
 
     res.status(201).json({
       data: { message: "Release added to collection" },
@@ -369,12 +352,7 @@ router.delete("/:id/releases/:releaseId", authenticate, async (req: Request, res
 
     await db
       .delete(collectionReleases)
-      .where(
-        and(
-          eq(collectionReleases.collectionId, collectionId),
-          eq(collectionReleases.releaseId, releaseId),
-        ),
-      );
+      .where(and(eq(collectionReleases.collectionId, collectionId), eq(collectionReleases.releaseId, releaseId)));
 
     res.json({
       data: { message: "Release removed from collection" },
@@ -403,10 +381,7 @@ router.post("/:id/dlc-releases/:dlcReleaseId", authenticate, async (req: Request
       return;
     }
 
-    await db
-      .insert(collectionDlcReleases)
-      .values({ collectionId, dlcReleaseId })
-      .onConflictDoNothing();
+    await db.insert(collectionDlcReleases).values({ collectionId, dlcReleaseId }).onConflictDoNothing();
 
     res.status(201).json({
       data: { message: "DLC release added to collection" },
@@ -438,10 +413,7 @@ router.delete("/:id/dlc-releases/:dlcReleaseId", authenticate, async (req: Reque
     await db
       .delete(collectionDlcReleases)
       .where(
-        and(
-          eq(collectionDlcReleases.collectionId, collectionId),
-          eq(collectionDlcReleases.dlcReleaseId, dlcReleaseId),
-        ),
+        and(eq(collectionDlcReleases.collectionId, collectionId), eq(collectionDlcReleases.dlcReleaseId, dlcReleaseId)),
       );
 
     res.json({

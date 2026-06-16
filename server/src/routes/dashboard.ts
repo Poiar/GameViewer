@@ -58,18 +58,9 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
     ]);
 
     // ── User-specific counts ──
-    const [
-      [{ count: totalUserOwned }],
-      [{ count: totalFavorites }],
-    ] = await Promise.all([
-      db
-        .select({ count: count() })
-        .from(ownedInstances)
-        .where(eq(ownedInstances.userId, userId)),
-      db
-        .select({ count: count() })
-        .from(userFavorites)
-        .where(eq(userFavorites.userId, userId)),
+    const [[{ count: totalUserOwned }], [{ count: totalFavorites }]] = await Promise.all([
+      db.select({ count: count() }).from(ownedInstances).where(eq(ownedInstances.userId, userId)),
+      db.select({ count: count() }).from(userFavorites).where(eq(userFavorites.userId, userId)),
     ]);
 
     // ── Platform distribution ──
@@ -220,10 +211,7 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
           .from(collectionReleases)
           .innerJoin(
             ownedInstances,
-            and(
-              eq(ownedInstances.releaseId, collectionReleases.releaseId),
-              eq(ownedInstances.userId, userId),
-            ),
+            and(eq(ownedInstances.releaseId, collectionReleases.releaseId), eq(ownedInstances.userId, userId)),
           )
           .where(eq(collectionReleases.collectionId, cc.collectionId));
 

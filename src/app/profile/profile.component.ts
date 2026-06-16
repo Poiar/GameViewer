@@ -1,6 +1,13 @@
 import {
-  Component, ChangeDetectionStrategy, EventEmitter, Output, inject,
-  OnInit, OnDestroy, ViewChild, ElementRef,
+  Component,
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output,
+  inject,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../services/auth.service";

@@ -82,11 +82,7 @@ router.post("/:gameId", async (req: Request, res: Response) => {
     }
 
     // Check game exists
-    const [game] = await db
-      .select({ id: masterGames.id })
-      .from(masterGames)
-      .where(eq(masterGames.id, gameId))
-      .limit(1);
+    const [game] = await db.select({ id: masterGames.id }).from(masterGames).where(eq(masterGames.id, gameId)).limit(1);
 
     if (!game) {
       res.status(404).json({
@@ -97,10 +93,7 @@ router.post("/:gameId", async (req: Request, res: Response) => {
     }
 
     // Idempotent insert — ignore if already exists
-    await db
-      .insert(userFavorites)
-      .values({ userId, masterGameId: gameId })
-      .onConflictDoNothing();
+    await db.insert(userFavorites).values({ userId, masterGameId: gameId }).onConflictDoNothing();
 
     res.status(201).json({
       data: { message: "Game added to favorites" },
@@ -129,11 +122,7 @@ router.delete("/:gameId", async (req: Request, res: Response) => {
       return;
     }
 
-    await db
-      .delete(userFavorites)
-      .where(
-        and(eq(userFavorites.userId, userId), eq(userFavorites.masterGameId, gameId)),
-      );
+    await db.delete(userFavorites).where(and(eq(userFavorites.userId, userId), eq(userFavorites.masterGameId, gameId)));
 
     res.json({
       data: { message: "Game removed from favorites" },

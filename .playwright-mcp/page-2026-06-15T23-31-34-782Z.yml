@@ -1,0 +1,60 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: 🎮
+        - generic [ref=e7]:
+          - heading "Game Catalog" [level=1] [ref=e8]
+          - paragraph [ref=e9]: Your Collection Tracker
+      - navigation "Main navigation" [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Collection
+          - link "Dashboard" [ref=e13] [cursor=pointer]:
+            - /url: "#/dashboard"
+            - img [ref=e15]
+            - generic [ref=e16]: Dashboard
+          - link "Inventory" [ref=e17] [cursor=pointer]:
+            - /url: "#/inventory"
+            - img [ref=e19]
+            - generic [ref=e22]: Inventory
+        - generic [ref=e23]:
+          - generic [ref=e24]: Browse
+          - link "Explore" [ref=e25] [cursor=pointer]:
+            - /url: "#/explore"
+            - img [ref=e27]
+            - generic [ref=e30]: Explore
+          - link "Games" [ref=e31] [cursor=pointer]:
+            - /url: "#/games"
+            - img [ref=e33]
+            - generic [ref=e35]: Games
+          - link "Series" [ref=e36] [cursor=pointer]:
+            - /url: "#/series"
+            - img [ref=e38]
+            - generic [ref=e41]: Series
+          - link "Collections" [ref=e42] [cursor=pointer]:
+            - /url: "#/collections"
+            - img [ref=e44]
+            - generic [ref=e49]: Collections
+          - link "Versions" [ref=e50] [cursor=pointer]:
+            - /url: "#/versions"
+            - img [ref=e52]
+            - generic [ref=e58]: Versions
+      - paragraph [ref=e60]: Game Catalog v1.0
+    - main [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - heading "Dashboard" [level=2] [ref=e64]
+          - paragraph [ref=e65]: Your collection at a glance
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - heading "Dashboard" [level=2] [ref=e69]
+            - paragraph [ref=e70]: Your collection at a glance
+          - generic "Sign in to see your dashboard" [ref=e71]:
+            - generic [ref=e72]:
+              - generic [ref=e73]: 🔐
+              - heading "Sign in to see your dashboard" [level=3] [ref=e74]
+              - paragraph [ref=e75]: Log in or create an account to track your collection, favorites, and discover patterns.
+  - generic [ref=e78]:
+    - generic [ref=e79]: "TS2532: Object is possibly 'undefined'."
+    - generic [ref=e80]: src/app/dashboard/dashboard.component.html:134:38
+    - generic [ref=e82]: Click outside, press Esc key, or fix the code to dismiss.

@@ -56,9 +56,7 @@ export class ErrorConsoleService {
         (e, i) =>
           `#${i + 1} ${e.time}\n` +
           `${e.message}\n` +
-          `${e.source || "inline/runtime"} ${e.line ? "line " + e.line : ""}${
-            e.col ? ":" + e.col : ""
-          }\n` +
+          `${e.source || "inline/runtime"} ${e.line ? "line " + e.line : ""}${e.col ? ":" + e.col : ""}\n` +
           `${e.stack}`,
       )
       .join("\n\n");

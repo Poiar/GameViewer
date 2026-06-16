@@ -12,17 +12,7 @@ import {
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import {
-  eq,
-  and,
-  like,
-  ilike,
-  desc,
-  asc,
-  count,
-  sql,
-  inArray,
-} from "drizzle-orm";
+import { eq, and, like, ilike, desc, asc, count, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -98,9 +88,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     if (platformSlug) {
       // platformSlug filters on `playableOn` JSONB field
-      conditions.push(
-        sql`${releases.playableOn}::text ILIKE ${`%"${platformSlug}"%`}`,
-      );
+      conditions.push(sql`${releases.playableOn}::text ILIKE ${`%"${platformSlug}"%`}`);
     }
 
     // If filtering by game, we need to join through releaseGroups
@@ -116,10 +104,7 @@ router.get("/", async (req: Request, res: Response) => {
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Total count
-    const [{ count: total }] = await db
-      .select({ count: count() })
-      .from(releases)
-      .where(whereClause);
+    const [{ count: total }] = await db.select({ count: count() }).from(releases).where(whereClause);
 
     // Fetch releases with relations via joins
     const rows = await db
@@ -231,10 +216,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 
     // Also fetch DLC compatibility info
-    const compatRows = await db
-      .select()
-      .from(dlcReleaseCompatibility)
-      .where(eq(dlcReleaseCompatibility.releaseId, id));
+    const compatRows = await db.select().from(dlcReleaseCompatibility).where(eq(dlcReleaseCompatibility.releaseId, id));
 
     const data = {
       ...row,
@@ -340,11 +322,7 @@ router.put("/:id", authenticate, validate(updateReleaseSchema), async (req: Requ
       return;
     }
 
-    const [existing] = await db
-      .select({ id: releases.id })
-      .from(releases)
-      .where(eq(releases.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: releases.id }).from(releases).where(eq(releases.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({
@@ -432,11 +410,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    const [existing] = await db
-      .select({ id: releases.id })
-      .from(releases)
-      .where(eq(releases.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: releases.id }).from(releases).where(eq(releases.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({

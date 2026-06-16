@@ -130,7 +130,7 @@ function mapDevice(deviceRaw: string): DeviceMapping {
 
   const map: Record<string, DeviceMapping> = {
     PC: { intendedFor: ["Win"], playableOn: ["Win"] },
-    "XBOX": { intendedFor: ["Xbox"], playableOn: ["Xbox"] },
+    XBOX: { intendedFor: ["Xbox"], playableOn: ["Xbox"] },
     X360: { intendedFor: ["X360"], playableOn: ["X360"] },
     XONE: { intendedFor: ["XONE"], playableOn: ["XONE"] },
     XSX: { intendedFor: ["XSX"], playableOn: ["XSX"] },
@@ -233,11 +233,8 @@ function mapDevice(deviceRaw: string): DeviceMapping {
 
   // Default: treat as a single platform
   const platformSlug = slug(normalized);
-  const platformName =
-    normalized === "PC" ? "Win" : normalized.replace(/\s+/g, "");
-  console.warn(
-    `  [WARN] Unknown device: "${deviceRaw}" → using "${platformName}"`,
-  );
+  const platformName = normalized === "PC" ? "Win" : normalized.replace(/\s+/g, "");
+  console.warn(`  [WARN] Unknown device: "${deviceRaw}" → using "${platformName}"`);
   return {
     intendedFor: [platformName],
     playableOn: [platformName],
@@ -301,20 +298,13 @@ function mapProvider(storeRaw: string): string {
 // Edition type inference from game title and collection
 // ---------------------------------------------------------------------------
 
-function inferEditionType(
-  gameTitle: string,
-  collectionTitle: string,
-): string {
+function inferEditionType(gameTitle: string, collectionTitle: string): string {
   const combined = `${collectionTitle} ${gameTitle}`.toLowerCase();
 
   if (combined.includes("demake") || combined.includes("(demake)")) {
     return "Demake";
   }
-  if (
-    combined.includes("(hd)") ||
-    combined.includes("remastered") ||
-    combined.includes("remaster")
-  ) {
+  if (combined.includes("(hd)") || combined.includes("remastered") || combined.includes("remaster")) {
     return "Remaster";
   }
   if (
@@ -358,11 +348,7 @@ function normalizeGameTitle(title: string): string {
 // ---------------------------------------------------------------------------
 
 async function main() {
-  const csvPath = path.join(
-    import.meta.dirname,
-    "imports",
-    "spil.csv",
-  );
+  const csvPath = path.join(import.meta.dirname, "imports", "spil.csv");
 
   if (!fs.existsSync(csvPath)) {
     console.error(`[Import] CSV file not found: ${csvPath}`);
@@ -399,10 +385,7 @@ async function main() {
       genreName: string;
     }
   >();
-  const collectionSet = new Map<
-    string,
-    { title: string; releaseYear: number | null }
-  >();
+  const collectionSet = new Map<string, { title: string; releaseYear: number | null }>();
 
   const fullGameRows: SheetRow[] = [];
   const dlcRows: SheetRow[] = [];
@@ -447,8 +430,7 @@ async function main() {
         const existing = gameMap.get(normalized.toLowerCase())!;
         if (
           row.firstReleaseYear &&
-          (existing.firstReleaseYear === null ||
-            row.firstReleaseYear < existing.firstReleaseYear)
+          (existing.firstReleaseYear === null || row.firstReleaseYear < existing.firstReleaseYear)
         ) {
           existing.firstReleaseYear = row.firstReleaseYear;
         }
@@ -474,9 +456,7 @@ async function main() {
   console.log(
     `[Import] Found: ${genreSet.size} genres, ${seriesSet.size} series, ${gameMap.size} unique games, ${collectionSet.size} collections`,
   );
-  console.log(
-    `[Import] Rows: ${fullGameRows.length} full games, ${dlcRows.length} DLC, ${arcadeRows.length} arcade`,
-  );
+  console.log(`[Import] Rows: ${fullGameRows.length} full games, ${dlcRows.length} DLC, ${arcadeRows.length} arcade`);
 
   // -----------------------------------------------------------------------
   // Connect to DB and insert data
@@ -498,22 +478,12 @@ async function main() {
   const existingEditionTypes = await db.select().from(s.editionTypes);
   const existingMediaFormats = await db.select().from(s.mediaFormats);
 
-  const platformSlugToId = new Map(
-    existingPlatforms.map((p) => [p.slug, p.id]),
-  );
-  const providerNameToId = new Map(
-    existingProviders.map((p) => [p.name, p.id]),
-  );
+  const platformSlugToId = new Map(existingPlatforms.map((p) => [p.slug, p.id]));
+  const providerNameToId = new Map(existingProviders.map((p) => [p.name, p.id]));
   const genreNameToId = new Map(existingGenres.map((g) => [g.name, g.id]));
-  const seriesNameToId = new Map(
-    existingSeries.map((s) => [s.name, s.id]),
-  );
-  const editionTypeNameToId = new Map(
-    existingEditionTypes.map((e) => [e.name, e.id]),
-  );
-  const mediaFormatNameToId = new Map(
-    existingMediaFormats.map((m) => [m.name, m.id]),
-  );
+  const seriesNameToId = new Map(existingSeries.map((s) => [s.name, s.id]));
+  const editionTypeNameToId = new Map(existingEditionTypes.map((e) => [e.name, e.id]));
+  const mediaFormatNameToId = new Map(existingMediaFormats.map((m) => [m.name, m.id]));
 
   // Add any missing platforms
   const neededPlatforms = new Set<string>();
@@ -527,9 +497,7 @@ async function main() {
     }
   }
   if (neededPlatforms.size > 0) {
-    console.log(
-      `[Import] Adding ${neededPlatforms.size} new platforms: ${[...neededPlatforms].join(", ")}`,
-    );
+    console.log(`[Import] Adding ${neededPlatforms.size} new platforms: ${[...neededPlatforms].join(", ")}`);
     const platformInserts = [...neededPlatforms].map((name) => ({
       name,
       slug: slug(name),
@@ -548,9 +516,7 @@ async function main() {
     }
   }
   if (neededProviders.size > 0) {
-    console.log(
-      `[Import] Adding ${neededProviders.size} new providers: ${[...neededProviders].join(", ")}`,
-    );
+    console.log(`[Import] Adding ${neededProviders.size} new providers: ${[...neededProviders].join(", ")}`);
     for (const name of neededProviders) {
       try {
         await db.insert(s.providers).values({ name, slug: slug(name) });
@@ -568,13 +534,9 @@ async function main() {
 
   // Add missing genres
   if (genreSet.size > 0) {
-    const missingGenres = [...genreSet].filter(
-      (g) => !genreNameToId.has(g),
-    );
+    const missingGenres = [...genreSet].filter((g) => !genreNameToId.has(g));
     if (missingGenres.length > 0) {
-      console.log(
-        `[Import] Adding ${missingGenres.length} new genres: ${missingGenres.join(", ")}`,
-      );
+      console.log(`[Import] Adding ${missingGenres.length} new genres: ${missingGenres.join(", ")}`);
       for (const name of missingGenres) {
         try {
           await db.insert(s.genres).values({ name, slug: slug(name) });
@@ -614,9 +576,7 @@ async function main() {
   // -----------------------------------------------------------------------
 
   console.log("[Import] Inserting series...");
-  const seriesToInsert = [...seriesSet].filter(
-    (name) => !seriesNameToId.has(name),
-  );
+  const seriesToInsert = [...seriesSet].filter((name) => !seriesNameToId.has(name));
   if (seriesToInsert.length > 0) {
     // Insert in batches to avoid long-running transactions
     for (const name of seriesToInsert) {
@@ -643,9 +603,7 @@ async function main() {
   const gameTitles = [...gameMap.values()];
 
   for (const g of gameTitles) {
-    const seriesId = g.seriesName
-      ? seriesNameToId.get(g.seriesName) ?? noneSeriesId
-      : noneSeriesId;
+    const seriesId = g.seriesName ? (seriesNameToId.get(g.seriesName) ?? noneSeriesId) : noneSeriesId;
 
     try {
       const result = await db
@@ -671,15 +629,10 @@ async function main() {
           .where(eq(s.masterGames.slug, slug(g.normalizedTitle)))
           .limit(1);
         if (existing.length > 0) {
-          gameTitleToId.set(
-            g.normalizedTitle.toLowerCase(),
-            existing[0].id,
-          );
+          gameTitleToId.set(g.normalizedTitle.toLowerCase(), existing[0].id);
         }
       } else {
-        console.warn(
-          `  [WARN] Failed to insert game "${g.title}": ${err?.message}`,
-        );
+        console.warn(`  [WARN] Failed to insert game "${g.title}": ${err?.message}`);
       }
     }
   }
@@ -707,10 +660,7 @@ async function main() {
       const key = `${gameId}-${genreId}`;
       if (!genreLinksAdded.has(key)) {
         try {
-          await db
-            .insert(s.masterGameGenres)
-            .values({ gameId, genreId })
-            .onConflictDoNothing();
+          await db.insert(s.masterGameGenres).values({ gameId, genreId }).onConflictDoNothing();
           genreLinksAdded.add(key);
         } catch {
           // ignore duplicates
@@ -748,17 +698,14 @@ async function main() {
     const providerName = mapProvider(row.store);
     const providerId = providerNameToId.get(providerName);
     if (!providerId) {
-      console.warn(
-        `  [WARN] No provider ID for "${providerName}" (row ${row.rowNum})`,
-      );
+      console.warn(`  [WARN] No provider ID for "${providerName}" (row ${row.rowNum})`);
       continue;
     }
 
     const deviceMapping = mapDevice(row.device);
 
     // Determine media format
-    const isPhysical =
-      row.physical === "y" || (row.store === "-" && row.physical !== "x");
+    const isPhysical = row.physical === "y" || (row.store === "-" && row.physical !== "x");
     const mediaFormatName = isPhysical ? "N/A" : "Digital";
     const mediaFormatId = mediaFormatNameToId.get(mediaFormatName) ?? 1;
 
@@ -772,18 +719,15 @@ async function main() {
     seenReleaseKeys.add(releaseKey);
 
     // Map controller support and local co-op
-    const controllerSupport = row.controllerSupport === "y"
-      ? "Yes"
-      : row.controllerSupport === "x"
-        ? "No"
-        : row.controllerSupport === "(y)"
-          ? "Maybe"
-          : "unknown";
-    const localMultiplayer = row.localCoop === "y"
-      ? "Yes"
-      : row.localCoop === "x"
-        ? "No"
-        : "unknown";
+    const controllerSupport =
+      row.controllerSupport === "y"
+        ? "Yes"
+        : row.controllerSupport === "x"
+          ? "No"
+          : row.controllerSupport === "(y)"
+            ? "Maybe"
+            : "unknown";
+    const localMultiplayer = row.localCoop === "y" ? "Yes" : row.localCoop === "x" ? "No" : "unknown";
 
     try {
       // Create release group
@@ -818,25 +762,18 @@ async function main() {
       releaseIdMap.set(releaseKey, rel.id);
 
       // Track collection membership
-      if (
-        row.collection &&
-        row.collection.trim().toLowerCase() !== row.game.trim().toLowerCase()
-      ) {
+      if (row.collection && row.collection.trim().toLowerCase() !== row.game.trim().toLowerCase()) {
         collectionReleasePairs.push({
           collectionTitle: row.collection.trim(),
           releaseId: rel.id,
         });
       }
     } catch (err: any) {
-      console.warn(
-        `  [WARN] Row ${row.rowNum} "${row.game}": ${err?.message?.slice(0, 100)}`,
-      );
+      console.warn(`  [WARN] Row ${row.rowNum} "${row.game}": ${err?.message?.slice(0, 100)}`);
     }
   }
 
-  console.log(
-    `[Import] Created ${releaseGroupCounter} release groups, ${releaseCounter} releases`,
-  );
+  console.log(`[Import] Created ${releaseGroupCounter} release groups, ${releaseCounter} releases`);
 
   // -----------------------------------------------------------------------
   // 6. Create collections and link releases
@@ -931,10 +868,7 @@ async function main() {
 
     // The collection field often is "Game Title: DLC Name" or "Game Title - DLC Name"
     // Try to extract parent game name
-    const parentCandidates = [
-      row.collection.split(":")[0].trim(),
-      row.collection.split(" - ")[0].trim(),
-    ];
+    const parentCandidates = [row.collection.split(":")[0].trim(), row.collection.split(" - ")[0].trim()];
 
     // Also check if the "game" column has the base game (sometimes it's there for DLC)
     if (row.game) {
@@ -955,10 +889,7 @@ async function main() {
       // Try matching first word of collection against game titles
       const firstPart = row.collection.split(":")[0].split(" - ")[0].trim();
       for (const [gameTitle, gameId] of gameTitleToId) {
-        if (
-          gameTitle.includes(firstPart.toLowerCase()) ||
-          firstPart.toLowerCase().includes(gameTitle)
-        ) {
+        if (gameTitle.includes(firstPart.toLowerCase()) || firstPart.toLowerCase().includes(gameTitle)) {
           parentGameId = gameId;
           break;
         }
@@ -969,13 +900,10 @@ async function main() {
       dlcCounter++;
       // Insert DLC
       const providerName = mapProvider(row.store);
-      const providerId =
-        providerNameToId.get(providerName) ?? providerNameToId.get("Physical")!;
+      const providerId = providerNameToId.get(providerName) ?? providerNameToId.get("Physical")!;
       const deviceMapping = mapDevice(row.device);
       const isPhysical = row.physical === "y";
-      const mediaFormatId = mediaFormatNameToId.get(
-        isPhysical ? "N/A" : "Digital",
-      ) ?? 1;
+      const mediaFormatId = mediaFormatNameToId.get(isPhysical ? "N/A" : "Digital") ?? 1;
 
       try {
         const [dlc] = await db
@@ -1030,9 +958,7 @@ async function main() {
         userId: 1,
         releaseId,
         location: place,
-        notes: row.note
-          ? `[SheetID:${row.sheetId}] ${row.note}`
-          : `[SheetID:${row.sheetId}]`,
+        notes: row.note ? `[SheetID:${row.sheetId}] ${row.note}` : `[SheetID:${row.sheetId}]`,
         condition: row.sealed === "y" ? "Sealed" : null,
       });
       ownedCounter++;
@@ -1076,11 +1002,7 @@ async function main() {
 
     // Find matching DLC release
     const dlcTitle = row.collection.trim();
-    const dlcs = await db
-      .select({ id: s.dlcs.id })
-      .from(s.dlcs)
-      .where(eq(s.dlcs.title, dlcTitle))
-      .limit(1);
+    const dlcs = await db.select({ id: s.dlcs.id }).from(s.dlcs).where(eq(s.dlcs.title, dlcTitle)).limit(1);
 
     if (dlcs.length > 0) {
       const dlcReleases = await db

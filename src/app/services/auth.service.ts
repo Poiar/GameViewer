@@ -53,15 +53,13 @@ export class AuthService extends ApiBaseService {
   }
 
   login(username: string, password: string): Observable<AuthResponse> {
-    return this.extractData<AuthResponse>(
-      this.post<AuthResponse>("/auth/login", { username, password }),
-    ).pipe(tap((res) => this.setSession(res)));
+    return this.extractData<AuthResponse>(this.post<AuthResponse>("/auth/login", { username, password })).pipe(
+      tap((res) => this.setSession(res)),
+    );
   }
 
   refreshToken(): Observable<string> {
-    return this.extractData<{ accessToken: string }>(
-      this.post<{ accessToken: string }>("/auth/refresh", {}),
-    ).pipe(
+    return this.extractData<{ accessToken: string }>(this.post<{ accessToken: string }>("/auth/refresh", {})).pipe(
       tap((res) => {
         this.accessTokenSignal.set(res.accessToken);
         this.isLoggedIn.set(true);
@@ -91,9 +89,7 @@ export class AuthService extends ApiBaseService {
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<void> {
-    return this.extractData<void>(
-      this.put<void>("/auth/me/password", { currentPassword, newPassword }),
-    );
+    return this.extractData<void>(this.put<void>("/auth/me/password", { currentPassword, newPassword }));
   }
 
   private setSession(res: AuthResponse): void {

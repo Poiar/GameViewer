@@ -1,9 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
 import { FavoritesService } from "../services/favorites.service";
-import {
-  allGames,
-  Game,
-} from "../../classes/model";
+import { allGames, Game } from "../../classes/model";
 
 @Component({
   selector: "app-games-page",
@@ -21,7 +18,13 @@ import {
               @if (game.coverImage) {
                 <img [src]="game.coverImage" [alt]="game.title" loading="lazy" width="80" height="112" />
               } @else {
-                <img [src]="'https://picsum.photos/seed/' + game.id + '/80/112'" [alt]="game.title" loading="lazy" width="80" height="112" />
+                <img
+                  [src]="'https://picsum.photos/seed/' + game.id + '/80/112'"
+                  [alt]="game.title"
+                  loading="lazy"
+                  width="80"
+                  height="112"
+                />
               }
             </div>
             <div class="card-title-wrap">
@@ -40,14 +43,20 @@ import {
               [attr.aria-label]="isFavorite(game.id) ? 'Remove from favorites' : 'Add to favorites'"
               (click)="toggleFavorite(game.id, $event)"
               title="{{ isFavorite(game.id) ? 'Remove from' : 'Add to' }} favorites"
-            >{{ isFavorite(game.id) ? "♥" : "♡" }}</button>
+            >
+              {{ isFavorite(game.id) ? "♥" : "♡" }}
+            </button>
           </div>
           <div class="card-versions">
             @for (superVersion of game.superVersions; track superVersion.id) {
               <div class="version-chip">
                 <span class="version-type">{{ superVersion.getVersionType() }}</span>
-                @if (superVersion.versionYear) { <span class="version-year">{{ superVersion.versionYear }}</span> }
-                @if (superVersion.versionName) { <span class="version-name">{{ superVersion.versionName }}</span> }
+                @if (superVersion.versionYear) {
+                  <span class="version-year">{{ superVersion.versionYear }}</span>
+                }
+                @if (superVersion.versionName) {
+                  <span class="version-name">{{ superVersion.versionName }}</span>
+                }
                 @for (gv of superVersion.gameVersions; track gv.id) {
                   <span class="version-platform">{{ gv.getPlayableOnTitles() }}</span>
                 }

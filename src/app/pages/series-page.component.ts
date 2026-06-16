@@ -1,8 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import {
-  allSeries,
-  Series,
-} from "../../classes/model";
+import { allSeries, Series } from "../../classes/model";
 
 @Component({
   selector: "app-series-page",
@@ -19,7 +16,9 @@ import {
             <div class="card-icon">📚</div>
             <div class="card-title-wrap">
               <h3 class="card-title">{{ series.title }}</h3>
-              <div class="card-meta">{{ series.games.length }} {{ series.games.length === 1 ? "title" : "titles" }}</div>
+              <div class="card-meta">
+                {{ series.games.length }} {{ series.games.length === 1 ? "title" : "titles" }}
+              </div>
             </div>
           </div>
           <div class="card-items">

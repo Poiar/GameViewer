@@ -1,0 +1,40 @@
+[   40638ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=6057aca8:14439
+[   40769ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4200/api/auth/me:0
+[   40770ms] Error: Authentication required. Provide a valid Bearer token.
+    at http://localhost:4200/main.js:645:29
+    at Observable2.init [as _subscribe] (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:1843:29)
+    at Observable2._trySubscribe (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:697:19)
+    at http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:691:115
+    at errorContext (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:466:5)
+    at Observable2.subscribe (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:689:5)
+    at http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:2677:23
+    at OperatorSubscriber2._this._error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:803:9)
+    at Subscriber2.error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:507:12)
+    at Subscriber2._error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:530:24)
+[  103718ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=6057aca8:14439
+[  103858ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4200/api/auth/me:0
+[  103858ms] Error: Authentication required. Provide a valid Bearer token.
+    at http://localhost:4200/main.js:645:29
+    at Observable2.init [as _subscribe] (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:1843:29)
+    at Observable2._trySubscribe (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:697:19)
+    at http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:691:115
+    at errorContext (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:466:5)
+    at Observable2.subscribe (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:689:5)
+    at http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:2677:23
+    at OperatorSubscriber2._this._error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:803:9)
+    at Subscriber2.error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:507:12)
+    at Subscriber2._error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:530:24)
+[  117995ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=6057aca8:14439
+[  118109ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:4200/api/auth/me:0
+[  118110ms] Error: Authentication required. Provide a valid Bearer token.
+    at http://localhost:4200/main.js:645:29
+    at Observable2.init [as _subscribe] (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:1843:29)
+    at Observable2._trySubscribe (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:697:19)
+    at http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:691:115
+    at errorContext (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:466:5)
+    at Observable2.subscribe (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:689:5)
+    at http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:2677:23
+    at OperatorSubscriber2._this._error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:803:9)
+    at Subscriber2.error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:507:12)
+    at Subscriber2._error (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-MARUHEWW.js?v=6057aca8:530:24)
+[  157157ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=6057aca8:14439

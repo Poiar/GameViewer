@@ -33,7 +33,9 @@
       <div class="dropdown-menu login-dropdown" role="menu">
         <div class="auth-tabs">
           <button class="tab-btn" [class.active]="mode === 'login'" (click)="switchMode('login')">Sign In</button>
-          <button class="tab-btn" [class.active]="mode === 'register'" (click)="switchMode('register')">Register</button>
+          <button class="tab-btn" [class.active]="mode === 'register'" (click)="switchMode('register')">
+            Register
+          </button>
         </div>
 
         @if (mode === "login") {
@@ -80,12 +82,7 @@
               [(ngModel)]="registerUsername"
               autocomplete="username"
             />
-            <input
-              type="text"
-              class="login-input"
-              placeholder="Display Name"
-              [(ngModel)]="registerDisplayName"
-            />
+            <input type="text" class="login-input" placeholder="Display Name" [(ngModel)]="registerDisplayName" />
             <input
               type="email"
               class="login-input"

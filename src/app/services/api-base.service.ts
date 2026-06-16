@@ -10,7 +10,10 @@ export class ApiBaseService {
 
   constructor(protected http: HttpClient) {}
 
-  protected get<T>(path: string, params?: Record<string, string | number | boolean | undefined>): Observable<ApiResponse<T>> {
+  protected get<T>(
+    path: string,
+    params?: Record<string, string | number | boolean | undefined>,
+  ): Observable<ApiResponse<T>> {
     let httpParams = new HttpParams();
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
@@ -47,8 +50,7 @@ export class ApiBaseService {
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
-    const message =
-      error.error?.error?.message ?? error.message ?? "An unexpected error occurred";
+    const message = error.error?.error?.message ?? error.message ?? "An unexpected error occurred";
     return throwError(() => new Error(message));
   }
 }

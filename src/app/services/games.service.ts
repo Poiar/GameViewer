@@ -26,18 +26,20 @@ export class GamesService extends ApiBaseService {
   }
 
   fetchCover(id: number): Observable<{ id: number; coverImageUrl: string }> {
-    return this.extractData<{ id: number; coverImageUrl: string }>(
-      this.post(`/games/${id}/cover`, {}),
-    );
+    return this.extractData<{ id: number; coverImageUrl: string }>(this.post(`/games/${id}/cover`, {}));
   }
 
-  bulkFetchCovers(limit?: number): Observable<{ fetched: number; total: number; results: Array<{ id: number; title: string; coverImageUrl: string | null }> }> {
-    return this.extractData(
-      this.post("/games/bulk-cover", { limit: limit ?? 10 }),
-    );
+  bulkFetchCovers(limit?: number): Observable<{
+    fetched: number;
+    total: number;
+    results: Array<{ id: number; title: string; coverImageUrl: string | null }>;
+  }> {
+    return this.extractData(this.post("/games/bulk-cover", { limit: limit ?? 10 }));
   }
 
-  private mapResponse(source: Observable<{ data: MasterGame[]; meta?: PaginationMeta }>): Observable<{ data: MasterGame[]; meta?: PaginationMeta }> {
+  private mapResponse(
+    source: Observable<{ data: MasterGame[]; meta?: PaginationMeta }>,
+  ): Observable<{ data: MasterGame[]; meta?: PaginationMeta }> {
     return source;
   }
 }

@@ -10,12 +10,36 @@ export default [
       "dist/",
       "node_modules/",
       "coverage/",
+      "test-results/",
+      "playwright-report/",
       "*.js",
       "*.mjs",
     ],
   },
+  // Non-type-aware linting for spec/test files and server code
   {
-    files: ["**/*.ts"],
+    files: ["**/*.spec.ts", "**/*.test.ts", "server/**/*.ts", "scripts/**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+      prettier: prettierPlugin,
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-explicit-any": "off",
+      "prettier/prettier": "error",
+    },
+  },
+  // Type-aware linting for Angular source
+  {
+    files: ["src/**/*.ts"],
+    ignores: ["src/**/*.spec.ts"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {

@@ -78,7 +78,9 @@
 
     @if (selectedOwned) {
       <div class="inventory-detail">
-        <h2>{{ selectedOwned.release?.releaseGroup?.masterGame?.title ?? selectedOwned.release?.title ?? "Item Details" }}</h2>
+        <h2>
+          {{ selectedOwned.release?.releaseGroup?.masterGame?.title ?? selectedOwned.release?.title ?? "Item Details" }}
+        </h2>
         <div class="detail-grid">
           <div class="detail-row">
             <span class="label">Version:</span>
@@ -102,7 +104,7 @@
           </div>
           <div class="detail-row">
             <span class="label">Acquired:</span>
-            {{ (selectedOwned.acquiredDate | slice:0:10) || "—" }}
+            {{ (selectedOwned.acquiredDate | slice: 0 : 10) || "—" }}
           </div>
           <div class="detail-row">
             <span class="label">Price:</span>
@@ -127,8 +129,11 @@
             </label>
             <label>
               Acquired:
-              <input type="date" [ngModel]="(editing.acquiredDate | slice:0:10) || ''"
-                     (ngModelChange)="editing.acquiredDate = $event" />
+              <input
+                type="date"
+                [ngModel]="(editing.acquiredDate | slice: 0 : 10) || ''"
+                (ngModelChange)="editing.acquiredDate = $event"
+              />
             </label>
             <label>
               Price:

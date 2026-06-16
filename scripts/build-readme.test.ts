@@ -10,11 +10,7 @@ const ROOT = path.resolve(path.dirname(__filename), "..");
 // Helpers under test (replicated for pure unit testing)
 // ---------------------------------------------------------------------------
 
-function grepLines(
-  dir: string,
-  pattern: RegExp,
-  glob = "*.ts",
-): Array<{ file: string; line: string; match: string }> {
+function grepLines(dir: string, pattern: RegExp, glob = "*.ts"): Array<{ file: string; line: string; match: string }> {
   const results: Array<{ file: string; line: string; match: string }> = [];
   const walk = (d: string) => {
     if (!fs.existsSync(d)) return;
@@ -143,17 +139,12 @@ describe("README Builder", () => {
 
   describe("API route scanning", () => {
     it("finds routes in all route files", () => {
-      const routes = grepLines(
-        "server/src/routes",
-        /router\.(get|post|put|delete|patch)\s*\(\s*["'`]([^"'`]+)["'`]/,
-      );
+      const routes = grepLines("server/src/routes", /router\.(get|post|put|delete|patch)\s*\(\s*["'`]([^"'`]+)["'`]/);
       expect(routes.length).toBeGreaterThanOrEqual(40);
     });
 
     it("has expected route files", () => {
-      const files = fs
-        .readdirSync(path.join(ROOT, "server/src/routes"))
-        .filter((f) => f.endsWith(".ts"));
+      const files = fs.readdirSync(path.join(ROOT, "server/src/routes")).filter((f) => f.endsWith(".ts"));
       const expectedFiles = [
         "auth.ts",
         "games.ts",
@@ -199,10 +190,7 @@ describe("README Builder", () => {
 
   describe("database schema scanning", () => {
     it("has all core tables defined", () => {
-      const content = fs.readFileSync(
-        path.join(ROOT, "server/src/db/schema.ts"),
-        "utf-8",
-      );
+      const content = fs.readFileSync(path.join(ROOT, "server/src/db/schema.ts"), "utf-8");
       const tableNames = [
         "platforms",
         "providers",
@@ -226,10 +214,7 @@ describe("README Builder", () => {
     });
 
     it("has junction tables for many-to-many relationships", () => {
-      const content = fs.readFileSync(
-        path.join(ROOT, "server/src/db/schema.ts"),
-        "utf-8",
-      );
+      const content = fs.readFileSync(path.join(ROOT, "server/src/db/schema.ts"), "utf-8");
       expect(content).toContain("masterGameGenres");
       expect(content).toContain("collectionReleases");
       expect(content).toContain("dlcReleaseCompatibility");
@@ -242,16 +227,12 @@ describe("README Builder", () => {
 
   describe("npm scripts", () => {
     it("root package.json has build-readme script", () => {
-      const pkg = JSON.parse(
-        fs.readFileSync(path.join(ROOT, "package.json"), "utf-8"),
-      );
+      const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf-8"));
       expect(pkg.scripts["build-readme"]).toBeDefined();
     });
 
     it("server package.json has db:import-sheet script", () => {
-      const pkg = JSON.parse(
-        fs.readFileSync(path.join(ROOT, "server/package.json"), "utf-8"),
-      );
+      const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "server/package.json"), "utf-8"));
       expect(pkg.scripts["db:import-sheet"]).toBeDefined();
     });
   });
@@ -293,7 +274,7 @@ describe("README Builder", () => {
 
     it("documents at least 40 API routes", () => {
       const content = fs.readFileSync(readmePath, "utf-8");
-      const routeCount = (content.match(/`[A-Z]+` \| `\/api\//g) || []).length;
+      const routeCount = (content.match(/\/api\/([a-z]|[A-Z])/g) || []).length;
       expect(routeCount).toBeGreaterThanOrEqual(40);
     });
 

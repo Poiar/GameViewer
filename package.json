@@ -8,20 +8,22 @@
     "watch": "ng build --watch --configuration development",
     "test": "npx playwright test --ui",
     "test:headless": "npx playwright test",
-    "lint": "eslint \"src/**/*.{ts,html}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,html}\" --fix",
-    "format": "prettier --write \"src/**/*.{ts,html,css,scss,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\"",
+    "test:unit": "npx vitest run",
+    "lint": "eslint \"src/**/*.{ts,html}\" \"server/src/**/*.ts\" \"scripts/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.{ts,html}\" \"server/src/**/*.ts\" \"scripts/**/*.ts\" --fix",
+    "format": "prettier --write \"**/*.{ts,html,css,scss,json,mjs,md}\" \"!openRouterModels.json\" \"!.playwright-mcp/**\"",
+    "format:check": "prettier --check \"**/*.{ts,html,css,scss,json,mjs,md}\" \"!openRouterModels.json\" \"!.playwright-mcp/**\"",
     "typecheck": "tsc --noEmit",
-    "build-readme": "tsx scripts/build-readme.ts",
+    "build-readme": "npx tsx scripts/build-readme.ts",
+    "check": "npm run lint && npm run format:check && npm run test:unit && npm run build-readme",
     "prepare": "husky"
   },
   "lint-staged": {
-    "src/**/*.{ts,html}": [
+    "**/*.{ts,html}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "src/**/*.{css,scss,json}": [
+    "**/*.{css,scss,json,mjs,md}": [
       "prettier --write"
     ]
   },

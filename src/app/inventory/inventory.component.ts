@@ -4,10 +4,7 @@ import { AuthService } from "../services/auth.service";
 import { InventoryService } from "../services/inventory.service";
 import { ReleasesService } from "../services/releases.service";
 import { OwnedInstance, Release } from "../types/game.types";
-import {
-  allGameVersions,
-  GameVersion,
-} from "../../classes/model";
+import { allGameVersions, GameVersion } from "../../classes/model";
 import { allOwnedInstances, OwnedInstance as OldOwnedInstance } from "../../classes/ownedInstance";
 import { SlicePipe } from "@angular/common";
 import { LoadingSpinnerComponent } from "../shared/loading-spinner.component";
@@ -83,18 +80,20 @@ export class InventoryComponent implements OnInit {
 
   onSaveEdit(): void {
     if (!this.editing) return;
-    this.inventoryService.updateItem(this.editing.id, {
-      condition: this.editing.condition ?? undefined,
-      location: this.editing.location ?? undefined,
-      notes: this.editing.notes ?? undefined,
-      acquiredDate: this.editing.acquiredDate ?? undefined,
-      purchasePrice: this.editing.purchasePrice ?? undefined,
-    }).subscribe({
-      next: () => {
-        this.editing = undefined;
-        this.loadInventory();
-      },
-    });
+    this.inventoryService
+      .updateItem(this.editing.id, {
+        condition: this.editing.condition ?? undefined,
+        location: this.editing.location ?? undefined,
+        notes: this.editing.notes ?? undefined,
+        acquiredDate: this.editing.acquiredDate ?? undefined,
+        purchasePrice: this.editing.purchasePrice ?? undefined,
+      })
+      .subscribe({
+        next: () => {
+          this.editing = undefined;
+          this.loadInventory();
+        },
+      });
   }
 
   onToggleAdd(): void {
@@ -114,24 +113,26 @@ export class InventoryComponent implements OnInit {
 
   onAdd(): void {
     if (!this.newReleaseId) return;
-    this.inventoryService.addItem({
-      releaseId: this.newReleaseId ?? undefined,
-      condition: this.newCondition || undefined,
-      location: this.newLocation || undefined,
-      notes: this.newNotes || undefined,
-      acquiredDate: this.newAcquiredDate || undefined,
-      purchasePrice: this.newPurchasePrice || undefined,
-    }).subscribe({
-      next: () => {
-        this.resetForm();
-        this.showAddForm = false;
-        this.loadInventory();
-      },
-    });
+    this.inventoryService
+      .addItem({
+        releaseId: this.newReleaseId ?? undefined,
+        condition: this.newCondition || undefined,
+        location: this.newLocation || undefined,
+        notes: this.newNotes || undefined,
+        acquiredDate: this.newAcquiredDate || undefined,
+        purchasePrice: this.newPurchasePrice || undefined,
+      })
+      .subscribe({
+        next: () => {
+          this.resetForm();
+          this.showAddForm = false;
+          this.loadInventory();
+        },
+      });
   }
 
   // Old hardcoded data methods (fallback when not logged in)
-  oldOnSelect(owned: OldOwnedInstance): void {
+  oldOnSelect(_owned: OldOwnedInstance): void {
     // handled in template
   }
 

@@ -66,10 +66,7 @@
               <div class="bar-row">
                 <span class="bar-label">{{ item.name }}</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill"
-                    [style.width.%]="(item.count / maxPlatformCount()) * 100"
-                  ></div>
+                  <div class="bar-fill" [style.width.%]="(item.count / maxPlatformCount()) * 100"></div>
                 </div>
                 <span class="bar-value">{{ item.count }}</span>
               </div>
@@ -89,10 +86,7 @@
               <div class="bar-row">
                 <span class="bar-label">{{ item.name }}</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill genre"
-                    [style.width.%]="(item.count / maxGenreCount()) * 100"
-                  ></div>
+                  <div class="bar-fill genre" [style.width.%]="(item.count / maxGenreCount()) * 100"></div>
                 </div>
                 <span class="bar-value">{{ item.count }}</span>
               </div>
@@ -117,7 +111,8 @@
       }
       <p class="cover-hint">
         Requires <code>SGDB_API_KEY</code> in <code>server/.env</code>. Get one at
-        <a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank" rel="noopener">steamgriddb.com</a>.
+        <a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank" rel="noopener">steamgriddb.com</a
+        >.
       </p>
     </div>
 
@@ -137,7 +132,9 @@
                 />
               }
               <div class="recent-info">
-                <span class="recent-title">{{ item.release?.releaseGroup?.masterGame?.title ?? item.release?.title ?? "Unknown" }}</span>
+                <span class="recent-title">{{
+                  item.release?.releaseGroup?.masterGame?.title ?? item.release?.title ?? "Unknown"
+                }}</span>
                 <span class="recent-meta">
                   {{ item.release?.releaseGroup?.editionType?.name ?? "" }}
                   {{ item.release?.playableOn?.join(", ") ?? "" }}
@@ -150,7 +147,7 @@
                   <span class="recent-price">${{ item.purchasePrice }}</span>
                 }
                 @if (item.acquiredDate) {
-                  <span class="recent-date">{{ item.acquiredDate | slice:0:10 }}</span>
+                  <span class="recent-date">{{ item.acquiredDate | slice: 0 : 10 }}</span>
                 }
               </div>
             </div>

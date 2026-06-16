@@ -11,9 +11,7 @@ export class CollectionsService extends ApiBaseService {
   }
 
   getCollections(page?: number, limit?: number): Observable<Collection[]> {
-    return this.extractData<Collection[]>(
-      this.get<Collection[]>("/collections", { page, limit }),
-    );
+    return this.extractData<Collection[]>(this.get<Collection[]>("/collections", { page, limit }));
   }
 
   getCollectionById(id: number): Observable<CollectionDetail> {
