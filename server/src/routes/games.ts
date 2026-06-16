@@ -357,30 +357,52 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       }
     }
 
-    // If user is authenticated, determine which releases/DLC releases they own
-    let ownedReleaseIds: Set<number> = new Set();
-    let ownedDlcReleaseIds: Set<number> = new Set();
+    // If user is authenticated, fetch owned instance details
+    const ownedReleaseMap = new Map<number, { condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
+    const ownedDlcReleaseMap = new Map<number, { condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
     if (req.user) {
       if (allReleaseIds.length > 0) {
         const owned = await db
-          .select({ releaseId: ownedInstances.releaseId })
+          .select({
+            releaseId: ownedInstances.releaseId,
+            condition: ownedInstances.condition,
+            location: ownedInstances.location,
+            purchasePrice: ownedInstances.purchasePrice,
+            acquiredDate: ownedInstances.acquiredDate,
+          })
           .from(ownedInstances)
           .where(
             and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
           );
         for (const o of owned) {
-          if (o.releaseId) ownedReleaseIds.add(o.releaseId);
+          if (o.releaseId) ownedReleaseMap.set(o.releaseId, {
+            condition: o.condition,
+            location: o.location,
+            purchasePrice: o.purchasePrice,
+            acquiredDate: o.acquiredDate,
+          });
         }
       }
       if (allDlcReleaseIds.length > 0) {
         const ownedDlc = await db
-          .select({ dlcReleaseId: ownedInstances.dlcReleaseId })
+          .select({
+            dlcReleaseId: ownedInstances.dlcReleaseId,
+            condition: ownedInstances.condition,
+            location: ownedInstances.location,
+            purchasePrice: ownedInstances.purchasePrice,
+            acquiredDate: ownedInstances.acquiredDate,
+          })
           .from(ownedInstances)
           .where(
             and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, allDlcReleaseIds)),
           );
         for (const o of ownedDlc) {
-          if (o.dlcReleaseId) ownedDlcReleaseIds.add(o.dlcReleaseId);
+          if (o.dlcReleaseId) ownedDlcReleaseMap.set(o.dlcReleaseId, {
+            condition: o.condition,
+            location: o.location,
+            purchasePrice: o.purchasePrice,
+            acquiredDate: o.acquiredDate,
+          });
         }
       }
     }
@@ -422,7 +444,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
               versionImageUrl: r.versionImageUrl,
               provider: r.provider ?? null,
               mediaFormat: r.mediaFormat ?? null,
-              userOwns: ownedReleaseIds.has(r.id),
+              userOwns: ownedReleaseMap.get(r.id) ?? null,
             })),
         })),
       dlcs: game.dlcs.map((dlc) => ({
@@ -437,7 +459,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
           onDiscForConsoleOnly: dr.onDiscForConsoleOnly,
           provider: dr.provider ?? null,
           mediaFormat: dr.mediaFormat ?? null,
-          userOwns: ownedDlcReleaseIds.has(dr.id),
+          userOwns: ownedDlcReleaseMap.get(dr.id) ?? null,
           compatibleWith: dr.compatibility.map((c) => ({
             releaseId: c.release?.id,
             releaseTitle: c.release?.title,

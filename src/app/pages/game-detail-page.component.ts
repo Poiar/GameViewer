@@ -69,7 +69,12 @@ import { MasterGameDetail } from "../types/game.types";
                       @if (rel.onlineMultiplayer === 'Yes') { 🌐 Online }
                     </span>
                     @if (rel.userOwns) {
-                      <span class="rel-owned-badge" title="You own this">✓</span>
+                      <div class="rel-owned-details">
+                        <span class="rel-owned-badge">✓</span>
+                        @if (rel.userOwns.condition) { <span class="rel-cond">{{ rel.userOwns.condition }}</span> }
+                        @if (rel.userOwns.location) { <span class="rel-loc" title="Location">📍 {{ rel.userOwns.location }}</span> }
+                        @if (rel.userOwns.purchasePrice) { <span class="rel-price" title="Price paid">💲 {{ rel.userOwns.purchasePrice }}</span> }
+                      </div>
                     }
                   </div>
                 }
@@ -98,7 +103,14 @@ import { MasterGameDetail } from "../types/game.types";
                         <span class="dr-provider">{{ $any(dr).provider?.name ?? "—" }}</span>
                         <span class="dr-format">{{ $any(dr).mediaFormat?.name ?? "" }}</span>
                         @if ($any(dr).onDiscForConsoleOnly) { <span class="dr-disc">💿 On Disc</span> }
-                        @if ($any(dr).userOwns) { <span class="rel-owned-badge" title="You own this">✓</span> }
+                        @if ($any(dr).userOwns) {
+                          <div class="rel-owned-details">
+                            <span class="rel-owned-badge">✓</span>
+                            @if ($any(dr).userOwns.condition) { <span class="rel-cond">{{ $any(dr).userOwns.condition }}</span> }
+                            @if ($any(dr).userOwns.location) { <span class="rel-loc" title="Location">📍 {{ $any(dr).userOwns.location }}</span> }
+                            @if ($any(dr).userOwns.purchasePrice) { <span class="rel-price" title="Price paid">💲 {{ $any(dr).userOwns.purchasePrice }}</span> }
+                          </div>
+                        }
                       </div>
                     }
                   </div>
@@ -157,6 +169,10 @@ import { MasterGameDetail } from "../types/game.types";
       font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; line-height: 1;
     }
+    .rel-owned-details { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
+    .rel-cond { padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; background: rgba(6,214,160,.15); color: var(--accent-secondary); white-space: nowrap; }
+    .rel-loc { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .rel-price { font-size: 11px; color: var(--accent-warn); font-weight: 600; white-space: nowrap; }
 
     .dlc-grid { display: flex; flex-wrap: wrap; gap: 12px; }
     .dlc-card { padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 8px; }

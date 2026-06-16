@@ -87,7 +87,7 @@ export interface Release {
   provider?: Provider;
   mediaFormat?: MediaFormat;
   releaseGroup?: ReleaseGroup & { masterGame?: MasterGame };
-  userOwns?: boolean;
+  userOwns?: { condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null } | null;
 }
 
 export interface ReleaseDetail extends Release {
