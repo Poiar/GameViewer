@@ -10,7 +10,7 @@
 //   Set SCRAPE_OC=false to skip OpenCritic.
 //   Set SCRAPE_HLTB=false to skip HLTB.
 
-import "dotenv/config";
+import "dotenv/config"; // loads server/.env from cwd — run from server/ or set DOTENV_CONFIG_PATH
 import { db } from "./index.js";
 import { masterGames } from "./schema.js";
 import { eq, and, isNull, sql } from "drizzle-orm";
