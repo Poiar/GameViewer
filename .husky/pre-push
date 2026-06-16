@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
-# Pre-push: run all checks. Fails fast if anything is broken.
+# Pre-push: secret scan + full checks
+echo "→ Scanning for secrets..."
+bash scripts/scan-secrets.sh || exit 1
 echo "→ Running pre-push checks..."
 npm run check

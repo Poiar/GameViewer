@@ -298,6 +298,26 @@ a.bar-row:hover { background: var(--bg-elevated); }
   cursor: not-allowed;
 }
 
+.panel-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.enrich-btn {
+  background: rgba(145,71,255,.1);
+  border-color: rgba(145,71,255,.25);
+  color: #9147ff;
+}
+
+.enrich-btn:hover:not(:disabled) {
+  background: #9147ff;
+  color: #fff;
+}
+
+.enrich-result {
+  color: #9147ff;
+}
+
 .cover-result {
   font-size: 13px;
   color: var(--accent-secondary);

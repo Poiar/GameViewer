@@ -45,8 +45,9 @@ import { MasterGameDetail } from "../types/game.types";
               <span class="tag tag-muted">a.k.a. {{ g.alternativeTitles.join(", ") }}</span>
             }
           </div>
-          @if (g.description) {
-            <p class="detail-desc">{{ g.description }}</p>
+          @if (g.summary || g.description) {
+            <p class="detail-desc">{{ g.summary || g.description }}</p>
+            @if (g.summary) { <span class="detail-desc-src">via IGDB</span> }
           }
           <!-- External links -->
           <div class="ext-links">
@@ -212,6 +213,7 @@ import { MasterGameDetail } from "../types/game.types";
     .fav-btn.active { border-color: #f59e0b; background: #f59e0b; color: #fff; }
     .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
     .detail-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 640px; }
+    .detail-desc-src { font-size: 10px; color: var(--text-muted); opacity: .5; margin-left: 4px; font-style: italic; }
 
     .ext-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
     .ext-link {

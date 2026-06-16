@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, OnInit, OnDestroy, 
 import { DashboardService } from "../services/dashboard.service";
 import { AuthService } from "../services/auth.service";
 import { GamesService } from "../services/games.service";
+import { HttpClient } from "@angular/common/http";
 import { SlicePipe } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { LoadingSpinnerComponent } from "../shared/loading-spinner.component";
@@ -21,6 +22,7 @@ import { Subscription } from "rxjs";
 export class DashboardComponent implements OnInit, OnDestroy {
   private dashboardService = inject(DashboardService);
   private gamesService = inject(GamesService);
+  private http = inject(HttpClient);
   protected authService = inject(AuthService);
 
   stats = signal<DashboardStats | null>(null);
@@ -28,6 +30,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   error = signal<string | null>(null);
   fetchingCovers = signal(false);
   coverFetchResult = signal<string | null>(null);
+  enriching = signal(false);
+  enrichResult = signal<string | null>(null);
 
   private sub?: Subscription;
 
@@ -95,6 +99,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.coverFetchResult.set(`Error: ${err.message}`);
         this.fetchingCovers.set(false);
+      },
+    });
+  }
+
+  bulkEnrich(): void {
+    this.enriching.set(true);
+    this.enrichResult.set(null);
+    this.http.post<any>('/api/enrich/batch', { limit: 25 }).subscribe({
+      next: (res) => {
+        const d = res.data ?? res;
+        this.enrichResult.set(`Enriched ${d.enriched} of ${d.total} games`);
+        this.enriching.set(false);
+        this.loadStats();
+      },
+      error: (err) => {
+        this.enrichResult.set(`Error: ${err.message}`);
+        this.enriching.set(false);
       },
     });
   }

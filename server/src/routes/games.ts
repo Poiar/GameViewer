@@ -426,6 +426,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       opencriticId: game.opencriticId ?? null,
       hltbId: game.hltbId ?? null,
       criticScore: game.criticScore ?? null,
+      summary: game.summary ?? null,
       releaseGroups: game.releaseGroups
         .sort((a, b) => (a.releaseYear ?? 0) - (b.releaseYear ?? 0))
         .map((rg) => ({

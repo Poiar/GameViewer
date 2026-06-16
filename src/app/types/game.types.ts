@@ -11,6 +11,7 @@ export interface MasterGame {
   opencriticId?: number | null;
   hltbId?: number | null;
   criticScore?: number | null;
+  summary?: string | null;
   createdAt: string;
   updatedAt: string;
   series?: SeriesSummary;

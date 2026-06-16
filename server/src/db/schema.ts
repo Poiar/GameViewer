@@ -116,6 +116,7 @@ export const masterGames = pgTable(
     opencriticId: integer("opencritic_id"),
     hltbId: integer("hltb_id"),
     criticScore: smallint("critic_score"),
+    summary: text("summary"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
