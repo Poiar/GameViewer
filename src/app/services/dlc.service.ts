@@ -14,6 +14,7 @@ export interface DlcSummary {
   gameTitle: string;
   gameSlug: string;
   releaseCount: number;
+  userOwns?: boolean;
 }
 
 @Injectable({ providedIn: "root" })
