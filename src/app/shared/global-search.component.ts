@@ -206,7 +206,7 @@ export class GlobalSearchComponent {
             next: (sRes) => {
               const seriesList = sRes.data ?? sRes;
               (Array.isArray(seriesList) ? seriesList.slice(0, 3) : []).forEach((s: any) => {
-                items.push({ type: "series", id: s.id, title: s.name, subtitle: `${s.gameCount ?? s._count?.games ?? 0} games`, url: `/series` });
+                items.push({ type: "series", id: s.id, title: s.name, subtitle: `${s.gameCount ?? s._count?.games ?? 0} games`, url: s.slug ? `/series/${s.slug}` : `/series` });
               });
               this.results.set(items);
               this.activeIdx.set(0);

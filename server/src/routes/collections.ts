@@ -11,8 +11,9 @@ import {
   mediaFormats,
   releaseGroups,
   dlcs,
+  ownedInstances,
 } from "../db/schema.js";
-import { authenticate } from "../middleware/auth.js";
+import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
 import { eq, and, desc, asc, count, sql, inArray } from "drizzle-orm";
@@ -87,8 +88,8 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// GET /:id — Get collection with releases, DLC releases, games
-router.get("/:id", async (req: Request, res: Response) => {
+// GET /:id — Get collection with releases, DLC releases, games. Auth optional.
+router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
     if (isNaN(id)) {
@@ -144,6 +145,36 @@ router.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
+    // Determine ownership (when authenticated)
+    let ownedReleaseIds = new Set<number>();
+    let ownedDlcReleaseIds = new Set<number>();
+    if (req.user) {
+      const releaseIds = collection.releases.map((cr) => cr.release.id);
+      const dlcReleaseIds = collection.dlcReleases.map((cdr) => cdr.dlcRelease.id);
+      if (releaseIds.length > 0) {
+        const owned = await db
+          .select({ releaseId: ownedInstances.releaseId })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, releaseIds)),
+          );
+        for (const o of owned) {
+          if (o.releaseId) ownedReleaseIds.add(o.releaseId);
+        }
+      }
+      if (dlcReleaseIds.length > 0) {
+        const ownedDlc = await db
+          .select({ dlcReleaseId: ownedInstances.dlcReleaseId })
+          .from(ownedInstances)
+          .where(
+            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, dlcReleaseIds)),
+          );
+        for (const o of ownedDlc) {
+          if (o.dlcReleaseId) ownedDlcReleaseIds.add(o.dlcReleaseId);
+        }
+      }
+    }
+
     // Shape the response
     const data = {
       id: collection.id,
@@ -167,6 +198,7 @@ router.get("/:id", async (req: Request, res: Response) => {
           editionName: cr.release.releaseGroup?.editionName,
           releaseYear: cr.release.releaseGroup?.releaseYear,
         },
+        userOwns: ownedReleaseIds.has(cr.release.id),
       })),
       dlcReleases: collection.dlcReleases.map((cdr) => ({
         id: cdr.dlcRelease.id,
@@ -175,6 +207,7 @@ router.get("/:id", async (req: Request, res: Response) => {
         dlc: cdr.dlcRelease.dlc ?? null,
         provider: cdr.dlcRelease.provider ?? null,
         mediaFormat: cdr.dlcRelease.mediaFormat ?? null,
+        userOwns: ownedDlcReleaseIds.has(cdr.dlcRelease.id),
       })),
     };
 
