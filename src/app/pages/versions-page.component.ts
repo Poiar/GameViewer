@@ -51,19 +51,19 @@ import { Release } from "../types/game.types";
     } @else {
       <div class="v-list">
         @for (rel of releases(); track rel.id; let i = $index) {
-          <div class="v-row" [style.--idx]="i">
+          <div class="v-row" [class.owned]="!!rel.userOwns" [style.--idx]="i">
             <div class="vr-game">
-              @if (rel.releaseGroup?.masterGame?.title) {
+              @if (rel.masterGame?.title) {
                 <a
                   class="vr-title"
-                  [routerLink]="['/games', rel.releaseGroup?.masterGame?.slug ?? '']"
-                >{{ rel.releaseGroup?.masterGame?.title ?? rel.title }}</a>
+                  [routerLink]="['/games', rel.masterGame?.slug ?? '']"
+                >{{ rel.masterGame?.title ?? rel.title }}</a>
               } @else {
                 <span class="vr-title vr-title--plain">{{ rel.title ?? "Unknown" }}</span>
               }
               <div class="vr-edition">
-                @if (rel.releaseGroup?.editionType?.name) {
-                  <span class="vrb vrb-ed">{{ rel.releaseGroup?.editionType?.name }}</span>
+                @if (rel.editionType?.name) {
+                  <span class="vrb vrb-ed">{{ rel.editionType?.name }}</span>
                 }
                 @if (rel.releaseGroup?.editionName) {
                   <span class="vrb vrb-name">{{ rel.releaseGroup?.editionName }}</span>
@@ -86,6 +86,9 @@ import { Release } from "../types/game.types";
               }
               @if (rel.region) {
                 <span class="vrb vrb-region">{{ rel.region }}</span>
+              }
+              @if (rel.userOwns) {
+                <span class="vrb vrb-owned">✓</span>
               }
             </div>
           </div>
@@ -146,6 +149,8 @@ import { Release } from "../types/game.types";
     }
     .v-row:hover { background: var(--bg-elevated); }
     .v-row + .v-row { border-top: 1px solid var(--border-subtle); }
+    .v-row.owned { background: rgba(6,214,160,.03); }
+    .v-row.owned:hover { background: rgba(6,214,160,.06); }
     @keyframes rowIn {
       from { opacity: 0; transform: translateX(-6px); }
       to   { opacity: 1; transform: translateX(0); }
@@ -175,6 +180,13 @@ import { Release } from "../types/game.types";
     }
     .vrb-fmt { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
     .vrb-region { background: var(--bg-tertiary); color: var(--text-muted); border: 1px solid var(--border-subtle); font-weight: 500; }
+    .vrb-owned {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent-secondary); color: #000;
+      font-size: 11px; font-weight: 800; display: inline-flex;
+      align-items: center; justify-content: center;
+      border: none; flex-shrink: 0;
+    }
     .vrb-none { background: var(--bg-tertiary); color: var(--text-muted); border: 1px solid var(--border-subtle); font-style: italic; }
 
     .vr-platforms { flex: 1.5; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }

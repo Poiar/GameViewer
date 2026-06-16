@@ -66,7 +66,7 @@ const updateGameSchema = z.object({
 router.get("/", optionalAuth, async (req: Request, res: Response) => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const limit = Math.min(2500, Math.max(1, parseInt(req.query.limit as string) || 20));
     const offset = (page - 1) * limit;
     const search = (req.query.search as string)?.trim();
     const genreSlug = (req.query.genre as string)?.trim();
