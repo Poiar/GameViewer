@@ -1,13 +1,6 @@
 import { Router, Request, Response } from "express";
 import { db } from "../db/index.js";
-import {
-  ownedInstances,
-  releases,
-  releaseGroups,
-  masterGames,
-  dlcReleases,
-  dlcs,
-} from "../db/schema.js";
+import { ownedInstances, releases, releaseGroups, masterGames, dlcReleases, dlcs } from "../db/schema.js";
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
@@ -32,10 +25,9 @@ const createInstanceSchema = z
     acquiredDate: z.string().optional().nullable(),
     purchasePrice: z.string().or(z.number()).optional().nullable(),
   })
-  .refine(
-    (data) => data.releaseId || data.dlcReleaseId,
-    { message: "At least one of releaseId or dlcReleaseId must be set" },
-  );
+  .refine((data) => data.releaseId || data.dlcReleaseId, {
+    message: "At least one of releaseId or dlcReleaseId must be set",
+  });
 
 const updateInstanceSchema = z.object({
   releaseId: z.number().int().optional().nullable(),
@@ -192,15 +184,7 @@ router.get("/", async (req: Request, res: Response) => {
 router.post("/", validate(createInstanceSchema), async (req: Request, res: Response) => {
   try {
     const userId = req.user!.userId;
-    const {
-      releaseId,
-      dlcReleaseId,
-      condition,
-      location,
-      notes,
-      acquiredDate,
-      purchasePrice,
-    } = req.body;
+    const { releaseId, dlcReleaseId, condition, location, notes, acquiredDate, purchasePrice } = req.body;
 
     const [created] = await db
       .insert(ownedInstances)
@@ -254,15 +238,7 @@ router.put("/:id", validate(updateInstanceSchema), async (req: Request, res: Res
       return;
     }
 
-    const {
-      releaseId,
-      dlcReleaseId,
-      condition,
-      location,
-      notes,
-      acquiredDate,
-      purchasePrice,
-    } = req.body;
+    const { releaseId, dlcReleaseId, condition, location, notes, acquiredDate, purchasePrice } = req.body;
 
     const updateData: Record<string, unknown> = { updatedAt: new Date() };
 
@@ -276,11 +252,7 @@ router.put("/:id", validate(updateInstanceSchema), async (req: Request, res: Res
       updateData.purchasePrice = purchasePrice != null ? String(purchasePrice) : null;
     }
 
-    const [updated] = await db
-      .update(ownedInstances)
-      .set(updateData)
-      .where(eq(ownedInstances.id, id))
-      .returning();
+    const [updated] = await db.update(ownedInstances).set(updateData).where(eq(ownedInstances.id, id)).returning();
 
     res.json({ data: updated, error: null });
   } catch (error) {

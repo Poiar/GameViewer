@@ -2,20 +2,20 @@
 
 ## Quick reference
 
-| Command | Description |
-|---------|-------------|
-| `ng serve` | Dev server at `http://localhost:4200/` — **always use the "ng: serve" run configuration in WebStorm instead of running this in a terminal** |
-| `ng build` | Production build to `dist/game-viewer/` |
-| `npm test` | Playwright tests with UI mode |
-| `npm run test:headless` | Playwright tests headless |
-| `npx playwright test --headed` | Playwright tests in headed browser |
-| `ng generate component <name>` | Scaffold a new component |
-| `npm run lint` | Lint TypeScript + HTML (ESLint + Prettier) |
-| `npm run lint:fix` | Lint and auto-fix issues |
-| `npm run format` | Format source files with Prettier |
-| `npm run format:check` | Check formatting without fixing |
-| `npm run typecheck` | TypeScript type check (tsc --noEmit) |
-| `npm run prepare` | Install Husky git hooks |
+| Command                        | Description                                                                                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ng serve`                     | Dev server at `http://localhost:4200/` — **always use the "ng: serve" run configuration in WebStorm instead of running this in a terminal** |
+| `ng build`                     | Production build to `dist/game-viewer/`                                                                                                     |
+| `npm test`                     | Playwright tests with UI mode                                                                                                               |
+| `npm run test:headless`        | Playwright tests headless                                                                                                                   |
+| `npx playwright test --headed` | Playwright tests in headed browser                                                                                                          |
+| `ng generate component <name>` | Scaffold a new component                                                                                                                    |
+| `npm run lint`                 | Lint TypeScript + HTML (ESLint + Prettier)                                                                                                  |
+| `npm run lint:fix`             | Lint and auto-fix issues                                                                                                                    |
+| `npm run format`               | Format source files with Prettier                                                                                                           |
+| `npm run format:check`         | Check formatting without fixing                                                                                                             |
+| `npm run typecheck`            | TypeScript type check (tsc --noEmit)                                                                                                        |
+| `npm run prepare`              | Install Husky git hooks                                                                                                                     |
 
 ## Architecture
 
@@ -61,6 +61,7 @@ Husky + lint-staged run automatically on `git commit` — staged `*.{ts,html}` f
 - `npx playwright test --debug` — step-through debugger
 
 Test files:
+
 - `src/classes/game.spec.ts` — model unit tests (genreEnum, Game, Series)
 - `e2e/app.component.spec.ts` — AppComponent E2E tests (sections, series, collections, navigation)
 - `e2e/game-ui.component.spec.ts` — GameUIComponent E2E tests (rendering, selection, details panel)

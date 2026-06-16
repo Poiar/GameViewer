@@ -12,15 +12,7 @@ import {
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import {
-  eq,
-  and,
-  desc,
-  asc,
-  count,
-  sql,
-  inArray,
-} from "drizzle-orm";
+import { eq, and, desc, asc, count, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -69,10 +61,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    const [{ count: total }] = await db
-      .select({ count: count() })
-      .from(dlcs)
-      .where(whereClause);
+    const [{ count: total }] = await db.select({ count: count() }).from(dlcs).where(whereClause);
 
     const rows = await db
       .select({
@@ -222,11 +211,7 @@ router.put("/:id", authenticate, validate(updateDlcSchema), async (req: Request,
       return;
     }
 
-    const [existing] = await db
-      .select({ id: dlcs.id })
-      .from(dlcs)
-      .where(eq(dlcs.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: dlcs.id }).from(dlcs).where(eq(dlcs.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({
@@ -301,11 +286,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    const [existing] = await db
-      .select({ id: dlcs.id })
-      .from(dlcs)
-      .where(eq(dlcs.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: dlcs.id }).from(dlcs).where(eq(dlcs.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({
@@ -347,11 +328,7 @@ router.post("/:dlcId/releases", authenticate, validate(createDlcReleaseSchema), 
     const { providerId, mediaFormatId, releaseDate, onDiscForConsoleOnly } = req.body;
 
     // Validate DLC exists
-    const [dlc] = await db
-      .select({ id: dlcs.id })
-      .from(dlcs)
-      .where(eq(dlcs.id, dlcId))
-      .limit(1);
+    const [dlc] = await db.select({ id: dlcs.id }).from(dlcs).where(eq(dlcs.id, dlcId)).limit(1);
 
     if (!dlc) {
       res.status(404).json({
@@ -411,10 +388,7 @@ router.post("/releases/:dlcReleaseId/compatibility", authenticate, async (req: R
       return;
     }
 
-    await db
-      .insert(dlcReleaseCompatibility)
-      .values({ dlcReleaseId, releaseId })
-      .onConflictDoNothing();
+    await db.insert(dlcReleaseCompatibility).values({ dlcReleaseId, releaseId }).onConflictDoNothing();
 
     res.status(201).json({
       data: { message: "Compatibility mapping added" },
@@ -430,43 +404,36 @@ router.post("/releases/:dlcReleaseId/compatibility", authenticate, async (req: R
 });
 
 // DELETE /releases/:dlcReleaseId/compatibility/:releaseId — Remove compatibility mapping
-router.delete(
-  "/releases/:dlcReleaseId/compatibility/:releaseId",
-  authenticate,
-  async (req: Request, res: Response) => {
-    try {
-      const dlcReleaseId = parseInt(req.params.dlcReleaseId as string, 10);
-      const releaseId = parseInt(req.params.releaseId as string, 10);
+router.delete("/releases/:dlcReleaseId/compatibility/:releaseId", authenticate, async (req: Request, res: Response) => {
+  try {
+    const dlcReleaseId = parseInt(req.params.dlcReleaseId as string, 10);
+    const releaseId = parseInt(req.params.releaseId as string, 10);
 
-      if (isNaN(dlcReleaseId) || isNaN(releaseId)) {
-        res.status(400).json({
-          data: null,
-          error: { code: "INVALID_ID", message: "Invalid DLC release ID or release ID" },
-        });
-        return;
-      }
-
-      await db
-        .delete(dlcReleaseCompatibility)
-        .where(
-          and(
-            eq(dlcReleaseCompatibility.dlcReleaseId, dlcReleaseId),
-            eq(dlcReleaseCompatibility.releaseId, releaseId),
-          ),
-        );
-
-      res.json({
-        data: { message: "Compatibility mapping removed" },
-        error: null,
-      });
-    } catch (error) {
-      console.error("Remove compatibility error:", error);
-      res.status(500).json({
+    if (isNaN(dlcReleaseId) || isNaN(releaseId)) {
+      res.status(400).json({
         data: null,
-        error: { code: "INTERNAL_ERROR", message: "Failed to remove compatibility mapping" },
+        error: { code: "INVALID_ID", message: "Invalid DLC release ID or release ID" },
       });
+      return;
     }
-  },
-);
+
+    await db
+      .delete(dlcReleaseCompatibility)
+      .where(
+        and(eq(dlcReleaseCompatibility.dlcReleaseId, dlcReleaseId), eq(dlcReleaseCompatibility.releaseId, releaseId)),
+      );
+
+    res.json({
+      data: { message: "Compatibility mapping removed" },
+      error: null,
+    });
+  } catch (error) {
+    console.error("Remove compatibility error:", error);
+    res.status(500).json({
+      data: null,
+      error: { code: "INTERNAL_ERROR", message: "Failed to remove compatibility mapping" },
+    });
+  }
+});
 
 export default router;

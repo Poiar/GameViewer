@@ -1,0 +1,27 @@
+[     190ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=cbf85270:14439
+[    6169ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:4200/:0
+[   23721ms] TypeError: Cannot read properties of undefined (reading 'map')
+    at eval (eval at <anonymous> (eval at evaluate (:303:30)), <anonymous>:2:28)
+    at timer (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:1474:27)
+    at _ZoneDelegate.invokeTask (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:377:171)
+    at _ZoneImpl2.runTask (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:158:37)
+    at invokeTask (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:454:26)
+    at ZoneTask.invoke (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:443:38)
+    at data.args.<computed> (http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:1447:26)
+[   96350ms] [ERROR] Error: API returned 500: Internal Server Error
+    at eval (eval at <anonymous> (eval at evaluate (:303:30)), <anonymous>:1:25)
+    at eval (eval at evaluate (:303:30), <anonymous>:4:50)
+    at UtilityScript.evaluate (<anonymous>:305:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44) @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:1867
+[  107258ms] [ERROR] Error: nested
+    at eval (eval at <anonymous> (eval at evaluate (:303:30)), <anonymous>:1:338)
+    at eval (eval at evaluate (:303:30), <anonymous>:4:50)
+    at UtilityScript.evaluate (<anonymous>:305:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44) @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/zone__js.js?v=46c053e7:1867
+[  107259ms] Error: nested
+    at eval (eval at <anonymous> (eval at evaluate (:303:30)), <anonymous>:1:338)
+    at eval (eval at evaluate (:303:30), <anonymous>:4:50)
+    at UtilityScript.evaluate (<anonymous>:305:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[  236776ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=cbf85270:14439
+[  307937ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Dev/GameViewer/.angular/cache/21.2.12/game-viewer/vite/deps/chunk-YHRVWWHG.js?v=cbf85270:14439

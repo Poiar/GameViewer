@@ -55,10 +55,7 @@ router.get("/", async (req: Request, res: Response) => {
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Total count
-    const [{ count: total }] = await db
-      .select({ count: count() })
-      .from(series)
-      .where(whereClause);
+    const [{ count: total }] = await db.select({ count: count() }).from(series).where(whereClause);
 
     // Select series with game count via subquery
     const orderByClause =
@@ -110,11 +107,7 @@ router.get("/:slug", async (req: Request, res: Response) => {
   try {
     const slug = req.params.slug as string;
 
-    const [s] = await db
-      .select()
-      .from(series)
-      .where(eq(series.slug, slug))
-      .limit(1);
+    const [s] = await db.select().from(series).where(eq(series.slug, slug)).limit(1);
 
     if (!s) {
       res.status(404).json({
@@ -159,11 +152,7 @@ router.post("/", authenticate, validate(createSeriesSchema), async (req: Request
     const slug = slugify(name);
 
     // Check slug uniqueness
-    const [existing] = await db
-      .select({ id: series.id })
-      .from(series)
-      .where(eq(series.slug, slug))
-      .limit(1);
+    const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.slug, slug)).limit(1);
 
     if (existing) {
       res.status(409).json({
@@ -200,11 +189,7 @@ router.put("/:id", authenticate, validate(updateSeriesSchema), async (req: Reque
       return;
     }
 
-    const [existing] = await db
-      .select({ id: series.id })
-      .from(series)
-      .where(eq(series.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({
@@ -251,11 +236,7 @@ router.put("/:id", authenticate, validate(updateSeriesSchema), async (req: Reque
       return;
     }
 
-    const [updated] = await db
-      .update(series)
-      .set(updateData)
-      .where(eq(series.id, id))
-      .returning();
+    const [updated] = await db.update(series).set(updateData).where(eq(series.id, id)).returning();
 
     res.json({ data: updated, error: null });
   } catch (error) {
@@ -279,11 +260,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    const [existing] = await db
-      .select({ id: series.id })
-      .from(series)
-      .where(eq(series.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({

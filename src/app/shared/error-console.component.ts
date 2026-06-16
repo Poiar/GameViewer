@@ -35,8 +35,7 @@ import { ErrorConsoleService } from "../services/error-console.service";
       </div>
 
       <div class="vibe-error-note">
-        This opens automatically when JavaScript throws. Copy the error and paste it
-        back into your AI.
+        This opens automatically when JavaScript throws. Copy the error and paste it back into your AI.
       </div>
     </div>
   `,

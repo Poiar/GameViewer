@@ -81,7 +81,11 @@ function mapProvider(storeRaw: string): string {
     s.startsWith("Diablo") ||
     s.startsWith("Delicious") ||
     s.startsWith("Assassin") ||
-    s === "2013" || s === "1998" || s === "2007" || s === "2022" || s === "Serve"
+    s === "2013" ||
+    s === "1998" ||
+    s === "2007" ||
+    s === "2022" ||
+    s === "Serve"
   ) {
     return "Physical";
   }
@@ -455,7 +459,7 @@ describe("parseCSVLine", () => {
   });
 
   it("parses a real data row correctly", () => {
-    const line = ',372,Rare Replay,Lunar Jetman,Full,1983,XSX/XONE,-,y,,y,y,Jetman,,NA,NA,Her,,,,,,';
+    const line = ",372,Rare Replay,Lunar Jetman,Full,1983,XSX/XONE,-,y,,y,y,Jetman,,NA,NA,Her,,,,,,";
     const result = parseCSVLine(line);
     expect(result.length).toBeGreaterThanOrEqual(21);
     expect(result[1]).toBe("372"); // ID

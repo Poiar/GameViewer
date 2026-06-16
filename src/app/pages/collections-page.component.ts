@@ -1,8 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, computed } from "@angular/core";
-import {
-  allCollections,
-  Collection,
-} from "../../classes/model";
+import { allCollections, Collection } from "../../classes/model";
 
 @Component({
   selector: "app-collections-page",
@@ -35,7 +32,9 @@ import {
             @for (gameVersion of collection.gameVersions; track gameVersion.id) {
               <div class="mini-item">
                 <span class="mini-label">{{ gameVersion.superVersion.game.title }}</span>
-                <span class="mini-detail">{{ gameVersion.superVersion.getVersionType() }} · {{ gameVersion.getPlayableOnTitles() }}</span>
+                <span class="mini-detail"
+                  >{{ gameVersion.superVersion.getVersionType() }} · {{ gameVersion.getPlayableOnTitles() }}</span
+                >
               </div>
             }
             @for (dlcVersion of collection.dlcVersions; track dlcVersion.id) {
@@ -50,9 +49,17 @@ import {
     </div>
     @if (collectionsTotalPages() > 1) {
       <div class="pagination">
-        <button class="pagination-btn" [disabled]="collectionsPage() === 0" (click)="prevCollectionsPage()">← Previous</button>
+        <button class="pagination-btn" [disabled]="collectionsPage() === 0" (click)="prevCollectionsPage()">
+          ← Previous
+        </button>
         <span class="pagination-info">Page {{ collectionsPage() + 1 }} of {{ collectionsTotalPages() }}</span>
-        <button class="pagination-btn" [disabled]="collectionsPage() >= collectionsTotalPages() - 1" (click)="nextCollectionsPage()">Next →</button>
+        <button
+          class="pagination-btn"
+          [disabled]="collectionsPage() >= collectionsTotalPages() - 1"
+          (click)="nextCollectionsPage()"
+        >
+          Next →
+        </button>
       </div>
     }
   `,

@@ -1,6 +1,12 @@
 import {
-  Component, ChangeDetectionStrategy, HostListener, ElementRef, inject,
-  OnInit, OnDestroy, computed,
+  Component,
+  ChangeDetectionStrategy,
+  HostListener,
+  ElementRef,
+  inject,
+  OnInit,
+  OnDestroy,
+  computed,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../services/auth.service";
@@ -81,33 +87,40 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   protected onRegister(): void {
-    if (!this.registerUsername.trim() || !this.registerDisplayName.trim() ||
-        !this.registerEmail.trim() || !this.registerPassword.trim()) return;
+    if (
+      !this.registerUsername.trim() ||
+      !this.registerDisplayName.trim() ||
+      !this.registerEmail.trim() ||
+      !this.registerPassword.trim()
+    )
+      return;
     if (this.registerPassword.length < 8) {
       this.authError = "Password must be at least 8 characters";
       return;
     }
     this.loading = true;
     this.authError = "";
-    this.authService.register(
-      this.registerUsername.trim(),
-      this.registerDisplayName.trim(),
-      this.registerEmail.trim(),
-      this.registerPassword.trim(),
-    ).subscribe({
-      next: () => {
-        this.registerUsername = "";
-        this.registerDisplayName = "";
-        this.registerEmail = "";
-        this.registerPassword = "";
-        this.loading = false;
-        this.dropdownOpen = false;
-      },
-      error: (err) => {
-        this.authError = err.message ?? "Registration failed";
-        this.loading = false;
-      },
-    });
+    this.authService
+      .register(
+        this.registerUsername.trim(),
+        this.registerDisplayName.trim(),
+        this.registerEmail.trim(),
+        this.registerPassword.trim(),
+      )
+      .subscribe({
+        next: () => {
+          this.registerUsername = "";
+          this.registerDisplayName = "";
+          this.registerEmail = "";
+          this.registerPassword = "";
+          this.loading = false;
+          this.dropdownOpen = false;
+        },
+        error: (err) => {
+          this.authError = err.message ?? "Registration failed";
+          this.loading = false;
+        },
+      });
   }
 
   protected switchMode(mode: "login" | "register"): void {

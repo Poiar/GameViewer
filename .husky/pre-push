@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Pre-push: run all checks. Fails fast if anything is broken.
+echo "→ Running pre-push checks..."
+npm run check

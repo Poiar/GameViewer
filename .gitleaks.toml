@@ -1,0 +1,13 @@
+# Gitleaks configuration for GameViewer
+# https://github.com/gitleaks/gitleaks
+
+title = "GameViewer Gitleaks config"
+
+[allowlist]
+  description = "Allowlisted patterns"
+  regexes = [
+    # <key> angle-bracket placeholders in documentation
+    '''<key>''',
+    # "..." ellipsis placeholders
+    '''\.\.\.''',
+  ]

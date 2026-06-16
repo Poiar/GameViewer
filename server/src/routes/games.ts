@@ -17,18 +17,7 @@ import {
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import {
-  eq,
-  and,
-  or,
-  ilike,
-  like,
-  desc,
-  asc,
-  count,
-  sql,
-  inArray,
-} from "drizzle-orm";
+import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -112,25 +101,16 @@ router.get("/", async (req: Request, res: Response) => {
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Total count
-    const [{ count: total }] = await db
-      .select({ count: count() })
-      .from(masterGames)
-      .where(whereClause);
+    const [{ count: total }] = await db.select({ count: count() }).from(masterGames).where(whereClause);
 
     // Determine sort
     let orderByClause;
     switch (sortBy) {
       case "year":
-        orderByClause =
-          order === "desc"
-            ? desc(masterGames.firstReleaseYear)
-            : asc(masterGames.firstReleaseYear);
+        orderByClause = order === "desc" ? desc(masterGames.firstReleaseYear) : asc(masterGames.firstReleaseYear);
         break;
       default: // "name"
-        orderByClause =
-          order === "desc"
-            ? desc(masterGames.title)
-            : asc(masterGames.title);
+        orderByClause = order === "desc" ? desc(masterGames.title) : asc(masterGames.title);
     }
 
     // Fetch paginated games with series name
@@ -206,9 +186,7 @@ router.get("/", async (req: Request, res: Response) => {
       firstReleaseYear: g.firstReleaseYear,
       description: g.description,
       coverImageUrl: g.coverImageUrl,
-      series: g.seriesId
-        ? { id: g.seriesId, name: g.seriesName }
-        : null,
+      series: g.seriesId ? { id: g.seriesId, name: g.seriesName } : null,
       alternativeTitles: g.alternativeTitles,
       genres: genreMap[g.id] || [],
       releaseGroupsCount: rgCountMap[g.id] || 0,
@@ -295,9 +273,7 @@ router.get("/:slug", async (req: Request, res: Response) => {
       coverImageUrl: game.coverImageUrl,
       alternativeTitles: game.alternativeTitles,
       series: game.series ?? null,
-      genres: game.genres
-        .map((g) => g.genre)
-        .sort((a, b) => a.name.localeCompare(b.name)),
+      genres: game.genres.map((g) => g.genre).sort((a, b) => a.name.localeCompare(b.name)),
       releaseGroups: game.releaseGroups
         .sort((a, b) => (a.releaseYear ?? 0) - (b.releaseYear ?? 0))
         .map((rg) => ({
@@ -439,11 +415,7 @@ router.put("/:id", authenticate, validate(updateGameSchema), async (req: Request
       return;
     }
 
-    const [existing] = await db
-      .select({ id: masterGames.id })
-      .from(masterGames)
-      .where(eq(masterGames.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: masterGames.id }).from(masterGames).where(eq(masterGames.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({
@@ -484,18 +456,13 @@ router.put("/:id", authenticate, validate(updateGameSchema), async (req: Request
     if (alternativeTitles !== undefined) updateData.alternativeTitles = alternativeTitles;
 
     if (Object.keys(updateData).length > 0) {
-      await db
-        .update(masterGames)
-        .set(updateData)
-        .where(eq(masterGames.id, id));
+      await db.update(masterGames).set(updateData).where(eq(masterGames.id, id));
     }
 
     // Update genre associations if provided
     if (genreIds !== undefined) {
       // Remove existing genre associations
-      await db
-        .delete(masterGameGenres)
-        .where(eq(masterGameGenres.gameId, id));
+      await db.delete(masterGameGenres).where(eq(masterGameGenres.gameId, id));
 
       // Insert new genre associations
       if (genreIds.length > 0) {
@@ -546,11 +513,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
       return;
     }
 
-    const [existing] = await db
-      .select({ id: masterGames.id })
-      .from(masterGames)
-      .where(eq(masterGames.id, id))
-      .limit(1);
+    const [existing] = await db.select({ id: masterGames.id }).from(masterGames).where(eq(masterGames.id, id)).limit(1);
 
     if (!existing) {
       res.status(404).json({
@@ -606,10 +569,7 @@ router.post("/:id/cover", authenticate, async (req: Request, res: Response) => {
     }
 
     // Store in DB
-    await db
-      .update(masterGames)
-      .set({ coverImageUrl: coverUrl, updatedAt: new Date() })
-      .where(eq(masterGames.id, id));
+    await db.update(masterGames).set({ coverImageUrl: coverUrl, updatedAt: new Date() }).where(eq(masterGames.id, id));
 
     res.json({ data: { id, coverImageUrl: coverUrl }, error: null });
   } catch (error) {
@@ -628,12 +588,7 @@ router.post("/bulk-cover", authenticate, async (req: Request, res: Response) => 
     const gamesNeedingCovers = await db
       .select({ id: masterGames.id, title: masterGames.title })
       .from(masterGames)
-      .where(
-        or(
-          sql`${masterGames.coverImageUrl} IS NULL`,
-          eq(masterGames.coverImageUrl, ""),
-        ),
-      )
+      .where(or(sql`${masterGames.coverImageUrl} IS NULL`, eq(masterGames.coverImageUrl, "")))
       .orderBy(sql`RANDOM()`)
       .limit(batchLimit);
 
