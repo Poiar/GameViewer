@@ -32,6 +32,11 @@ export const routes: Routes = [
     data: { title: "Series" },
   },
   {
+    path: "series/:slug",
+    loadComponent: () => import("./pages/series-detail-page.component").then((m) => m.SeriesDetailPageComponent),
+    data: { title: "Series Detail" },
+  },
+  {
     path: "inventory",
     loadComponent: () => import("./pages/inventory-page.component").then((m) => m.InventoryPageComponent),
     data: { title: "Inventory" },
@@ -50,5 +55,15 @@ export const routes: Routes = [
     path: "dlc",
     loadComponent: () => import("./pages/dlc-page.component").then((m) => m.DlcPageComponent),
     data: { title: "DLCs" },
+  },
+  {
+    path: "platforms",
+    loadComponent: () => import("./pages/platforms-page.component").then((m) => m.PlatformsPageComponent),
+    data: { title: "Platforms" },
+  },
+  {
+    path: "providers",
+    loadComponent: () => import("./pages/providers-page.component").then((m) => m.ProvidersPageComponent),
+    data: { title: "Providers" },
   },
 ];

@@ -55,7 +55,7 @@
             <div class="inv-row-main" (click)="selectedOwned === owned ? selectedOwned = undefined : onSelect(owned)">
               <div class="ir-cover">
                 @if (owned.release?.releaseGroup?.masterGame?.coverImageUrl) {
-                  <img [src]="owned.release.releaseGroup.masterGame.coverImageUrl" alt="" loading="lazy" />
+                  <img [src]="owned.release?.releaseGroup?.masterGame?.coverImageUrl" alt="" loading="lazy" />
                 } @else {
                   <span class="ir-cover-ph">🎮</span>
                 }
@@ -64,13 +64,13 @@
                 <h3 class="ir-title">{{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? owned.dlcRelease?.dlc?.title ?? "Unknown" }}</h3>
                 <div class="ir-badges">
                   @if (owned.release?.releaseGroup?.editionType?.name) {
-                    <span class="irb irb-edition">{{ owned.release.releaseGroup.editionType.name }}</span>
+                    <span class="irb irb-edition">{{ owned.release?.releaseGroup?.editionType?.name }}</span>
                   }
                   @if (owned.release?.mediaFormat?.name) {
-                    <span class="irb irb-format">{{ owned.release.mediaFormat.name }}</span>
+                    <span class="irb irb-format">{{ owned.release?.mediaFormat?.name }}</span>
                   }
                   @if (owned.dlcRelease?.dlc?.dlcType) {
-                    <span class="irb irb-dlc">{{ owned.dlcRelease.dlc.dlcType }}</span>
+                    <span class="irb irb-dlc">{{ owned.dlcRelease?.dlc?.dlcType }}</span>
                   }
                 </div>
                 <div class="ir-platforms">
@@ -78,7 +78,7 @@
                     <span class="irb irb-plat">{{ p }}</span>
                   }
                   @if (owned.release?.region) {
-                    <span class="irb irb-region">{{ owned.release.region }}</span>
+                    <span class="irb irb-region">{{ owned.release?.region }}</span>
                   }
                 </div>
               </div>
@@ -110,7 +110,7 @@
                 @if (owned.release?.provider?.name) {
                   <div class="irm-stat">
                     <span class="irms-lbl">Provider</span>
-                    <span class="irms-val">{{ owned.release.provider.name }}</span>
+                    <span class="irms-val">{{ owned.release?.provider?.name }}</span>
                   </div>
                 }
               </div>
