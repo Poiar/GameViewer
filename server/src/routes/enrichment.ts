@@ -8,13 +8,23 @@ import { eq, and, isNull, sql } from "drizzle-orm";
 const router = Router();
 
 async function updateGame(gameId: number, enrichment: Awaited<ReturnType<typeof enrichGame>>) {
-  await db.update(masterGames).set({
+  const setData: Record<string, unknown> = {
     igdbId: enrichment.igdbId ?? undefined,
     opencriticId: enrichment.opencriticId ?? undefined,
     hltbId: enrichment.hltbId ?? undefined,
     criticScore: enrichment.opencriticScore ?? undefined,
+    summary: enrichment.igdbSummary ?? undefined,
     updatedAt: new Date(),
-  } as any).where(eq(masterGames.id, gameId));
+  };
+  // Use IGDB cover if no cover exists
+  if (enrichment.igdbCoverUrl && !enrichment.igdbCoverUrl.includes("nocover")) {
+    // Only set cover if game doesn't already have one — check first
+    const [existing] = await db.select({ cover: masterGames.coverImageUrl }).from(masterGames).where(eq(masterGames.id, gameId)).limit(1);
+    if (!existing?.cover) {
+      setData["coverImageUrl"] = enrichment.igdbCoverUrl;
+    }
+  }
+  await db.update(masterGames).set(setData as any).where(eq(masterGames.id, gameId));
 }
 
 // POST /batch — Batch enrich games without external IDs (MUST be before /:id)

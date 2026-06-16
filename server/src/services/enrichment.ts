@@ -30,10 +30,16 @@ async function igdbQuery<T>(endpoint: string, body: string): Promise<T | null> {
   return (await res.json()) as T;
 }
 
+export function getIgdbCoverUrl(coverUrl: string | undefined): string | null {
+  if (!coverUrl) return null;
+  // IGDB cover URLs: //images.igdb.com/igdb/image/upload/t_thumb/co2r2r.jpg
+  // Replace t_thumb with t_cover_big for high-res
+  return coverUrl.startsWith("//") ? "https:" + coverUrl.replace("t_thumb", "t_cover_big") : coverUrl;
+}
+
 export async function searchIgdb(title: string): Promise<IgdbGame | null> {
   const results = await igdbQuery<IgdbGame[]>("games", `search "${title}"; fields name,slug,summary,first_release_date,cover.url,genres.name; limit 3;`);
   if (!results?.length) return null;
-  // Best match: exact title match preferred
   const exact = results.find((g) => g.name.toLowerCase() === title.toLowerCase());
   return exact ?? results[0];
 }
@@ -111,6 +117,8 @@ export async function searchHltb(title: string): Promise<HltbResult | null> {
 export interface EnrichmentResult {
   igdbId?: number;
   igdbUrl?: string;
+  igdbCoverUrl?: string;
+  igdbSummary?: string;
   opencriticId?: number;
   opencriticScore?: number;
   hltbId?: number;
@@ -125,10 +133,11 @@ export async function enrichGame(title: string): Promise<EnrichmentResult> {
   if (igdb) {
     result.igdbId = igdb.id;
     result.igdbUrl = `https://www.igdb.com/games/${igdb.slug}`;
+    result.igdbCoverUrl = getIgdbCoverUrl(igdb.cover?.url);
+    result.igdbSummary = igdb.summary ?? undefined;
   }
 
-  // OpenCritic (only makes sense for games with reviews)
-  // Skip for very old games or obscure titles
+  // OpenCritic
   const oc = await searchOpenCritic(title);
   if (oc) {
     result.opencriticId = oc.id;
