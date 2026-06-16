@@ -117,6 +117,29 @@
       @if (enrichResult()) {
         <p class="cover-result enrich-result">{{ enrichResult() }}</p>
       }
+      <!-- Enrichment coverage -->
+      <div class="enrich-coverage">
+        <div class="ec-item" [class.ec-active]="(s.enrichedIgdb ?? 0) > 0">
+          <span class="ec-icon">🎮</span>
+          <span class="ec-label">IGDB</span>
+          <span class="ec-count">{{ s.enrichedIgdb ?? 0 }}/{{ s.totalGames }}</span>
+        </div>
+        <div class="ec-item" [class.ec-active]="(s.enrichedOpenCritic ?? 0) > 0">
+          <span class="ec-icon">📊</span>
+          <span class="ec-label">OpenCritic</span>
+          <span class="ec-count">{{ s.enrichedOpenCritic ?? 0 }}/{{ s.totalGames }}</span>
+        </div>
+        <div class="ec-item" [class.ec-active]="(s.enrichedHltb ?? 0) > 0">
+          <span class="ec-icon">🕐</span>
+          <span class="ec-label">HLTB</span>
+          <span class="ec-count">{{ s.enrichedHltb ?? 0 }}/{{ s.totalGames }}</span>
+        </div>
+        <div class="ec-item" [class.ec-active]="(s.gamesWithCovers ?? 0) > 0">
+          <span class="ec-icon">🖼️</span>
+          <span class="ec-label">Covers</span>
+          <span class="ec-count">{{ s.gamesWithCovers ?? 0 }}/{{ s.totalGames }}</span>
+        </div>
+      </div>
       <p class="cover-hint">
         <a href="https://www.steamgriddb.com" target="_blank" rel="noopener">SteamGridDB</a> covers ·
         <a href="https://www.igdb.com" target="_blank" rel="noopener">IGDB</a> metadata
@@ -130,22 +153,21 @@
         <div class="recent-list">
           @for (item of s.recentlyAdded; track item.id) {
             <div class="recent-item">
-              @if (item.release?.releaseGroup?.masterGame?.coverImageUrl) {
+              @if ($any(item).masterGameCover) {
                 <img
                   class="recent-cover"
-                  [src]="$any(item.release).releaseGroup.masterGame.coverImageUrl"
-                  [alt]="$any(item.release).releaseGroup.masterGame.title"
+                  [src]="$any(item).masterGameCover"
+                  [alt]="$any(item).masterGameTitle"
                   loading="lazy"
                 />
               }
               <div class="recent-info">
                 <span class="recent-title">{{
-                  item.release?.releaseGroup?.masterGame?.title ?? item.release?.title ?? "Unknown"
+                  $any(item).masterGameTitle || $any(item).title || "Unknown"
                 }}</span>
                 <span class="recent-meta">
-                  {{ item.release?.releaseGroup?.editionType?.name ?? "" }}
-                  {{ item.release?.playableOn?.join(", ") ?? "" }}
-                  ·
+                  @if ($any(item).type === "dlc") { <span class="recent-dlc-badge">DLC</span> }
+                  @if ($any(item).playableOn?.length) { {{ $any(item).playableOn.join(", ") }} · }
                   {{ item.condition ?? "Unknown condition" }}
                 </span>
               </div>

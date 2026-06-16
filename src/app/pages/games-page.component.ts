@@ -175,6 +175,11 @@ import { MasterGame, Genre } from "../types/game.types";
                 </span>
               }
 
+              <!-- Critic score badge -->
+              @if (game.criticScore) {
+                <span class="critic-badge">{{ game.criticScore }}</span>
+              }
+
               <!-- Hover overlay -->
               <div class="card-overlay">
                 <div class="overlay-top">
@@ -593,6 +598,33 @@ import { MasterGame, Genre } from "../types/game.types";
     .game-card:hover .owned-count-badge {
       transform: scale(0.85);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 6px rgba(124, 106, 247, 0.2);
+    }
+
+    .critic-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      min-width: 26px;
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 13px;
+      background: rgba(247, 110, 110, 0.9);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 12px rgba(247, 110, 110, 0.4);
+      z-index: 2;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .game-card:hover .critic-badge {
+      transform: scale(0.85);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 6px rgba(247, 110, 110, 0.2);
     }
 
     /* Overlay */

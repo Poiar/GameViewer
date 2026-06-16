@@ -10,8 +10,10 @@ export interface MasterGame {
   igdbId?: number | null;
   opencriticId?: number | null;
   hltbId?: number | null;
+  hltbTime?: number | null;
   criticScore?: number | null;
   summary?: string | null;
+  screenshots?: string[];
   createdAt: string;
   updatedAt: string;
   series?: SeriesSummary;
@@ -216,6 +218,10 @@ export interface DashboardStats {
   recentlyAdded: OwnedInstance[];
   totalValue: number;
   collectionCompleteness: { collectionId: number; title: string; owned: number; total: number }[];
+  enrichedIgdb?: number;
+  enrichedOpenCritic?: number;
+  enrichedHltb?: number;
+  gamesWithCovers?: number;
 }
 
 export interface UserProfile {

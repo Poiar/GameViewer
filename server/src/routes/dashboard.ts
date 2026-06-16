@@ -16,7 +16,7 @@ import {
   dlcs,
 } from "../db/schema.js";
 import { authenticate } from "../middleware/auth.js";
-import { eq, and, asc, desc, count, sql } from "drizzle-orm";
+import { eq, and, asc, desc, count, sql, isNotNull } from "drizzle-orm";
 
 const router = Router();
 
@@ -55,6 +55,19 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
       db.select({ count: count() }).from(releases),
       db.select({ count: count() }).from(series),
       db.select({ count: count() }).from(collections),
+    ]);
+
+    // ── Enrichment coverage ──
+    const [
+      [{ count: enrichedIgdb }],
+      [{ count: enrichedOpenCritic }],
+      [{ count: enrichedHltb }],
+      [{ count: gamesWithCovers }],
+    ] = await Promise.all([
+      db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.igdbId)),
+      db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.opencriticId)),
+      db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.hltbId)),
+      db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.coverImageUrl)),
     ]);
 
     // ── User-specific counts ──
@@ -115,6 +128,8 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
         releaseTitle: releases.title,
         masterGameTitle: masterGames.title,
         masterGameSlug: masterGames.slug,
+        masterGameCover: masterGames.coverImageUrl,
+        playableOn: releases.playableOn,
         dlcTitle: sql<string | null>`NULL`,
         dlcType: sql<string | null>`NULL`,
       })
@@ -138,6 +153,8 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
         releaseTitle: sql<string | null>`NULL`,
         masterGameTitle: masterGames.title,
         masterGameSlug: masterGames.slug,
+        masterGameCover: masterGames.coverImageUrl,
+        playableOn: sql<string[] | null>`NULL`,
         dlcTitle: dlcs.title,
         dlcType: dlcs.dlcType,
       })
@@ -168,6 +185,8 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
       title: r.dlcTitle ?? r.releaseTitle,
       masterGameTitle: r.masterGameTitle,
       masterGameSlug: r.masterGameSlug,
+      masterGameCover: r.masterGameCover,
+      playableOn: r.playableOn,
       type: r.dlcTitle ? "dlc" : "game",
     }));
 
@@ -240,6 +259,10 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
         genreBreakdown,
         recentlyAdded,
         collectionCompleteness,
+        enrichedIgdb: safeNumber(enrichedIgdb),
+        enrichedOpenCritic: safeNumber(enrichedOpenCritic),
+        enrichedHltb: safeNumber(enrichedHltb),
+        gamesWithCovers: safeNumber(gamesWithCovers),
       },
       error: null,
     });

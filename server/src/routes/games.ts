@@ -17,6 +17,7 @@ import {
 } from "../db/schema.js";
 import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
+import { enrichGame } from "../services/enrichment.js";
 import { z } from "zod";
 import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
 
@@ -425,8 +426,10 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       igdbId: game.igdbId ?? null,
       opencriticId: game.opencriticId ?? null,
       hltbId: game.hltbId ?? null,
+      hltbTime: game.hltbTime ?? null,
       criticScore: game.criticScore ?? null,
       summary: game.summary ?? null,
+      screenshots: game.screenshots ?? [],
       releaseGroups: game.releaseGroups
         .sort((a, b) => (a.releaseYear ?? 0) - (b.releaseYear ?? 0))
         .map((rg) => ({
@@ -549,6 +552,27 @@ router.post("/", authenticate, validate(createGameSchema), async (req: Request, 
       : created;
 
     res.status(201).json({ data, error: null });
+
+    // Fire-and-forget enrichment
+    enrichGame(title).then((enrichment) => {
+      if (enrichment.igdbId || enrichment.opencriticId || enrichment.hltbId) {
+        const setData: Record<string, unknown> = {
+          igdbId: enrichment.igdbId ?? undefined,
+          opencriticId: enrichment.opencriticId ?? undefined,
+          hltbId: enrichment.hltbId ?? undefined,
+          hltbTime: enrichment.hltbTime ?? undefined,
+          criticScore: enrichment.opencriticScore ?? undefined,
+          summary: enrichment.igdbSummary ?? undefined,
+          screenshots: enrichment.igdbScreenshots?.length ? enrichment.igdbScreenshots : undefined,
+          updatedAt: new Date(),
+        };
+        if (enrichment.igdbCoverUrl && !enrichment.igdbCoverUrl.includes("nocover")) {
+          setData["coverImageUrl"] = enrichment.igdbCoverUrl;
+        }
+        db.update(masterGames).set(setData as any).where(eq(masterGames.id, created.id)).execute()
+          .catch((e) => console.error("Auto-enrich update failed:", e));
+      }
+    }).catch((e) => console.error("Auto-enrich search failed:", e));
   } catch (error) {
     console.error("Create game error:", error);
     res.status(500).json({
