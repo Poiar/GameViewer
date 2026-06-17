@@ -1,20 +1,24 @@
-// Long-running enrichment scraper — OpenCritic + HLTB.
+// Long-running enrichment scraper — OpenCritic + HLTB + IGDB + Steam.
 // Runs for ~10 hours with random 10–60s delays between requests to avoid
 // rate limiting and bot detection patterns.
 //
-// Both OpenCritic and HLTB use Playwright browser context (page.evaluate)
-// so that Client Hints, cookies, and SPA auth are handled by the browser.
+// OpenCritic uses page.evaluate() with a Bearer token for API calls.
+// HLTB intercepts the page's own API responses after a UI search.
+// IGDB is called directly (Twitch API).
+// Steam calls the public ISteamUserStats endpoint.
 //
 // Usage: npx tsx src/db/scrape-all.ts  (run from server/ directory)
 //   Set MAX_HOURS env var to override duration (default 10).
 //   Set SCRAPE_OC=false to skip OpenCritic.
 //   Set SCRAPE_HLTB=false to skip HLTB.
+//   Set SCRAPE_STEAM=false to skip Steam.
 
 import "dotenv/config";
 import { db } from "./index.js";
 import { masterGames } from "./schema.js";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { chromium } from "playwright";
+import { searchIgdb, getIgdbCoverUrl } from "../services/enrichment.js";
 
 // --------------------------------------------------------------------------
 // Config
@@ -22,7 +26,7 @@ import { chromium } from "playwright";
 
 const MAX_HOURS = parseFloat(process.env.SCRAPE_MAX_HOURS ?? "10");
 const SCRAPE_OC = process.env.SCRAPE_OC !== "false";
-const SCRAPE_HLTB = process.env.SCRAPE_HLTB === "true"; // Cloudflare-blocked — opt-in only
+const SCRAPE_HLTB = process.env.SCRAPE_HLTB === "true"; // Cloudflare-blocked — opt-in
 const SCRAPE_STEAM = process.env.SCRAPE_STEAM !== "false";
 const OC_BEARER = "R2tBRkdvUU9WSHpoUXpaSXVYa2g5cGU5NEFsWUgyeXQ=";
 
@@ -91,47 +95,52 @@ async function scrapeHltb(page: any, title: string): Promise<{
   hltbTime?: number;
 } | null> {
   try {
-    return await page.evaluate(async (gameTitle: string) => {
-      const initRes = await fetch(`https://howlongtobeat.com/api/bleed/init?t=${Date.now()}`, {
-        headers: { Referer: "https://howlongtobeat.com/", Accept: "application/json" },
-      });
-      if (!initRes.ok) return null as any;
-      const initData = (await initRes.json()) as { token?: string; hpKey?: string; hpVal?: string };
-      if (!initData.token) return null as any;
+    // Navigate to a fresh HLTB page so Cloudflare cookies are current
+    await page.goto("https://howlongtobeat.com/", { waitUntil: "domcontentloaded", timeout: 20_000 });
+    await page.waitForTimeout(2500);
 
-      const body: Record<string, unknown> = {
-        searchType: "games", searchTerms: gameTitle.split(" "), searchPage: 1, size: 5,
-        searchOptions: {
-          games: { userId: 0, platform: "", sortCategory: "popular", rangeCategory: "main",
-            rangeTime: { min: null, max: null },
-            gameplay: { perspective: "", flow: "", genre: "", difficulty: "" },
-            rangeYear: { min: "", max: "" }, modifier: "" },
-          users: { sortCategory: "postcount" }, lists: { sortCategory: "follows" },
-          filter: "", sort: 0, randomizer: 0,
-        },
-        useCache: true,
+    // Eavesdrop on the page's own /api/bleed POST responses.
+    // The page's JS has a valid Cloudflare clearance, so its API calls succeed.
+    const captured: Promise<any> = new Promise((resolve) => {
+      let settled = false;
+      const done = (data: any) => { if (settled) return; settled = true; resolve(data); };
+      const timer = setTimeout(() => done(null), 10_000);
+
+      const handler = (resp: any) => {
+        if (settled) return;
+        if (!resp.url().includes("/api/bleed")) return;
+        if (resp.request().method() !== "POST") return;
+        resp.json()
+          .then((j: any) => { if (j?.data?.length) done(j); })
+          .catch(() => {});
       };
-      if (initData.hpKey) body[initData.hpKey] = initData.hpVal;
 
-      const searchRes = await fetch("https://howlongtobeat.com/api/bleed", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", Referer: "https://howlongtobeat.com/",
-          Accept: "application/json", "x-auth-token": initData.token,
-          ...(initData.hpKey && initData.hpVal ? { "x-hp-key": initData.hpKey, "x-hp-val": initData.hpVal } : {}),
-        },
-        body: JSON.stringify(body),
+      page.on("response", handler);
+
+      // Trigger the search in the page UI
+      page.locator('input[type="text"]').first()
+        .fill(title)
+        .then(() => page.keyboard.press("Enter"))
+        .catch(() => done(null));
+
+      // Cleanup after resolution
+      captured.then(() => {
+        clearTimeout(timer);
+        page.off("response", handler);
       });
-      if (!searchRes.ok) return null as any;
-      const json = (await searchRes.json()) as any;
-      if (!json.data?.length) return null as any;
-      const exact = json.data.find((g: any) => g.game_name?.toLowerCase() === gameTitle.toLowerCase());
-      const match = exact ?? json.data[0];
-      return {
-        hltbId: match.game_id as number,
-        hltbTime: match.comp_main ? Math.round((match.comp_main as number) / 3600) : undefined,
-      } as any;
-    }, title) as Promise<{ hltbId?: number; hltbTime?: number } | null>;
+    });
+
+    const json = await captured;
+    if (!json?.data?.length) return null;
+
+    const exact = json.data.find(
+      (g: any) => g.game_name?.toLowerCase() === title.toLowerCase(),
+    );
+    const match = exact ?? json.data[0];
+    return {
+      hltbId: match.game_id as number,
+      hltbTime: match.comp_main ? Math.round((match.comp_main as number) / 3600) : undefined,
+    };
   } catch {
     return null;
   }
@@ -187,7 +196,7 @@ async function main() {
     console.log("[scrape-all] HLTB browser ready");
   }
 
-  let ocCount = 0, hltbCount = 0, steamCount = 0;
+  let ocCount = 0, hltbCount = 0, igdbCount = 0, steamCount = 0;
 
   // ------------------------------------------------------------------
   // Build per-source conditions (evaluated once — static SQL fragments)
@@ -196,6 +205,8 @@ async function main() {
   const enrichConditions: ReturnType<typeof isNull>[] = [];
   if (SCRAPE_OC) enrichConditions.push(isNull(masterGames.opencriticId));
   if (SCRAPE_HLTB) enrichConditions.push(isNull(masterGames.hltbId));
+  // Always include IGDB-missing games (no API key needed — uses Twitch creds)
+  enrichConditions.push(isNull(masterGames.igdbId));
 
   const hasEnrich = enrichConditions.length > 0;
   const enrichWhere = hasEnrich
@@ -235,6 +246,10 @@ async function main() {
           title: masterGames.title,
           opencriticId: masterGames.opencriticId,
           hltbId: masterGames.hltbId,
+          igdbId: masterGames.igdbId,
+          summary: masterGames.summary,
+          coverImageUrl: masterGames.coverImageUrl,
+          screenshots: masterGames.screenshots,
         })
         .from(masterGames)
         .where(enrichWhere!)
@@ -274,11 +289,50 @@ async function main() {
           }
         }
 
+        // IGDB enrichment (Twitch API — no browser needed)
+        if (!g.igdbId) {
+          const igdb = await searchIgdb(g.title);
+          if (igdb) {
+            sets.igdbId = igdb.id;
+            if (igdb.summary && !g.summary) sets.summary = igdb.summary;
+            if (!g.coverImageUrl) {
+              const cover = getIgdbCoverUrl(igdb.cover?.url);
+              if (cover) sets.coverImageUrl = cover;
+            }
+            sets.gameModes = igdb.game_modes?.map((m) => m.name).filter(Boolean) ?? [];
+            sets.playerPerspectives = igdb.player_perspectives?.map((p) => p.name).filter(Boolean) ?? [];
+            // Age rating
+            const ar = igdb.age_ratings?.[0];
+            if (ar) {
+              const catMap: Record<number, string> = { 1: "ESRB", 2: "PEGI" };
+              const ratingMap: Record<number, string> = { 6: "RP", 7: "EC", 8: "E", 9: "E10+", 10: "T", 11: "M", 12: "AO" };
+              sets.ageRating = `${catMap[ar.category] ?? ""} ${ratingMap[ar.rating] ?? ar.rating}`.trim();
+            }
+            // Trailer
+            if (igdb.videos?.length) {
+              sets.trailerUrl = `https://www.youtube.com/watch?v=${igdb.videos[0].video_id}`;
+            }
+            // Franchise
+            if (igdb.franchise?.name) sets.franchise = igdb.franchise.name;
+            // Steam AppID
+            const steamExt = igdb.external_games?.find((e) => e.external_game_source === 1);
+            if (steamExt) sets.steamAppId = parseInt(steamExt.uid, 10) || undefined;
+            // Screenshots
+            if (!(g.screenshots as any)?.length && igdb.screenshots?.length) {
+              sets.screenshots = igdb.screenshots
+                .map((s) => s.url?.startsWith("//") ? "https:" + s.url.replace("t_thumb", "t_screenshot_big") : s.url)
+                .filter((u): u is string => !!u && !u.includes("nocover"));
+            }
+            igdbCount++;
+            label += " IGDB✓";
+          }
+        }
+
         if (Object.keys(sets).length > 1) {
           await db.update(masterGames).set(sets as any).where(eq(masterGames.id, g.id));
           didWork = true;
         }
-        console.log(`${label}  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+        console.log(`${label}  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
       }
     }
 
@@ -311,9 +365,9 @@ async function main() {
             .where(eq(masterGames.id, g.id));
           steamCount++;
           didWork = true;
-          console.log(` Steam✓(${st.steamPlayers})  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+          console.log(` Steam✓(${st.steamPlayers})  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
         } else {
-          console.log(` Steam✗  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+          console.log(` Steam✗  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
         }
       }
     }
@@ -328,7 +382,7 @@ async function main() {
     if (Date.now() >= deadline) break;
     const remaining = Math.round((deadline - Date.now()) / 1000 / 60);
     if (remaining % 15 === 0 && didWork) {
-      console.log(`  ⏱ ${remaining}min remaining  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+      console.log(`  ⏱ ${remaining}min remaining  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
     }
   }
 
