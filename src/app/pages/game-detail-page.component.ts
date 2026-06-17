@@ -49,6 +49,31 @@ import { MasterGameDetail } from "../types/game.types";
             <p class="detail-desc">{{ g.summary || g.description }}</p>
             @if (g.summary) { <span class="detail-desc-src">via IGDB</span> }
           }
+          <!-- IGDB + Steam metadata -->
+          @if (g.gameModes?.length || g.playerPerspectives?.length || g.ageRating || g.franchise || g.trailerUrl || g.steamPlayers || g.steamAppId) {
+            <div class="detail-meta-row">
+              @if (g.franchise) {
+                <span class="meta-item meta-franchise" title="Franchise">{{ g.franchise }}</span>
+              }
+              @if (g.ageRating) {
+                <span class="meta-item meta-rating" title="Age rating">{{ g.ageRating }}</span>
+              }
+              @for (mode of g.gameModes ?? []; track mode) {
+                <span class="meta-item tag-genre">{{ mode }}</span>
+              }
+              @for (persp of g.playerPerspectives ?? []; track persp) {
+                <span class="meta-item" style="background:rgba(147,112,219,.12);color:#9370db;border-color:rgba(147,112,219,.25)">{{ persp }}</span>
+              }
+              @if (g.trailerUrl) {
+                <a class="meta-item meta-trailer" [href]="g.trailerUrl" target="_blank" rel="noopener" title="Watch trailer">▶ Trailer</a>
+              }
+              @if (g.steamPlayers != null) {
+                <a class="meta-item meta-steam" href="https://store.steampowered.com/app/{{ g.steamAppId }}" target="_blank" rel="noopener" title="Current Steam players">👥 {{ g.steamPlayers }} playing</a>
+              } @else if (g.steamAppId) {
+                <a class="meta-item meta-steam" href="https://store.steampowered.com/app/{{ g.steamAppId }}" target="_blank" rel="noopener" title="View on Steam">Steam</a>
+              }
+            </div>
+          }
           <!-- External links -->
           <div class="ext-links">
             @if (g.igdbId) {
@@ -240,6 +265,19 @@ import { MasterGameDetail } from "../types/game.types";
     .detail-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 640px; }
     .detail-desc-src { font-size: 10px; color: var(--text-muted); opacity: .5; margin-left: 4px; font-style: italic; }
 
+    .detail-meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; }
+    .meta-item {
+      display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border-subtle); text-decoration: none; transition: all .15s;
+    }
+    .meta-franchise { background: rgba(255,183,77,.12); color: #ffb74d; border-color: rgba(255,183,77,.25); font-weight: 700; }
+    .meta-rating { background: rgba(247,110,110,.12); color: #f76e6e; border-color: rgba(247,110,110,.25); font-weight: 700; }
+    .meta-trailer { background: rgba(79,195,247,.12); color: #4fc3f7; border-color: rgba(79,195,247,.25); gap: 4px; }
+    .meta-trailer:hover { background: rgba(79,195,247,.25); }
+    .meta-steam { background: rgba(27,40,56,.8); color: #66c0f4; border-color: rgba(102,192,244,.3); gap: 4px; font-weight: 600; }
+    .meta-steam:hover { background: rgba(102,192,244,.2); border-color: #66c0f4; }
+
     .ext-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
     .ext-link {
       padding: 3px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
@@ -396,6 +434,12 @@ export class GameDetailPageComponent implements OnInit {
           if (d.hltbTime) { (g as any).hltbTime = d.hltbTime; }
           if (d.igdbSummary) { (g as any).summary = d.igdbSummary; }
           if (d.igdbCoverUrl && !g.coverImageUrl) { (g as any).coverImageUrl = d.igdbCoverUrl; }
+          if (d.igdbGameModes) { (g as any).gameModes = d.igdbGameModes; }
+          if (d.igdbPlayerPerspectives) { (g as any).playerPerspectives = d.igdbPlayerPerspectives; }
+          if (d.igdbAgeRating) { (g as any).ageRating = d.igdbAgeRating; }
+          if (d.igdbTrailerUrl) { (g as any).trailerUrl = d.igdbTrailerUrl; }
+          if (d.igdbFranchise) { (g as any).franchise = d.igdbFranchise; }
+          if (d.igdbSteamAppId) { (g as any).steamAppId = d.igdbSteamAppId; }
         }
         this.enriching.set(false);
       },
