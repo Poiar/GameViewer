@@ -180,6 +180,11 @@ import { MasterGame, Genre } from "../types/game.types";
                 <span class="critic-badge">{{ game.criticScore }}</span>
               }
 
+              <!-- Steam players badge -->
+              @if (game.steamPlayers != null) {
+                <span class="steam-badge" title="Current Steam players">👥 {{ game.steamPlayers }}</span>
+              }
+
               <!-- Hover overlay -->
               <div class="card-overlay">
                 <div class="overlay-top">
@@ -625,6 +630,32 @@ import { MasterGame, Genre } from "../types/game.types";
     .game-card:hover .critic-badge {
       transform: scale(0.85);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 6px rgba(247, 110, 110, 0.2);
+    }
+
+    /* Steam badge */
+    .steam-badge {
+      position: absolute;
+      top: 40px;
+      left: 8px;
+      height: 22px;
+      padding: 0 7px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(27, 40, 56, 0.92);
+      color: #66c0f4;
+      border: 1px solid rgba(102, 192, 244, 0.35);
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      z-index: 2;
+      pointer-events: none;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .game-card:hover .steam-badge {
+      transform: scale(0.85);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 6px rgba(102, 192, 244, 0.2);
     }
 
     /* Overlay */
