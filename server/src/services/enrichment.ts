@@ -14,6 +14,14 @@ interface IgdbGame {
   cover?: { id: number; url: string };
   genres?: { id: number; name: string }[];
   screenshots?: { id: number; url: string }[];
+  game_modes?: { id: number; name: string }[];
+  player_perspectives?: { id: number; name: string }[];
+  age_ratings?: { id: number; category: number; rating: number }[];
+  videos?: { video_id: string; name: string }[];
+  franchise?: { id: number; name: string };
+  external_games?: { id: number; uid: string; external_game_source: number }[];
+  total_rating?: number;
+  total_rating_count?: number;
 }
 
 async function igdbQuery<T>(endpoint: string, body: string): Promise<T | null> {
@@ -39,7 +47,7 @@ export function getIgdbCoverUrl(coverUrl: string | undefined): string | undefine
 }
 
 export async function searchIgdb(title: string): Promise<IgdbGame | null> {
-  const results = await igdbQuery<IgdbGame[]>("games", `search "${title}"; fields name,slug,summary,first_release_date,cover.url,genres.name,screenshots.url; limit 3;`);
+  const results = await igdbQuery<IgdbGame[]>("games", `search "${title}"; fields name,slug,summary,first_release_date,cover.url,genres.name,screenshots.url,game_modes.name,player_perspectives.name,age_ratings.category,age_ratings.rating,videos.video_id,videos.name,franchise.name,external_games.uid,external_games.external_game_source,total_rating,total_rating_count; limit 3;`);
   if (!results?.length) return null;
   const exact = results.find((g) => g.name.toLowerCase() === title.toLowerCase());
   return exact ?? results[0];
@@ -193,6 +201,14 @@ export interface EnrichmentResult {
   igdbSummary?: string;
   igdbGenres?: string[];
   igdbScreenshots?: string[];
+  igdbGameModes?: string[];
+  igdbPlayerPerspectives?: string[];
+  igdbAgeRating?: string;
+  igdbTrailerUrl?: string;
+  igdbFranchise?: string;
+  igdbSteamAppId?: number;
+  igdbTotalRating?: number;
+  igdbTotalRatingCount?: number;
   opencriticId?: number;
   opencriticScore?: number;
   hltbId?: number;
@@ -213,6 +229,35 @@ export async function enrichGame(title: string): Promise<EnrichmentResult> {
     result.igdbScreenshots = igdb.screenshots
       ?.map((s) => s.url?.startsWith("//") ? "https:" + s.url.replace("t_thumb", "t_screenshot_big") : s.url)
       .filter((u): u is string => !!u && !u.includes("nocover"));
+    result.igdbGameModes = igdb.game_modes?.map((m) => m.name).filter(Boolean) as string[] | undefined;
+    result.igdbPlayerPerspectives = igdb.player_perspectives?.map((p) => p.name).filter(Boolean) as string[] | undefined;
+    result.igdbTotalRating = igdb.total_rating ? Math.round(igdb.total_rating) : undefined;
+    result.igdbTotalRatingCount = igdb.total_rating_count ?? undefined;
+
+    // Age rating — convert IGDB category enum to human-readable label
+    if (igdb.age_ratings?.length) {
+      const catMap: Record<number, string> = { 1: "ESRB", 2: "PEGI" };
+      const ratingMap: Record<number, string> = {
+        6: "RP", 7: "EC", 8: "E", 9: "E10+", 10: "T", 11: "M", 12: "AO",
+      };
+      const ar = igdb.age_ratings[0];
+      const cat = catMap[ar.category] ?? "";
+      const rating = ratingMap[ar.rating] ?? `${ar.rating}`;
+      result.igdbAgeRating = cat ? `${cat} ${rating}` : rating;
+    }
+
+    // Trailer / video
+    if (igdb.videos?.length) {
+      const vid = igdb.videos[0];
+      result.igdbTrailerUrl = `https://www.youtube.com/watch?v=${vid.video_id}`;
+    }
+
+    // Franchise
+    result.igdbFranchise = igdb.franchise?.name;
+
+    // Steam AppID from external_games
+    const steam = igdb.external_games?.find((e) => e.external_game_source === 1); // 1 = Steam
+    if (steam) result.igdbSteamAppId = parseInt(steam.uid, 10) || undefined;
   }
 
   // OpenCritic
@@ -230,4 +275,26 @@ export async function enrichGame(title: string): Promise<EnrichmentResult> {
   }
 
   return result;
+}
+
+// ---------------------------------------------------------------------------
+// Steam concurrent player counts (public API, no auth needed)
+// ---------------------------------------------------------------------------
+
+export async function fetchSteamPlayers(steamAppId: number): Promise<{
+  players: number;
+  asOf: Date;
+} | null> {
+  try {
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=${steamAppId}`,
+    );
+    if (!res.ok) return null;
+    const json = (await res.json()) as any;
+    const players = json?.response?.player_count;
+    if (typeof players !== "number") return null;
+    return { players, asOf: new Date() };
+  } catch {
+    return null;
+  }
 }

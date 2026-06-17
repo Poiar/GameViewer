@@ -14,6 +14,13 @@ export interface MasterGame {
   criticScore?: number | null;
   summary?: string | null;
   screenshots?: string[];
+  gameModes?: string[];
+  playerPerspectives?: string[];
+  ageRating?: string | null;
+  trailerUrl?: string | null;
+  franchise?: string | null;
+  steamAppId?: number | null;
+  steamPlayers?: number | null;
   createdAt: string;
   updatedAt: string;
   series?: SeriesSummary;
