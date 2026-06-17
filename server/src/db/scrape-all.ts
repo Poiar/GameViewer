@@ -198,6 +198,11 @@ async function main() {
 
   let ocCount = 0, hltbCount = 0, igdbCount = 0, steamCount = 0;
 
+  // Track repeated OC failures — blacklist after 3 consecutive misses
+  const ocFails = new Map<number, number>();
+  const ocBlacklist = new Set<number>();
+  const OC_MAX_FAILS = 3;
+
   // ------------------------------------------------------------------
   // Build per-source conditions (evaluated once — static SQL fragments)
   // ------------------------------------------------------------------
@@ -252,7 +257,11 @@ async function main() {
           screenshots: masterGames.screenshots,
         })
         .from(masterGames)
-        .where(enrichWhere!)
+        .where(
+          ocBlacklist.size
+            ? and(enrichWhere!, sql`${masterGames.id} NOT IN (${[...ocBlacklist].join(",")})`)
+            : enrichWhere!
+        )
         .orderBy(sql`RANDOM()`)
         .limit(1);
 
@@ -269,9 +278,17 @@ async function main() {
             sets.opencriticId = oc.opencriticId;
             if (oc.criticScore != null) sets.criticScore = oc.criticScore;
             ocCount++;
+            ocFails.delete(g.id);
             label += ` OC✓${oc.criticScore != null ? "(" + oc.criticScore + ")" : ""}`;
           } else {
-            label += " OC✗";
+            const f = (ocFails.get(g.id) ?? 0) + 1;
+            ocFails.set(g.id, f);
+            if (f >= OC_MAX_FAILS) {
+              ocBlacklist.add(g.id);
+              label += ` OC✗🚫`;
+            } else {
+              label += ` OC✗(${f})`;
+            }
           }
         }
 
@@ -375,14 +392,10 @@ async function main() {
     // ── Progress heartbeat ────────────────────────────────────────
 
     if (!didWork) {
-      // Enrichment is drained and Steam is caught up — brief nap
-      await new Promise((r) => setTimeout(r, 5_000));
-    }
-
-    if (Date.now() >= deadline) break;
-    const remaining = Math.round((deadline - Date.now()) / 1000 / 60);
-    if (remaining % 15 === 0 && didWork) {
-      console.log(`  ⏱ ${remaining}min remaining  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
+      // Both pools empty — enrichment is done, Steam within its 1h TTL.
+      // Exit cleanly rather than spinning. Restart scraper later if needed.
+      console.log("\n[scrape-all] All enrichment caught up + Steam refreshed. Nothing left — exiting.");
+      break;
     }
   }
 
