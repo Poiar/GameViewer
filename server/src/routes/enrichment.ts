@@ -16,6 +16,12 @@ async function updateGame(gameId: number, enrichment: Awaited<ReturnType<typeof 
     criticScore: enrichment.opencriticScore ?? undefined,
     summary: enrichment.igdbSummary ?? undefined,
     screenshots: enrichment.igdbScreenshots?.length ? enrichment.igdbScreenshots : undefined,
+    gameModes: enrichment.igdbGameModes?.length ? enrichment.igdbGameModes : undefined,
+    playerPerspectives: enrichment.igdbPlayerPerspectives?.length ? enrichment.igdbPlayerPerspectives : undefined,
+    ageRating: enrichment.igdbAgeRating ?? undefined,
+    trailerUrl: enrichment.igdbTrailerUrl ?? undefined,
+    franchise: enrichment.igdbFranchise ?? undefined,
+    steamAppId: enrichment.igdbSteamAppId ?? undefined,
     updatedAt: new Date(),
   };
   // Use IGDB cover if no cover exists

@@ -22,7 +22,8 @@ import { chromium } from "playwright";
 
 const MAX_HOURS = parseFloat(process.env.SCRAPE_MAX_HOURS ?? "10");
 const SCRAPE_OC = process.env.SCRAPE_OC !== "false";
-const SCRAPE_HLTB = process.env.SCRAPE_HLTB !== "false";
+const SCRAPE_HLTB = process.env.SCRAPE_HLTB === "true"; // Cloudflare-blocked — opt-in only
+const SCRAPE_STEAM = process.env.SCRAPE_STEAM !== "false";
 const OC_BEARER = "R2tBRkdvUU9WSHpoUXpaSXVYa2g5cGU5NEFsWUgyeXQ=";
 
 function rand(min: number, max: number): number {
@@ -137,13 +138,35 @@ async function scrapeHltb(page: any, title: string): Promise<{
 }
 
 // --------------------------------------------------------------------------
+// Steam concurrent players (public API, no auth needed)
+// --------------------------------------------------------------------------
+
+async function scrapeSteam(steamAppId: number): Promise<{
+  steamPlayers?: number;
+  steamPlayersAt?: Date;
+} | null> {
+  try {
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=${steamAppId}`,
+    );
+    if (!res.ok) return null;
+    const json = (await res.json()) as any;
+    const players = json?.response?.player_count;
+    if (typeof players !== "number") return null;
+    return { steamPlayers: players, steamPlayersAt: new Date() };
+  } catch {
+    return null;
+  }
+}
+
+// --------------------------------------------------------------------------
 // Main loop
 // --------------------------------------------------------------------------
 
 async function main() {
   const deadline = Date.now() + MAX_HOURS * 3600 * 1000;
   console.log(`[scrape-all] Starting — max ${MAX_HOURS}h, deadline ${new Date(deadline).toLocaleTimeString()}`);
-  console.log(`[scrape-all] OpenCritic: ${SCRAPE_OC ? "ON" : "OFF"} | HLTB: ${SCRAPE_HLTB ? "ON" : "OFF"}`);
+  console.log(`[scrape-all] OC: ${SCRAPE_OC ? "ON" : "OFF"} | HLTB: ${SCRAPE_HLTB ? "ON" : "OFF"} | Steam: ${SCRAPE_STEAM ? "ON" : "OFF"}`);
 
   // Launch one browser, two tabs — one per site
   const browser = await chromium.launch({ headless: true });
@@ -164,67 +187,152 @@ async function main() {
     console.log("[scrape-all] HLTB browser ready");
   }
 
-  let ocCount = 0, hltbCount = 0;
+  let ocCount = 0, hltbCount = 0, steamCount = 0;
 
-  while (Date.now() < deadline) {
-    // Fetch a batch of un-enriched games (randomize to avoid patterns)
-    const games = await db
-      .select({ id: masterGames.id, title: masterGames.title, opencriticId: masterGames.opencriticId, hltbId: masterGames.hltbId })
-      .from(masterGames)
-      .where(
-        SCRAPE_OC && SCRAPE_HLTB ? and(isNull(masterGames.opencriticId), isNull(masterGames.hltbId)) :
-        SCRAPE_OC ? isNull(masterGames.opencriticId) :
-        isNull(masterGames.hltbId),
+  // ------------------------------------------------------------------
+  // Build per-source conditions (evaluated once — static SQL fragments)
+  // ------------------------------------------------------------------
+
+  const enrichConditions: ReturnType<typeof isNull>[] = [];
+  if (SCRAPE_OC) enrichConditions.push(isNull(masterGames.opencriticId));
+  if (SCRAPE_HLTB) enrichConditions.push(isNull(masterGames.hltbId));
+
+  const hasEnrich = enrichConditions.length > 0;
+  const enrichWhere = hasEnrich
+    ? enrichConditions.length === 1
+      ? enrichConditions[0]
+      : sql`(${sql.join(enrichConditions, sql`) OR (`)})`
+    : null;
+
+  const steamWhere = SCRAPE_STEAM
+    ? and(
+        sql`${masterGames.steamAppId} IS NOT NULL`,
+        sql`(${masterGames.steamPlayers} IS NULL OR ${masterGames.steamPlayersAt} < NOW() - INTERVAL '1 hour')`,
       )
-      .orderBy(sql`RANDOM()`)
-      .limit(1);
+    : null;
 
-    if (!games.length) {
-      console.log("\n[scrape-all] No more games to enrich — done!");
-      break;
-    }
+  const hasSteam = steamWhere !== null;
 
-    const g = games[0];
-    const sets: Record<string, unknown> = { updatedAt: new Date() };
-    let label = "";
-
-    if (SCRAPE_OC && !g.opencriticId && ocPage) {
-      process.stdout.write(`[OC] "${g.title.slice(0, 40)}"`);
-      await delay();
-      const oc = await scrapeOpenCritic(ocPage, g.title);
-      if (oc?.opencriticId) {
-        sets.opencriticId = oc.opencriticId;
-        if (oc.criticScore != null) sets.criticScore = oc.criticScore;
-        ocCount++;
-        label += ` OC✓${oc.criticScore != null ? "(" + oc.criticScore + ")" : ""}`;
-      } else {
-        label += " OC✗";
-      }
-    }
-
-    if (SCRAPE_HLTB && !g.hltbId && hltbPage) {
-      process.stdout.write(`[HLTB] "${g.title.slice(0, 40)}"`);
-      await delay();
-      const hltb = await scrapeHltb(hltbPage, g.title);
-      if (hltb?.hltbId) {
-        sets.hltbId = hltb.hltbId;
-        if (hltb.hltbTime != null) sets.hltbTime = hltb.hltbTime;
-        hltbCount++;
-        label += ` HLTB✓${hltb.hltbTime != null ? "(" + hltb.hltbTime + "h)" : ""}`;
-      } else {
-        label += " HLTB✗";
-      }
-    }
-
-    if (Object.keys(sets).length > 1) {
-      await db.update(masterGames).set(sets as any).where(eq(masterGames.id, g.id));
-    }
-
-    const remaining = Math.round((deadline - Date.now()) / 1000 / 60);
-    console.log(`${label}  [OC:${ocCount} HLTB:${hltbCount}] ${remaining}min left`);
+  if (!hasEnrich && !hasSteam) {
+    console.log("[scrape-all] No scrapers enabled — exiting.");
+    await browser.close();
+    process.exit(0);
   }
 
-  console.log(`\n[scrape-all] Finished! OC:${ocCount} HLTB:${hltbCount}`);
+  // ------------------------------------------------------------------
+  // Main loop — two independent passes per iteration
+  // ------------------------------------------------------------------
+
+  while (Date.now() < deadline) {
+    let didWork = false;
+
+    // ── Enrichment pass (OC / HLTB) ──────────────────────────────
+
+    if (hasEnrich) {
+      const games = await db
+        .select({
+          id: masterGames.id,
+          title: masterGames.title,
+          opencriticId: masterGames.opencriticId,
+          hltbId: masterGames.hltbId,
+        })
+        .from(masterGames)
+        .where(enrichWhere!)
+        .orderBy(sql`RANDOM()`)
+        .limit(1);
+
+      if (games.length) {
+        const g = games[0];
+        const sets: Record<string, unknown> = { updatedAt: new Date() };
+        let label = "";
+
+        if (SCRAPE_OC && !g.opencriticId && ocPage) {
+          process.stdout.write(`[OC] "${g.title.slice(0, 40)}"`);
+          await delay();
+          const oc = await scrapeOpenCritic(ocPage, g.title);
+          if (oc?.opencriticId) {
+            sets.opencriticId = oc.opencriticId;
+            if (oc.criticScore != null) sets.criticScore = oc.criticScore;
+            ocCount++;
+            label += ` OC✓${oc.criticScore != null ? "(" + oc.criticScore + ")" : ""}`;
+          } else {
+            label += " OC✗";
+          }
+        }
+
+        if (SCRAPE_HLTB && !g.hltbId && hltbPage) {
+          process.stdout.write(`[HLTB] "${g.title.slice(0, 40)}"`);
+          await delay();
+          const hltb = await scrapeHltb(hltbPage, g.title);
+          if (hltb?.hltbId) {
+            sets.hltbId = hltb.hltbId;
+            if (hltb.hltbTime != null) sets.hltbTime = hltb.hltbTime;
+            hltbCount++;
+            label += ` HLTB✓${hltb.hltbTime != null ? "(" + hltb.hltbTime + "h)" : ""}`;
+          } else {
+            label += " HLTB✗";
+          }
+        }
+
+        if (Object.keys(sets).length > 1) {
+          await db.update(masterGames).set(sets as any).where(eq(masterGames.id, g.id));
+          didWork = true;
+        }
+        console.log(`${label}  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+      }
+    }
+
+    // ── Steam pass (concurrent players via public API) ────────────
+
+    if (hasSteam) {
+      const games = await db
+        .select({
+          id: masterGames.id,
+          title: masterGames.title,
+          steamAppId: masterGames.steamAppId,
+        })
+        .from(masterGames)
+        .where(steamWhere)
+        .orderBy(sql`RANDOM()`)
+        .limit(1);
+
+      if (games.length) {
+        const g = games[0];
+        process.stdout.write(`[ST] "${g.title.slice(0, 40)}"`);
+        const st = await scrapeSteam(g.steamAppId!);
+        if (st?.steamPlayers != null) {
+          await db
+            .update(masterGames)
+            .set({
+              steamPlayers: st.steamPlayers,
+              steamPlayersAt: st.steamPlayersAt as any,
+              updatedAt: new Date(),
+            } as any)
+            .where(eq(masterGames.id, g.id));
+          steamCount++;
+          didWork = true;
+          console.log(` Steam✓(${st.steamPlayers})  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+        } else {
+          console.log(` Steam✗  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+        }
+      }
+    }
+
+    // ── Progress heartbeat ────────────────────────────────────────
+
+    if (!didWork) {
+      // Enrichment is drained and Steam is caught up — brief nap
+      await new Promise((r) => setTimeout(r, 5_000));
+    }
+
+    if (Date.now() >= deadline) break;
+    const remaining = Math.round((deadline - Date.now()) / 1000 / 60);
+    if (remaining % 15 === 0 && didWork) {
+      console.log(`  ⏱ ${remaining}min remaining  [OC:${ocCount} HLTB:${hltbCount} ST:${steamCount}]`);
+    }
+  }
+
+  console.log(`\n[scrape-all] Finished! OC:${ocCount} HLTB:${hltbCount} Steam:${steamCount}`);
   await browser.close();
   process.exit(0);
 }
