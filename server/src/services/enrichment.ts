@@ -1,5 +1,6 @@
-// Game enrichment from external sources: IGDB, OpenCritic, HowLongToBeat
+// Game enrichment from external sources: IGDB, OpenCritic, HowLongToBeat, RAWG
 import { config } from "../config.js";
+import { searchGames } from "./rawg.js";
 
 // ---------------------------------------------------------------------------
 // IGDB (Twitch API v4)
