@@ -19,6 +19,7 @@ import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { enrichGame } from "../services/enrichment.js";
 import { importSteamDlcs } from "../services/steam-storefront.js";
+import { fetchSchemaForGame, fetchGlobalAchievementPercentages } from "../services/steam-webapi.js";
 import { z } from "zod";
 import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
 
@@ -496,6 +497,31 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       })),
       createdAt: game.createdAt,
     };
+
+    // ── Steam Achievements ──
+    if (game.steamAppId) {
+      const [schema, percentages] = await Promise.all([
+        fetchSchemaForGame(game.steamAppId),
+        fetchGlobalAchievementPercentages(game.steamAppId),
+      ]);
+
+      if (schema && schema.length > 0) {
+        const pctMap = new Map(
+          (percentages ?? []).map((p: { name: string; percent: number }) => [p.name, p.percent]),
+        );
+        (data as Record<string, unknown>).achievements = schema
+          .map((a) => ({
+            name: a.name,
+            displayName: a.displayName,
+            description: a.description ?? null,
+            icon: a.icon ?? null,
+            iconGray: a.icongray ?? null,
+            hidden: a.hidden === 1,
+            percent: pctMap.get(a.name) ?? null,
+          }))
+          .sort((a, b) => (b.percent ?? 0) - (a.percent ?? 0));
+      }
+    }
 
     res.json({ data, error: null });
   } catch (error) {

@@ -40,9 +40,20 @@ export interface MasterGame {
   ownedReleases?: { platforms: string[]; formats: string[] }[];
 }
 
+export interface AchievementSummary {
+  name: string;
+  displayName: string;
+  description: string | null;
+  icon: string | null;
+  iconGray: string | null;
+  hidden: boolean;
+  percent: number | null;
+}
+
 export interface MasterGameDetail extends MasterGame {
   releaseGroups: ReleaseGroupDetail[];
   dlcs: DlcDetail[];
+  achievements?: AchievementSummary[];
 }
 
 export interface SeriesSummary {

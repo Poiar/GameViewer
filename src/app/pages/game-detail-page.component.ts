@@ -106,7 +106,28 @@ import { MasterGameDetail } from "../types/game.types";
                 {{ importingDlc() ? "..." : "📦 Steam DLC" }}
               </button>
             }
+            <!-- RAWG metadata (shown after enrichment) -->
+            @if ($any(g).rawgMetacritic) {
+              <span class="ext-link" style="background:rgba(111,195,69,.12);color:#6fc345;border:1px solid rgba(111,195,69,.25)">
+                Metacritic: {{ $any(g).rawgMetacritic }}
+              </span>
+            }
+            @if ($any(g).rawgEsrb) {
+              <span class="ext-link" style="background:rgba(247,110,110,.12);color:#f76e6e;border:1px solid rgba(247,110,110,.25)">
+                {{ $any(g).rawgEsrb }}
+              </span>
+            }
           </div>
+
+          <!-- RAWG stores (shown after enrichment) -->
+          @if ($any(g).rawgStores?.length) {
+            <div class="stores-row">
+              <span class="stores-label">Available on</span>
+              @for (store of $any(g).rawgStores; track store.id) {
+                <span class="store-badge">{{ store.name }}</span>
+              }
+            </div>
+          }
 
           <!-- ITAD Price section -->
           @if (g.itadCurrentPrice || g.itadLowestPrice || g.steamAppId) {
@@ -213,6 +234,43 @@ import { MasterGameDetail } from "../types/game.types";
               </div>
             </div>
           }
+        </div>
+      }
+
+      <!-- Steam Achievements -->
+      @if (g.achievements?.length) {
+        <div class="section">
+          <h2 class="section-title">
+            Steam Achievements
+            <span class="ach-count">({{ g.achievements.length }})</span>
+          </h2>
+          <div class="ach-grid">
+            @for (ach of g.achievements; track ach.name) {
+              <div class="ach-card" [class.ach-hidden]="ach.hidden" [class.ach-rare]="ach.percent != null && ach.percent < 10">
+                <div class="ach-icon">
+                  @if (ach.percent != null && ach.percent >= 50) {
+                    <img [src]="ach.icon || ach.iconGray" alt="" class="ach-img" loading="lazy" (error)="ach.icon = null; ach.iconGray = null" />
+                  } @else if (ach.iconGray) {
+                    <img [src]="ach.iconGray" alt="" class="ach-img" loading="lazy" />
+                  } @else {
+                    <span class="ach-emoji">🏆</span>
+                  }
+                </div>
+                <div class="ach-info">
+                  <span class="ach-name">{{ ach.displayName || ach.name }}</span>
+                  @if (ach.description) { <span class="ach-desc">{{ ach.description }}</span> }
+                </div>
+                <div class="ach-pct" [title]="ach.percent != null ? (ach.percent + '% of players have this') : ''">
+                  @if (ach.percent != null) {
+                    <span class="ach-pct-bar" [style.width.%]="ach.percent"></span>
+                    <span class="ach-pct-label">{{ ach.percent }}%</span>
+                  } @else {
+                    <span class="ach-pct-label ach-no-data">—</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
         </div>
       }
 
@@ -353,6 +411,13 @@ import { MasterGameDetail } from "../types/game.types";
     .pricing-fetch-btn:hover:not(:disabled) { background: #ffb74d; color: #000; border-color: #ffb74d; }
     .pricing-fetch-btn:disabled { opacity: .4; cursor: not-allowed; }
 
+    .stores-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
+    .stores-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .store-badge {
+      padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500;
+      background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle);
+    }
+
     .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
     .tag-genre { background: rgb(6, 214, 160, 0.1); color: var(--accent-secondary); border-color: rgb(6, 214, 160, 0.25); }
     .tag-accent { background: var(--accent-glow); color: var(--accent); border-color: var(--border-accent); }
@@ -446,6 +511,39 @@ import { MasterGameDetail } from "../types/game.types";
       .release-row { flex-wrap: wrap; }
       .rel-multiplayer { margin-left: 0; }
     }
+
+    /* ── Steam Achievements ── */
+    .ach-count { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-left: 8px; }
+    .ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+    .ach-card {
+      display: flex; gap: 10px; align-items: center; padding: 10px 12px;
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md); transition: all .15s;
+      position: relative; overflow: hidden;
+    }
+    .ach-card:hover { border-color: var(--border-default); }
+    .ach-card.ach-hidden { opacity: .6; }
+    .ach-card.ach-rare { border-color: rgba(255,183,77,.2); background: linear-gradient(135deg, var(--bg-card) 0%, rgba(255,183,77,.04) 100%); }
+    .ach-icon { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .ach-img { width: 100%; height: 100%; object-fit: contain; }
+    .ach-emoji { font-size: 22px; opacity: .5; }
+    .ach-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .ach-name { font-size: 13px; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ach-hidden .ach-name { opacity: .6; }
+    .ach-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ach-pct {
+      width: 50px; height: 18px; flex-shrink: 0; position: relative;
+      background: var(--bg-tertiary); border-radius: 9px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ach-pct-bar {
+      position: absolute; inset: 0; right: auto;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      border-radius: 9px; opacity: .2;
+    }
+    .ach-rare .ach-pct-bar { background: linear-gradient(90deg, #ffb74d, #ff9800); }
+    .ach-pct-label { position: relative; font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: -.01em; }
+    .ach-no-data { opacity: .4; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -533,6 +631,10 @@ export class GameDetailPageComponent implements OnInit {
           if (d.igdbTrailerUrl) { (g as any).trailerUrl = d.igdbTrailerUrl; }
           if (d.igdbFranchise) { (g as any).franchise = d.igdbFranchise; }
           if (d.igdbSteamAppId) { (g as any).steamAppId = d.igdbSteamAppId; }
+          // RAWG supplementary data
+          if (d.rawgMetacritic) { (g as any).rawgMetacritic = d.rawgMetacritic; }
+          if (d.rawgEsrb) { (g as any).rawgEsrb = d.rawgEsrb; }
+          if (d.rawgStores?.length) { (g as any).rawgStores = d.rawgStores; }
         }
         this.enriching.set(false);
       },

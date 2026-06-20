@@ -213,6 +213,11 @@ export interface EnrichmentResult {
   opencriticScore?: number;
   hltbId?: number;
   hltbTime?: number;
+  // RAWG.io supplementary data
+  rawgId?: number;
+  rawgMetacritic?: number;
+  rawgEsrb?: string;
+  rawgStores?: Array<{ id: number; name: string; slug: string }>;
 }
 
 export async function enrichGame(title: string): Promise<EnrichmentResult> {
@@ -272,6 +277,26 @@ export async function enrichGame(title: string): Promise<EnrichmentResult> {
   if (hltb) {
     result.hltbId = hltb.id;
     result.hltbTime = hltb.mainTime;
+  }
+
+  // RAWG.io — supplementary: Metacritic, ESRB, stores
+  const rawgResults = await searchGames(title);
+  if (rawgResults?.length) {
+    const rawg = rawgResults[0]; // best match
+    result.rawgId = rawg.id;
+    result.rawgMetacritic = rawg.metacritic ?? undefined;
+    result.rawgEsrb = rawg.esrbRating?.name ?? undefined;
+    result.rawgStores = rawg.stores
+      .filter((s) => s.store?.name)
+      .map((s) => ({ id: s.store.id, name: s.store.name, slug: s.store.slug }));
+    // Use RAWG ESRB as fallback age rating if IGDB didn't provide one
+    if (!result.igdbAgeRating && rawg.esrbRating?.name) {
+      result.igdbAgeRating = `ESRB ${rawg.esrbRating.name}`;
+    }
+    // Use RAWG Metacritic as fallback critic score if OpenCritic didn't provide one
+    if (!result.opencriticScore && rawg.metacritic != null) {
+      result.opencriticScore = rawg.metacritic;
+    }
   }
 
   return result;
