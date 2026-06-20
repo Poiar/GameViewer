@@ -101,6 +101,11 @@ import { MasterGameDetail } from "../types/game.types";
             <button class="ext-link ext-enrich-btn" (click)="enrichGame(g.id)" [disabled]="enriching()">
               {{ enriching() ? "..." : "🔗 Enrich" }}
             </button>
+            @if (g.steamAppId) {
+              <button class="ext-link ext-dlc-btn" (click)="importSteamDlc(g.id)" [disabled]="importingDlc()">
+                {{ importingDlc() ? "..." : "📦 Steam DLC" }}
+              </button>
+            }
           </div>
 
           <!-- ITAD Price section -->
@@ -324,6 +329,13 @@ import { MasterGameDetail } from "../types/game.types";
     }
     .ext-enrich-btn:hover:not(:disabled) { background: #9147ff; color: #fff; border-color: #9147ff; }
     .ext-enrich-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .ext-dlc-btn {
+      background: rgba(42,107,192,.12); color: #2a6bc0; border: 1px dashed rgba(42,107,192,.25);
+      cursor: pointer; font-family: inherit; font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 8px; transition: all .15s; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .ext-dlc-btn:hover:not(:disabled) { background: #2a6bc0; color: #fff; border-color: #2a6bc0; }
+    .ext-dlc-btn:disabled { opacity: .4; cursor: not-allowed; }
 
     .pricing-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; padding: 8px 12px; background: rgba(255,183,77,.08); border: 1px solid rgba(255,183,77,.2); border-radius: 10px; }
     .pricing-label { font-size: 11px; font-weight: 700; color: #ffb74d; text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; }
@@ -458,6 +470,24 @@ export class GameDetailPageComponent implements OnInit {
   toggleExpand(relId: number): void { this.expandedRelease.set(this.expandedRelease() === relId ? null : relId); }
   // Per-game enrichment
   enriching = signal(false);
+  // Steam DLC import
+  importingDlc = signal(false);
+
+  importSteamDlc(gameId: number): void {
+    this.importingDlc.set(true);
+    this.http.post(`/api/games/${gameId}/import-steam-dlc`, {}).subscribe({
+      next: (res: any) => {
+        const d = res.data ?? res;
+        console.log('[Steam DLC]', d.message);
+        // Reload game data to show the new DLCs
+        this.gamesService.getGameBySlug(this.game()?.slug ?? '').subscribe({
+          next: (g) => { this.game.set(g); this.importingDlc.set(false); },
+          error: () => this.importingDlc.set(false),
+        });
+      },
+      error: () => this.importingDlc.set(false),
+    });
+  }
   // ITAD pricing
   pricing = signal(false);
 

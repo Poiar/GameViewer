@@ -18,6 +18,7 @@ import {
 import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { enrichGame } from "../services/enrichment.js";
+import { importSteamDlcs } from "../services/steam-storefront.js";
 import { z } from "zod";
 import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
 
@@ -812,6 +813,182 @@ router.post("/bulk-cover", authenticate, async (req: Request, res: Response) => 
   } catch (error) {
     console.error("Bulk cover fetch error:", error);
     res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to fetch covers" } });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Steam DLC Import
+// ---------------------------------------------------------------------------
+
+// POST /:id/import-steam-dlc — Import DLCs from Steam for a single game
+router.post("/:id/import-steam-dlc", authenticate, async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid game ID" } });
+      return;
+    }
+
+    const [game] = await db
+      .select({ id: masterGames.id, title: masterGames.title, steamAppId: masterGames.steamAppId })
+      .from(masterGames)
+      .where(eq(masterGames.id, id))
+      .limit(1);
+
+    if (!game) {
+      res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Game not found" } });
+      return;
+    }
+
+    if (!game.steamAppId) {
+      res.json({ data: { message: "No Steam App ID — enrich the game first", imported: 0 }, error: null });
+      return;
+    }
+
+    const dlcMap = await importSteamDlcs(game.steamAppId);
+    if (!dlcMap.size) {
+      res.json({ data: { message: "No DLCs found on Steam for this game", imported: 0 }, error: null });
+      return;
+    }
+
+    const existingDlcs = await db
+      .select({ title: dlcs.title })
+      .from(dlcs)
+      .where(eq(dlcs.masterGameId, id));
+    const existingTitles = new Set(existingDlcs.map((d) => d.title.toLowerCase()));
+
+    const STEAM_PROVIDER_ID = 2;
+    const DIGITAL_FORMAT_ID = 2;
+
+    let imported = 0;
+    for (const [, info] of dlcMap) {
+      if (existingTitles.has(info.title.toLowerCase())) continue;
+
+      const [created] = await db
+        .insert(dlcs)
+        .values({
+          title: info.title,
+          firstReleaseYear: info.releaseYear ?? undefined,
+          dlcType: info.dlcType || "dlc",
+          masterGameId: id,
+        })
+        .returning();
+
+      if (created) {
+        await db.insert(dlcReleases).values({
+          dlcId: created.id,
+          providerId: STEAM_PROVIDER_ID,
+          mediaFormatId: DIGITAL_FORMAT_ID,
+          releaseDate: info.releaseYear ? `${info.releaseYear}-01-01` : null,
+        });
+        imported++;
+      }
+    }
+
+    res.json({
+      data: {
+        message: `Imported ${imported} DLC${imported !== 1 ? "s" : ""} from Steam`,
+        total: dlcMap.size,
+        imported,
+      },
+      error: null,
+    });
+  } catch (error) {
+    console.error("Steam DLC import error:", error);
+    res.status(500).json({
+      data: null,
+      error: { code: "INTERNAL_ERROR", message: "Failed to import Steam DLCs" },
+    });
+  }
+});
+
+// POST /import-steam-dlc-batch — Batch import DLCs for games with steamAppId
+router.post("/import-steam-dlc-batch", authenticate, async (req: Request, res: Response) => {
+  try {
+    const { limit } = req.body as { limit?: number };
+    const batchLimit = Math.min(limit ?? 10, 30);
+
+    const games = await db
+      .select({ id: masterGames.id, title: masterGames.title, steamAppId: masterGames.steamAppId })
+      .from(masterGames)
+      .where(
+        and(
+          sql`${masterGames.steamAppId} IS NOT NULL`,
+          sql`NOT EXISTS (SELECT 1 FROM ${dlcs} WHERE ${dlcs.masterGameId} = ${masterGames.id})`,
+        ),
+      )
+      .orderBy(sql`RANDOM()`)
+      .limit(batchLimit);
+
+    if (!games.length) {
+      res.json({ data: { message: "No games found that need DLC imports", total: 0, imported: 0 }, error: null });
+      return;
+    }
+
+    const STEAM_PROVIDER_ID = 2;
+    const DIGITAL_FORMAT_ID = 2;
+    let totalImported = 0;
+    let totalDlcFound = 0;
+    const results: Array<{ id: number; title: string; imported: number; total: number }> = [];
+
+    for (const game of games) {
+      if (!game.steamAppId) continue;
+
+      const dlcMap = await importSteamDlcs(game.steamAppId);
+
+      const existingDlcs = await db
+        .select({ title: dlcs.title })
+        .from(dlcs)
+        .where(eq(dlcs.masterGameId, game.id));
+      const existingTitles = new Set(existingDlcs.map((d) => d.title.toLowerCase()));
+
+      let imported = 0;
+      for (const [, info] of dlcMap) {
+        if (existingTitles.has(info.title.toLowerCase())) continue;
+
+        const [created] = await db
+          .insert(dlcs)
+          .values({
+            title: info.title,
+            firstReleaseYear: info.releaseYear ?? undefined,
+            dlcType: info.dlcType || "dlc",
+            masterGameId: game.id,
+          })
+          .returning();
+
+        if (created) {
+          await db.insert(dlcReleases).values({
+            dlcId: created.id,
+            providerId: STEAM_PROVIDER_ID,
+            mediaFormatId: DIGITAL_FORMAT_ID,
+            releaseDate: info.releaseYear ? `${info.releaseYear}-01-01` : null,
+          });
+          imported++;
+        }
+      }
+
+      totalImported += imported;
+      totalDlcFound += dlcMap.size;
+      results.push({ id: game.id, title: game.title, imported, total: dlcMap.size });
+
+      if (imported > 0) await new Promise((r) => setTimeout(r, 300));
+    }
+
+    res.json({
+      data: {
+        message: `Imported ${totalImported} DLCs across ${games.length} games`,
+        total: totalDlcFound,
+        imported: totalImported,
+        games: results,
+      },
+      error: null,
+    });
+  } catch (error) {
+    console.error("Batch Steam DLC import error:", error);
+    res.status(500).json({
+      data: null,
+      error: { code: "INTERNAL_ERROR", message: "Failed to batch import Steam DLCs" },
+    });
   }
 });
 
