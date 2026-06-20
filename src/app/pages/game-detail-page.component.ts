@@ -56,7 +56,7 @@ import { MasterGameDetail } from "../types/game.types";
               @if (g.franchise) {
                 <span class="meta-item meta-franchise" title="Franchise">{{ g.franchise }}</span>
               }
-              @if (g.ageRating) {
+              @if (g.ageRating && g.ageRating !== 'undefined') {
                 <span class="meta-item meta-rating" title="Age rating">{{ g.ageRating }}</span>
               }
               @for (mode of g.gameModes ?? []; track mode) {
@@ -242,14 +242,14 @@ import { MasterGameDetail } from "../types/game.types";
         <div class="section">
           <h2 class="section-title">
             Steam Achievements
-            <span class="ach-count">({{ g.achievements.length }})</span>
+            <span class="ach-count">({{ g.achievements!.length }})</span>
           </h2>
           <div class="ach-grid">
             @for (ach of g.achievements; track ach.name) {
               <div class="ach-card" [class.ach-hidden]="ach.hidden" [class.ach-rare]="ach.percent != null && ach.percent < 10">
                 <div class="ach-icon">
                   @if (ach.percent != null && ach.percent >= 50) {
-                    <img [src]="ach.icon || ach.iconGray" alt="" class="ach-img" loading="lazy" (error)="ach.icon = null; ach.iconGray = null" />
+                    <img [src]="ach.icon || ach.iconGray" alt="" class="ach-img" loading="lazy" (error)="clearAchievementIcon(ach)" />
                   } @else if (ach.iconGray) {
                     <img [src]="ach.iconGray" alt="" class="ach-img" loading="lazy" />
                   } @else {
@@ -608,6 +608,12 @@ export class GameDetailPageComponent implements OnInit {
       error: () => this.pricing.set(false),
     });
   }
+  // Achievement icon error handler
+  clearAchievementIcon(ach: any): void {
+    ach.icon = null;
+    ach.iconGray = null;
+  }
+
   // Lightbox
   lightboxUrl = signal<string | null>(null);
 

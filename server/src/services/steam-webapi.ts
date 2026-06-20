@@ -93,6 +93,49 @@ export async function fetchSteamAppList(): Promise<SteamAppEntry[] | null> {
 }
 
 // ---------------------------------------------------------------------------
+// Owned Games (user-specific, requires API key + user's Steam ID)
+// ---------------------------------------------------------------------------
+
+export interface SteamOwnedGame {
+  appid: number;
+  name: string;
+  playtime_forever: number;
+  playtime_2weeks?: number;
+  img_icon_url: string;
+  img_logo_url: string;
+  has_community_visible_stats?: boolean;
+}
+
+/**
+ * Fetch a user's owned games from Steam (requires STEAM_WEB_API_KEY).
+ * The user's Steam profile must have game details set to public.
+ */
+export async function fetchOwnedGames(
+  steamId: string,
+): Promise<SteamOwnedGame[] | null> {
+  if (!config.steamWebApiKey) {
+    console.warn("[Steam WebAPI] No STEAM_WEB_API_KEY configured");
+    return null;
+  }
+  try {
+    const res = await fetch(
+      `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${config.steamWebApiKey}&steamid=${steamId}&format=json&include_appinfo=true&include_played_free_games=true`,
+    );
+    if (!res.ok) {
+      console.warn(`[Steam WebAPI] GetOwnedGames failed (${res.status})`);
+      return null;
+    }
+    const json = (await res.json()) as {
+      response: { games?: SteamOwnedGame[] };
+    };
+    return json.response?.games ?? null;
+  } catch (err) {
+    console.warn("[Steam WebAPI] GetOwnedGames error:", err);
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Key-required endpoints
 // ---------------------------------------------------------------------------
 

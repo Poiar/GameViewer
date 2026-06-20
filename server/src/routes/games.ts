@@ -154,6 +154,9 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
         seriesId: masterGames.seriesId,
         seriesName: series.name,
         alternativeTitles: masterGames.alternativeTitles,
+        steamAppId: masterGames.steamAppId,
+        itadCurrentPrice: masterGames.itadCurrentPrice,
+        itadCurrentShop: masterGames.itadCurrentShop,
         createdAt: masterGames.createdAt,
       })
       .from(masterGames)
@@ -269,6 +272,9 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
       coverImageUrl: g.coverImageUrl,
       series: g.seriesId ? { id: g.seriesId, name: g.seriesName } : null,
       alternativeTitles: g.alternativeTitles,
+      steamAppId: g.steamAppId ?? null,
+      itadCurrentPrice: g.itadCurrentPrice ?? null,
+      itadCurrentShop: g.itadCurrentShop ?? null,
       genres: genreMap[g.id] || [],
       releaseGroupsCount: rgCountMap[g.id] || 0,
       ownedReleases: ownedMap[g.id] || [],

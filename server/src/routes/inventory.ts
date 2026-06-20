@@ -1,10 +1,12 @@
 import { Router, Request, Response } from "express";
 import { db } from "../db/index.js";
-import { ownedInstances, releases, releaseGroups, masterGames, dlcReleases, dlcs } from "../db/schema.js";
+import { ownedInstances, releases, releaseGroups, masterGames, dlcReleases, dlcs, users, editionTypes } from "../db/schema.js";
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { z } from "zod";
-import { eq, and, desc, count, sql, inArray } from "drizzle-orm";
+import { eq, and, desc, count, sql, inArray, ilike, isNull } from "drizzle-orm";
+import { enrichGame } from "../services/enrichment.js";
+import { fetchOwnedGames } from "../services/steam-webapi.js";
 
 const router = Router();
 
@@ -260,6 +262,306 @@ router.delete("/:id", async (req: Request, res: Response) => {
     res.status(500).json({
       data: null,
       error: { code: "INTERNAL_ERROR", message: "Failed to delete owned instance" },
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Steam Import
+// ---------------------------------------------------------------------------
+
+const STEAM_PROVIDER_ID = 2;
+const DIGITAL_FORMAT_ID = 2;
+
+/**
+ * Look up or create a release group + release for a Steam game.
+ */
+async function ensureSteamRelease(
+  masterGameId: number,
+  title: string,
+  releaseYear: number | null,
+): Promise<number> {
+  // Check if a Steam release already exists for this game
+  const existingRelease = await db
+    .select({ id: releases.id })
+    .from(releases)
+    .innerJoin(releaseGroups, eq(releases.releaseGroupId, releaseGroups.id))
+    .where(
+      and(
+        eq(releaseGroups.masterGameId, masterGameId),
+        eq(releases.providerId, STEAM_PROVIDER_ID),
+        eq(releases.mediaFormatId, DIGITAL_FORMAT_ID),
+      ),
+    )
+    .limit(1);
+
+  if (existingRelease.length > 0) {
+    return existingRelease[0].id;
+  }
+
+  // Find or create a release group
+  let releaseGroupId: number;
+
+  const existingRg = await db
+    .select({ id: releaseGroups.id })
+    .from(releaseGroups)
+    .where(
+      and(
+        eq(releaseGroups.masterGameId, masterGameId),
+        eq(releaseGroups.editionTypeId, 1), // Original
+      ),
+    )
+    .limit(1);
+
+  if (existingRg.length > 0) {
+    releaseGroupId = existingRg[0].id;
+  } else {
+    const [rg] = await db
+      .insert(releaseGroups)
+      .values({
+        masterGameId,
+        editionTypeId: 1, // Original
+        releaseYear: releaseYear ?? undefined,
+      })
+      .returning({ id: releaseGroups.id });
+    releaseGroupId = rg.id;
+  }
+
+  // Create the Steam digital release
+  const [rel] = await db
+    .insert(releases)
+    .values({
+      releaseGroupId,
+      title: null,
+      providerId: STEAM_PROVIDER_ID,
+      mediaFormatId: DIGITAL_FORMAT_ID,
+      intendedFor: ["game"],
+      playableOn: ["Win"],
+      controllerSupport: "unknown",
+      localMultiplayer: "unknown",
+      onlineMultiplayer: "unknown",
+      releaseDate: releaseYear ? `${releaseYear}-01-01` : null,
+    })
+    .returning({ id: releases.id });
+
+  return rel.id;
+}
+
+// POST /import-steam — Import owned games from Steam
+router.post("/import-steam", async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+    const { steamId: bodySteamId } = req.body as { steamId?: string };
+
+    // Get Steam ID from request body or user profile
+    let steamId = bodySteamId;
+    if (!steamId) {
+      const [user] = await db
+        .select({ steamId: users.steamId })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      steamId = user?.steamId ?? null;
+    }
+
+    if (!steamId) {
+      res.status(400).json({
+        data: null,
+        error: {
+          code: "MISSING_STEAM_ID",
+          message: "Provide a Steam ID in the request body or save one to your profile",
+        },
+      });
+      return;
+    }
+
+    // Save steamId to user profile if not already set
+    await db.update(users).set({ steamId }).where(eq(users.id, userId));
+
+    // Fetch owned games from Steam
+    const ownedGames = await fetchOwnedGames(steamId);
+    if (!ownedGames?.length) {
+      res.json({
+        data: {
+          message: "No games found. Make sure your Steam profile game details are set to public.",
+          imported: 0,
+          skipped: 0,
+          total: 0,
+          games: [],
+        },
+        error: null,
+      });
+      return;
+    }
+
+    const results: Array<{
+      appid: number;
+      name: string;
+      matched: boolean;
+      imported: boolean;
+      message: string;
+    }> = [];
+
+    let imported = 0;
+    let skipped = 0;
+
+    for (const game of ownedGames) {
+      try {
+        // Step 1: Try to match by steamAppId
+        let [existing] = await db
+          .select({ id: masterGames.id, title: masterGames.title })
+          .from(masterGames)
+          .where(eq(masterGames.steamAppId, game.appid))
+          .limit(1);
+
+        let isNew = false;
+
+        if (!existing) {
+          // Step 2: Try fuzzy match by title
+          const matches = await db
+            .select({ id: masterGames.id, title: masterGames.title })
+            .from(masterGames)
+            .where(ilike(masterGames.title, `%${game.name}%`))
+            .orderBy(sql`LENGTH(${masterGames.title})`)
+            .limit(1);
+
+          existing = matches[0] ?? null;
+        }
+
+        if (!existing) {
+          // Step 3: Create new master game
+          const slug = game.name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "");
+
+          // Ensure unique slug
+          let finalSlug = slug;
+          let suffix = 0;
+          while (true) {
+            const [slugCheck] = await db
+              .select({ id: masterGames.id })
+              .from(masterGames)
+              .where(eq(masterGames.slug, finalSlug))
+              .limit(1);
+            if (!slugCheck) break;
+            suffix++;
+            finalSlug = `${slug}-${suffix}`;
+          }
+
+          const [created] = await db
+            .insert(masterGames)
+            .values({
+              title: game.name,
+              slug: finalSlug,
+              steamAppId: game.appid,
+              firstReleaseYear: new Date().getFullYear(),
+            })
+            .returning();
+
+          existing = { id: created.id, title: created.title };
+          isNew = true;
+
+          // Fire-and-forget enrichment
+          enrichGame(game.name).then((enrichment) => {
+            if (enrichment.igdbId || enrichment.opencriticId || enrichment.hltbId) {
+              const updateData: Record<string, unknown> = {
+                igdbId: enrichment.igdbId ?? undefined,
+                opencriticId: enrichment.opencriticId ?? undefined,
+                hltbId: enrichment.hltbId ?? undefined,
+                hltbTime: enrichment.hltbTime ?? undefined,
+                criticScore: enrichment.opencriticScore ?? undefined,
+                summary: enrichment.igdbSummary ?? undefined,
+                updatedAt: new Date(),
+              };
+              if (enrichment.igdbCoverUrl && !enrichment.igdbCoverUrl.includes("nocover")) {
+                updateData["coverImageUrl"] = enrichment.igdbCoverUrl;
+              }
+              db.update(masterGames).set(updateData as any).where(eq(masterGames.id, created.id)).execute()
+                .catch((e) => console.error("Auto-enrich update failed:", e));
+            }
+          }).catch((e) => console.error("Auto-enrich search failed:", e));
+        }
+
+        // Step 4: Ensure Steam release exists
+        const releaseId = await ensureSteamRelease(
+          existing.id,
+          game.name,
+          null, // release year comes from enrichment
+        );
+
+        // Step 5: Dedup — check if user already owns this release
+        const [ownedCheck] = await db
+          .select({ id: ownedInstances.id })
+          .from(ownedInstances)
+          .where(
+            and(
+              eq(ownedInstances.userId, userId),
+              eq(ownedInstances.releaseId, releaseId),
+            ),
+          )
+          .limit(1);
+
+        if (ownedCheck) {
+          results.push({
+            appid: game.appid,
+            name: game.name,
+            matched: true,
+            imported: false,
+            message: `Already owned — "${existing.title}"`,
+          });
+          skipped++;
+          continue;
+        }
+
+        // Step 6: Create owned instance
+        await db.insert(ownedInstances).values({
+          userId,
+          releaseId,
+          condition: "Digital",
+          location: "Steam",
+        });
+
+        imported++;
+        results.push({
+          appid: game.appid,
+          name: game.name,
+          matched: true,
+          imported: true,
+          message: isNew ? `Created + owned — "${existing.title}"` : `Added — "${existing.title}"`,
+        });
+
+        // Rate limit
+        if (imported % 5 === 0) await new Promise((r) => setTimeout(r, 300));
+      } catch (gameErr) {
+        console.error(`[Steam Import] Error processing ${game.name} (appid=${game.appid}):`, gameErr);
+        results.push({
+          appid: game.appid,
+          name: game.name,
+          matched: false,
+          imported: false,
+          message: `Error: ${(gameErr as Error).message}`,
+        });
+        skipped++;
+      }
+    }
+
+    res.json({
+      data: {
+        message: `Imported ${imported} games, skipped ${skipped} (out of ${ownedGames.length} total)`,
+        total: ownedGames.length,
+        imported,
+        skipped,
+        steamId,
+        games: results,
+      },
+      error: null,
+    });
+  } catch (error) {
+    console.error("Steam import error:", error);
+    res.status(500).json({
+      data: null,
+      error: { code: "INTERNAL_ERROR", message: "Failed to import from Steam" },
     });
   }
 });

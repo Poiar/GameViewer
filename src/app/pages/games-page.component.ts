@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@angular/core";
 import { RouterLink, ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
+import { CurrencyPipe } from "@angular/common";
 import { FavoritesService } from "../services/favorites.service";
 import { GamesService } from "../services/games.service";
 import { LookupService } from "../services/lookup.service";
@@ -10,7 +11,7 @@ import { MasterGame, Genre } from "../types/game.types";
 @Component({
   selector: "app-games-page",
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, CurrencyPipe],
   template: `
     <div class="page-header">
       <div class="header-content">
@@ -183,6 +184,14 @@ import { MasterGame, Genre } from "../types/game.types";
               <!-- Steam players badge -->
               @if (game.steamPlayers != null) {
                 <span class="steam-badge" title="Current Steam players">👥 {{ game.steamPlayers }}</span>
+              }
+
+              <!-- Price badge -->
+              @if (game.itadCurrentPrice) {
+                <span class="price-badge" title="{{ game.itadCurrentShop || 'Best price' }}">
+                  {{ game.itadCurrentPrice | currency:'USD':'symbol':'1.2-2' }}
+                  @if (game.itadCurrentShop) { <span class="price-shop">{{ game.itadCurrentShop }}</span> }
+                </span>
               }
 
               <!-- Hover overlay -->
@@ -630,6 +639,31 @@ import { MasterGame, Genre } from "../types/game.types";
     .game-card:hover .critic-badge {
       transform: scale(0.85);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 6px rgba(247, 110, 110, 0.2);
+    }
+
+    /* Price badge */
+    .price-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      height: 22px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(6, 214, 160, 0.92);
+      color: #000;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .price-shop {
+      font-size: 9px;
+      font-weight: 500;
+      opacity: 0.8;
     }
 
     /* Steam badge */

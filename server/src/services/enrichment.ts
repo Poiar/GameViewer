@@ -249,7 +249,10 @@ export async function enrichGame(title: string): Promise<EnrichmentResult> {
       const ar = igdb.age_ratings[0];
       const cat = catMap[ar.category] ?? "";
       const rating = ratingMap[ar.rating] ?? `${ar.rating}`;
-      result.igdbAgeRating = cat ? `${cat} ${rating}` : rating;
+      const ageLabel = cat ? `${cat} ${rating}` : rating;
+      if (ageLabel && ageLabel !== "undefined") {
+        result.igdbAgeRating = ageLabel;
+      }
     }
 
     // Trailer / video
