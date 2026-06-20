@@ -63,11 +63,17 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
       [{ count: enrichedOpenCritic }],
       [{ count: enrichedHltb }],
       [{ count: gamesWithCovers }],
+      [{ count: gamesWithSteamAppId }],
+      [{ count: gamesWithPrice }],
+      [{ count: gamesWithDlcs }],
     ] = await Promise.all([
       db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.igdbId)),
       db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.opencriticId)),
       db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.hltbId)),
       db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.coverImageUrl)),
+      db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.steamAppId)),
+      db.select({ count: count() }).from(masterGames).where(isNotNull(masterGames.itadCurrentPrice)),
+      db.select({ count: count() }).from(masterGames).where(sql`EXISTS (SELECT 1 FROM ${dlcs} WHERE ${dlcs.masterGameId} = ${masterGames.id})`),
     ]);
 
     // ── User-specific counts ──
@@ -200,6 +206,24 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
 
     const totalValue = safeFloat(valueResult.total);
 
+    // ── Total market value (sum of itad_current_price for user's owned games) ──
+    const [marketValueResult] = await db
+      .select({
+        total: sql<string>`COALESCE(SUM(${masterGames.itadCurrentPrice}::numeric), 0)`,
+      })
+      .from(ownedInstances)
+      .innerJoin(releases, eq(ownedInstances.releaseId, releases.id))
+      .innerJoin(releaseGroups, eq(releases.releaseGroupId, releaseGroups.id))
+      .innerJoin(masterGames, eq(releaseGroups.masterGameId, masterGames.id))
+      .where(
+        and(
+          eq(ownedInstances.userId, userId),
+          sql`${masterGames.itadCurrentPrice} IS NOT NULL`,
+        ),
+      );
+
+    const totalMarketValue = safeFloat(marketValueResult.total);
+
     // ── Collection completeness ──
     const collectionCompletenessData = await db
       .select({
@@ -255,6 +279,7 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
         totalUserOwned: safeNumber(totalUserOwned),
         totalFavorites: safeNumber(totalFavorites),
         totalValue,
+        totalMarketValue,
         platformDistribution,
         genreBreakdown,
         recentlyAdded,
@@ -263,6 +288,9 @@ router.get("/stats", authenticate, async (req: Request, res: Response) => {
         enrichedOpenCritic: safeNumber(enrichedOpenCritic),
         enrichedHltb: safeNumber(enrichedHltb),
         gamesWithCovers: safeNumber(gamesWithCovers),
+        gamesWithSteamAppId: safeNumber(gamesWithSteamAppId),
+        gamesWithPrice: safeNumber(gamesWithPrice),
+        gamesWithDlcs: safeNumber(gamesWithDlcs),
       },
       error: null,
     });

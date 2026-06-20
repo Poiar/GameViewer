@@ -56,6 +56,110 @@
       }
     </div>
 
+    <!-- Collection Value card -->
+    <div class="value-card-grid">
+      <div class="value-card">
+        <div class="value-label">Total Paid</div>
+        <div class="value-amount">${{ s.totalValue.toFixed(2) }}</div>
+      </div>
+      <div class="value-card">
+        <div class="value-label">Market Value</div>
+        <div class="value-amount">${{ (s.totalMarketValue ?? 0).toFixed(2) }}</div>
+      </div>
+      <div class="value-card" [class.positive]="(s.totalMarketValue ?? 0) >= s.totalValue" [class.negative]="(s.totalMarketValue ?? 0) < s.totalValue">
+        <div class="value-label">Net</div>
+        <div class="value-amount">{{ (s.totalMarketValue ?? 0) >= s.totalValue ? '+' : '' }}{{ ((s.totalMarketValue ?? 0) - s.totalValue).toFixed(2) }}</div>
+      </div>
+    </div>
+
+    <!-- Coverage cards with batch buttons -->
+    <div class="coverage-grid">
+      <div class="coverage-card">
+        <div class="coverage-icon">🔗</div>
+        <div class="coverage-info">
+          <div class="coverage-label">IGDB Enrichment</div>
+          <div class="coverage-count">{{ s.enrichedIgdb ?? 0 }}/{{ s.totalGames }}</div>
+        </div>
+        <button class="action-btn enrich-btn" (click)="bulkEnrich()" [disabled]="enriching()">
+          {{ enriching() ? "..." : "Enrich 25" }}
+        </button>
+      </div>
+      <div class="coverage-card">
+        <div class="coverage-icon">💰</div>
+        <div class="coverage-info">
+          <div class="coverage-label">Price Data</div>
+          <div class="coverage-count">{{ s.gamesWithPrice ?? 0 }}/{{ s.totalGames }}</div>
+        </div>
+        <button class="action-btn price-btn" (click)="bulkPrice()" [disabled]="pricing()">
+          {{ pricing() ? "..." : "Price 50" }}
+        </button>
+      </div>
+      <div class="coverage-card">
+        <div class="coverage-icon">📦</div>
+        <div class="coverage-info">
+          <div class="coverage-label">Steam DLCs</div>
+          <div class="coverage-count">{{ s.gamesWithDlcs ?? 0 }}/{{ s.totalGames }}</div>
+        </div>
+        <button class="action-btn dlc-btn" (click)="bulkImportDlcs()" [disabled]="importingDlcs()">
+          {{ importingDlcs() ? "..." : "DLC 10" }}
+        </button>
+      </div>
+      <div class="coverage-card">
+        <div class="coverage-icon">🪟</div>
+        <div class="coverage-info">
+          <div class="coverage-label">Steam App IDs</div>
+          <div class="coverage-count">{{ s.gamesWithSteamAppId ?? 0 }}/{{ s.totalGames }}</div>
+        </div>
+        <span class="info-badge">Info</span>
+      </div>
+    </div>
+    @if (pricingResult()) {
+      <p class="action-feedback">{{ pricingResult() }}</p>
+    }
+    @if (dlcResult()) {
+      <p class="action-feedback">{{ dlcResult() }}</p>
+    }
+
+    <!-- Enrichment funnel -->
+    <div class="funnel">
+      <h3 class="panel-title">Enrichment Funnel</h3>
+      <div class="funnel-step">
+        <div class="funnel-row">
+          <span class="funnel-label">Total Games</span>
+          <span class="funnel-count">{{ s.totalGames }}</span>
+        </div>
+        <div class="funnel-bar"><div class="funnel-fill full" style="width:100%"></div></div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-row">
+          <span class="funnel-label">Enriched (IGDB)</span>
+          <span class="funnel-count">{{ s.enrichedIgdb ?? 0 }} ({{ s.totalGames > 0 ? ((s.enrichedIgdb ?? 0) / s.totalGames * 100).toFixed(0) : 0 }}%)</span>
+        </div>
+        <div class="funnel-bar"><div class="funnel-fill" [style.width.%]="s.totalGames > 0 ? ((s.enrichedIgdb ?? 0) / s.totalGames * 100) : 0"></div></div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-row">
+          <span class="funnel-label">Has Steam ID</span>
+          <span class="funnel-count">{{ s.gamesWithSteamAppId ?? 0 }} ({{ s.totalGames > 0 ? ((s.gamesWithSteamAppId ?? 0) / s.totalGames * 100).toFixed(0) : 0 }}%)</span>
+        </div>
+        <div class="funnel-bar"><div class="funnel-fill" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithSteamAppId ?? 0) / s.totalGames * 100) : 0"></div></div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-row">
+          <span class="funnel-label">Has Price</span>
+          <span class="funnel-count">{{ s.gamesWithPrice ?? 0 }} ({{ s.totalGames > 0 ? ((s.gamesWithPrice ?? 0) / s.totalGames * 100).toFixed(0) : 0 }}%)</span>
+        </div>
+        <div class="funnel-bar"><div class="funnel-fill" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithPrice ?? 0) / s.totalGames * 100) : 0"></div></div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-row">
+          <span class="funnel-label">Has DLCs</span>
+          <span class="funnel-count">{{ s.gamesWithDlcs ?? 0 }} ({{ s.totalGames > 0 ? ((s.gamesWithDlcs ?? 0) / s.totalGames * 100).toFixed(0) : 0 }}%)</span>
+        </div>
+        <div class="funnel-bar"><div class="funnel-fill" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithDlcs ?? 0) / s.totalGames * 100) : 0"></div></div>
+      </div>
+    </div>
+
     <div class="dashboard-panels">
       <!-- Platform distribution -->
       <div class="panel">

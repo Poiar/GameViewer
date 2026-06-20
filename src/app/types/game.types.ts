@@ -238,6 +238,10 @@ export interface DashboardStats {
   enrichedOpenCritic?: number;
   enrichedHltb?: number;
   gamesWithCovers?: number;
+  gamesWithSteamAppId?: number;
+  gamesWithPrice?: number;
+  gamesWithDlcs?: number;
+  totalMarketValue?: number;
 }
 
 export interface UserProfile {

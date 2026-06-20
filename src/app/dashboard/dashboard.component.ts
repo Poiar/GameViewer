@@ -32,6 +32,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   coverFetchResult = signal<string | null>(null);
   enriching = signal(false);
   enrichResult = signal<string | null>(null);
+  pricing = signal(false);
+  pricingResult = signal<string | null>(null);
+  importingDlcs = signal(false);
+  dlcResult = signal<string | null>(null);
 
   private sub?: Subscription;
 
@@ -116,6 +120,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.enrichResult.set(`Error: ${err.message}`);
         this.enriching.set(false);
+      },
+    });
+  }
+
+  bulkPrice(): void {
+    this.pricing.set(true);
+    this.pricingResult.set(null);
+    this.http.post<any>('/api/pricing/batch', { limit: 50 }).subscribe({
+      next: (res) => {
+        const d = res.data ?? res;
+        this.pricingResult.set(`Priced ${d.updated} of ${d.total} games`);
+        this.pricing.set(false);
+        this.loadStats();
+      },
+      error: (err) => {
+        this.pricingResult.set(`Error: ${err.message}`);
+        this.pricing.set(false);
+      },
+    });
+  }
+
+  bulkImportDlcs(): void {
+    this.importingDlcs.set(true);
+    this.dlcResult.set(null);
+    this.http.post<any>('/api/dlc/batch', { limit: 10 }).subscribe({
+      next: (res) => {
+        const d = res.data ?? res;
+        this.dlcResult.set(`Imported ${d.imported} DLCs across ${d.games?.length ?? 0} games`);
+        this.importingDlcs.set(false);
+        this.loadStats();
+      },
+      error: (err) => {
+        this.dlcResult.set(`Error: ${err.message}`);
+        this.importingDlcs.set(false);
       },
     });
   }

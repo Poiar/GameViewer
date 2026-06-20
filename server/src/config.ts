@@ -22,4 +22,6 @@ export const config = {
   itadApiKey: process.env.ITAD_API_KEY ?? "",
   itadClientId: process.env.ITAD_CLIENT_ID ?? "",
   itadClientSecret: process.env.ITAD_CLIENT_SECRET ?? "",
+  steamWebApiKey: process.env.STEAM_WEB_API_KEY ?? "",
+  rawgApiKey: process.env.RAWG_API_KEY ?? "",
 } as const;

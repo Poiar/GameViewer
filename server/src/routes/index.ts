@@ -11,6 +11,7 @@ import dashboardRoutes from "./dashboard.js";
 import lookupRoutes from "./lookup.js";
 import enrichmentRoutes from "./enrichment.js";
 import pricingRoutes from "./pricing.js";
+import exportRoutes from "./export.js";
 
 const router = Router();
 
@@ -26,6 +27,7 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/lookup", lookupRoutes);
 router.use("/enrich", enrichmentRoutes);
 router.use("/pricing", pricingRoutes);
+router.use("/export", exportRoutes);
 
 export { router as apiRouter };
 export default router;
