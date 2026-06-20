@@ -19,4 +19,7 @@ export const config = {
   igdbClientId: process.env.IGDB_CLIENT_ID ?? "",
   igdbAccessToken: process.env.IGDB_ACCESS_TOKEN ?? "",
   rapidApiKey: process.env.RAPIDAPI_KEY ?? "",
+  itadApiKey: process.env.ITAD_API_KEY ?? "",
+  itadClientId: process.env.ITAD_CLIENT_ID ?? "",
+  itadClientSecret: process.env.ITAD_CLIENT_SECRET ?? "",
 } as const;

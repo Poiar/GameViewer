@@ -50,3 +50,4 @@ server/.env
 *.env.local
 .playwright-mcp/
 test-results/
+server/src/.itad-token.json

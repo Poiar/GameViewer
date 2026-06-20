@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { DatePipe, CurrencyPipe } from "@angular/common";
 import { GamesService } from "../services/games.service";
 import { FavoritesService } from "../services/favorites.service";
 import { MasterGameDetail } from "../types/game.types";
@@ -8,7 +9,7 @@ import { MasterGameDetail } from "../types/game.types";
 @Component({
   selector: "app-game-detail-page",
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe, CurrencyPipe],
   template: `
     @if (loading()) {
       <div class="center-message"><div class="spinner"></div><p>Loading...</p></div>
@@ -101,6 +102,30 @@ import { MasterGameDetail } from "../types/game.types";
               {{ enriching() ? "..." : "🔗 Enrich" }}
             </button>
           </div>
+
+          <!-- ITAD Price section -->
+          @if (g.itadCurrentPrice || g.itadLowestPrice || g.steamAppId) {
+            <div class="pricing-bar">
+              <span class="pricing-label">💰 Pricing</span>
+              @if (g.itadCurrentPrice) {
+                <a class="pricing-deal" [href]="g.itadCurrentUrl || '#'" target="_blank" rel="noopener" title="Best deal">
+                  Best: <strong>{{ g.itadCurrentPrice | currency:'USD':'symbol':'1.2-2' }}</strong>
+                  @if (g.itadCurrentShop) { <span class="pricing-shop">@ {{ g.itadCurrentShop }}</span> }
+                </a>
+              }
+              @if (g.itadLowestPrice) {
+                <span class="pricing-low" title="Historical lowest price">
+                  Lowest ever: <strong>{{ g.itadLowestPrice | currency:'USD':'symbol':'1.2-2' }}</strong>
+                  @if (g.itadLowestAt) { <span class="pricing-date">({{ g.itadLowestAt | date:'MMM yyyy' }})</span> }
+                </span>
+              }
+              @if (!g.itadCurrentPrice && !g.itadLowestPrice && g.steamAppId) {
+                <button class="pricing-fetch-btn" (click)="fetchPrices(g.id)" [disabled]="pricing()">
+                  {{ pricing() ? "..." : "💲 Fetch prices" }}
+                </button>
+              }
+            </div>
+          }
         </div>
       </div>
 
@@ -300,6 +325,22 @@ import { MasterGameDetail } from "../types/game.types";
     .ext-enrich-btn:hover:not(:disabled) { background: #9147ff; color: #fff; border-color: #9147ff; }
     .ext-enrich-btn:disabled { opacity: .4; cursor: not-allowed; }
 
+    .pricing-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; padding: 8px 12px; background: rgba(255,183,77,.08); border: 1px solid rgba(255,183,77,.2); border-radius: 10px; }
+    .pricing-label { font-size: 11px; font-weight: 700; color: #ffb74d; text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; }
+    .pricing-deal, .pricing-low { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-secondary); text-decoration: none; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,.04); }
+    .pricing-deal { color: var(--accent-secondary); background: rgba(6,214,160,.1); }
+    .pricing-deal:hover { background: rgba(6,214,160,.2); }
+    .pricing-shop { opacity: .7; font-size: 11px; }
+    .pricing-low strong { color: #ffb74d; }
+    .pricing-date { opacity: .6; font-size: 10px; }
+    .pricing-fetch-btn {
+      padding: 3px 10px; border-radius: 8px; font-size: 11px; font-weight: 600;
+      background: rgba(255,183,77,.08); color: #ffb74d; border: 1px dashed rgba(255,183,77,.25);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .pricing-fetch-btn:hover:not(:disabled) { background: #ffb74d; color: #000; border-color: #ffb74d; }
+    .pricing-fetch-btn:disabled { opacity: .4; cursor: not-allowed; }
+
     .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
     .tag-genre { background: rgb(6, 214, 160, 0.1); color: var(--accent-secondary); border-color: rgb(6, 214, 160, 0.25); }
     .tag-accent { background: var(--accent-glow); color: var(--accent); border-color: var(--border-accent); }
@@ -417,6 +458,28 @@ export class GameDetailPageComponent implements OnInit {
   toggleExpand(relId: number): void { this.expandedRelease.set(this.expandedRelease() === relId ? null : relId); }
   // Per-game enrichment
   enriching = signal(false);
+  // ITAD pricing
+  pricing = signal(false);
+
+  fetchPrices(gameId: number): void {
+    this.pricing.set(true);
+    this.http.post(`/api/pricing/${gameId}`, {}).subscribe({
+      next: (res: any) => {
+        const d = res.data ?? res;
+        const g = this.game();
+        if (g) {
+          if (d.itadPlain) (g as any).itadPlain = d.itadPlain;
+          if (d.currentPrice) (g as any).itadCurrentPrice = d.currentPrice;
+          if (d.currentShop) (g as any).itadCurrentShop = d.currentShop;
+          if (d.currentUrl) (g as any).itadCurrentUrl = d.currentUrl;
+          if (d.lowestPrice) (g as any).itadLowestPrice = d.lowestPrice;
+          if (d.lowestAt) (g as any).itadLowestAt = d.lowestAt;
+        }
+        this.pricing.set(false);
+      },
+      error: () => this.pricing.set(false),
+    });
+  }
   // Lightbox
   lightboxUrl = signal<string | null>(null);
 

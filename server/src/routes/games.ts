@@ -430,6 +430,21 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       criticScore: game.criticScore ?? null,
       summary: game.summary ?? null,
       screenshots: game.screenshots ?? [],
+      gameModes: game.gameModes ?? [],
+      playerPerspectives: game.playerPerspectives ?? [],
+      ageRating: game.ageRating ?? null,
+      trailerUrl: game.trailerUrl ?? null,
+      franchise: game.franchise ?? null,
+      steamAppId: game.steamAppId ?? null,
+      steamPlayers: game.steamPlayers ?? null,
+      steamPlayersAt: game.steamPlayersAt ?? null,
+      itadPlain: game.itadPlain ?? null,
+      itadCurrentPrice: game.itadCurrentPrice ?? null,
+      itadCurrentShop: game.itadCurrentShop ?? null,
+      itadCurrentUrl: game.itadCurrentUrl ?? null,
+      itadLowestPrice: game.itadLowestPrice ?? null,
+      itadLowestAt: game.itadLowestAt ?? null,
+      itadPricesAt: game.itadPricesAt ?? null,
       releaseGroups: game.releaseGroups
         .sort((a, b) => (a.releaseYear ?? 0) - (b.releaseYear ?? 0))
         .map((rg) => ({

@@ -21,6 +21,15 @@ export interface MasterGame {
   franchise?: string | null;
   steamAppId?: number | null;
   steamPlayers?: number | null;
+  steamPlayersAt?: string | null;
+  // Is There Any Deal price data
+  itadPlain?: string | null;
+  itadCurrentPrice?: string | null;
+  itadCurrentShop?: string | null;
+  itadCurrentUrl?: string | null;
+  itadLowestPrice?: string | null;
+  itadLowestAt?: string | null;
+  itadPricesAt?: string | null;
   createdAt: string;
   updatedAt: string;
   series?: SeriesSummary;
