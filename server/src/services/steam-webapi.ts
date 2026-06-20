@@ -93,6 +93,55 @@ export async function fetchSteamAppList(): Promise<SteamAppEntry[] | null> {
 }
 
 // ---------------------------------------------------------------------------
+// Vanity URL → Steam ID resolver
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve a Steam vanity URL (e.g. "https://steamcommunity/id/gabelogannewell")
+ * to a 64-bit Steam ID. Also accepts raw numeric IDs, returning them as-is.
+ * Requires STEAM_WEB_API_KEY.
+ */
+export async function resolveSteamVanityUrl(input: string): Promise<string | null> {
+  if (!config.steamWebApiKey) {
+    console.warn("[Steam WebAPI] No STEAM_WEB_API_KEY configured");
+    return null;
+  }
+
+  // Strip common URL prefixes
+  let cleaned = input.trim()
+    .replace(/^https?:\/\//, "")
+    .replace(/^steamcommunity\.com\//, "")
+    .replace(/^steamcommunity\.com\/profiles\//, "")
+    .replace(/^steamcommunity\.com\/id\//, "")
+    .replace(/\/+$/, "");
+
+  // If it's already a numeric Steam ID (17 digits), return as-is
+  if (/^\d{17}$/.test(cleaned)) {
+    return cleaned;
+  }
+
+  // Resolve vanity URL
+  try {
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${config.steamWebApiKey}&vanityurl=${encodeURIComponent(cleaned)}`,
+    );
+    if (!res.ok) {
+      console.warn(`[Steam WebAPI] ResolveVanityURL failed (${res.status}) for "${cleaned}"`);
+      return null;
+    }
+    const json = (await res.json()) as { response: { success: number; steamid?: string; message?: string } };
+    if (json.response?.success === 1 && json.response?.steamid) {
+      return json.response.steamid;
+    }
+    console.warn(`[Steam WebAPI] Vanity URL not found: "${cleaned}" — ${json.response?.message ?? "unknown"}`);
+    return null;
+  } catch (err) {
+    console.warn("[Steam WebAPI] ResolveVanityURL error:", err);
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Owned Games (user-specific, requires API key + user's Steam ID)
 // ---------------------------------------------------------------------------
 

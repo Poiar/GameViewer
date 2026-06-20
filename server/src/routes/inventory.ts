@@ -6,7 +6,7 @@ import { validate } from "../middleware/validate.js";
 import { z } from "zod";
 import { eq, and, desc, count, sql, inArray, ilike, isNull } from "drizzle-orm";
 import { enrichGame } from "../services/enrichment.js";
-import { fetchOwnedGames } from "../services/steam-webapi.js";
+import { fetchOwnedGames, resolveSteamVanityUrl } from "../services/steam-webapi.js";
 
 const router = Router();
 
@@ -369,17 +369,30 @@ router.post("/import-steam", async (req: Request, res: Response) => {
         data: null,
         error: {
           code: "MISSING_STEAM_ID",
-          message: "Provide a Steam ID in the request body or save one to your profile",
+          message: "Provide a Steam ID or profile URL in the request body, or save one to your profile",
         },
       });
       return;
     }
 
-    // Save steamId to user profile if not already set
-    await db.update(users).set({ steamId }).where(eq(users.id, userId));
+    // Resolve vanity URL or profile URL to a numeric Steam ID
+    const resolvedId = await resolveSteamVanityUrl(steamId);
+    if (!resolvedId) {
+      res.status(400).json({
+        data: null,
+        error: {
+          code: "INVALID_STEAM_ID",
+          message: "Could not resolve Steam profile. Try using your 64-bit Steam ID or your profile's custom URL name.",
+        },
+      });
+      return;
+    }
+
+    // Save resolved steamId to user profile
+    await db.update(users).set({ steamId: resolvedId }).where(eq(users.id, userId));
 
     // Fetch owned games from Steam
-    const ownedGames = await fetchOwnedGames(steamId);
+    const ownedGames = await fetchOwnedGames(resolvedId);
     if (!ownedGames?.length) {
       res.json({
         data: {
@@ -552,7 +565,7 @@ router.post("/import-steam", async (req: Request, res: Response) => {
         total: ownedGames.length,
         imported,
         skipped,
-        steamId,
+        steamId: resolvedId,
         games: results,
       },
       error: null,
