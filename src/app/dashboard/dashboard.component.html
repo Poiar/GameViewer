@@ -93,6 +93,9 @@
         <button class="action-btn price-btn" (click)="bulkPrice()" [disabled]="pricing()">
           {{ pricing() ? "..." : "Price 50" }}
         </button>
+        <button class="action-btn price-btn" (click)="priceAll()" [disabled]="pricingAll()">
+          {{ pricingAll() ? "..." : "Price All" }}
+        </button>
       </div>
       <div class="coverage-card">
         <div class="coverage-icon">📦</div>

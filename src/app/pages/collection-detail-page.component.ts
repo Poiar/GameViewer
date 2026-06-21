@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@ang
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 
-interface CollDetail { id: number; title: string; releaseYear: number | null; mediaFormat?: { id: number; name: string } | null; releases?: Array<{ id: number; title: string | null; playableOn: string[]; region: string | null; provider?: { name: string } | null; mediaFormat?: { name: string } | null; releaseGroup?: { editionType?: { name: string } | null; masterGame?: { title: string; slug: string } | null } | null; userOwns?: boolean }>; }
+interface CollDetail { id: number; title: string; releaseYear: number | null; mediaFormat?: { id: number; name: string } | null; releases?: Array<{ id: number; title: string | null; playableOn: string[]; region: string | null; provider?: { name: string } | null; mediaFormat?: { name: string } | null; releaseGroup?: { editionType?: { name: string } | null; masterGame?: { title: string; slug: string; coverImageUrl?: string | null } | null } | null; userOwns?: boolean }>; }
 
 @Component({
   selector: "app-collection-detail-page", standalone: true, imports: [RouterLink],
@@ -22,6 +22,11 @@ interface CollDetail { id: number; title: string; releaseYear: number | null; me
         <div class="cd-list">
           @for (rel of c.releases; track rel.id; let i = $index) {
             <a class="cd-row" [class.owned]="!!rel.userOwns" [routerLink]="['/games', rel.releaseGroup?.masterGame?.slug ?? '']" [style.--idx]="i">
+              <div class="cdr-cover">
+                @if (rel.releaseGroup?.masterGame?.coverImageUrl) {
+                  <img class="cdr-cover-img" [src]="rel.releaseGroup?.masterGame?.coverImageUrl" alt="" loading="lazy" />
+                }
+              </div>
               <div class="cdr-game">
                 <span class="cdr-title">{{ rel.releaseGroup?.masterGame?.title ?? rel.title ?? "—" }}</span>
                 @if (rel.releaseGroup?.editionType?.name) { <span class="cdr-ed">{{ rel.releaseGroup?.editionType?.name }}</span> }
@@ -55,6 +60,8 @@ interface CollDetail { id: number; title: string; releaseYear: number | null; me
     .cd-row.owned { background: rgba(6,214,160,.04); }
     @keyframes in { from { opacity: 0; } to { opacity: 1; } }
     .cdr-game { flex: 2; min-width: 0; display: flex; gap: 8px; align-items: center; }
+    .cdr-cover { width: 36px; height: 50px; flex-shrink: 0; border-radius: 4px; overflow: hidden; background: var(--bg-tertiary); }
+    .cdr-cover-img { width: 100%; height: 100%; object-fit: cover; }
     .cdr-title { font-size: 14px; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .cdr-ed { font-size: 10px; color: var(--accent); background: var(--accent-glow); padding: 1px 6px; border-radius: 8px; flex-shrink: 0; }
     .cdr-platforms { flex: 1.5; display: flex; gap: 4px; flex-wrap: wrap; }

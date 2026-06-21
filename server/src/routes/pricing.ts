@@ -200,6 +200,67 @@ router.post("/batch", authenticate, async (req: Request, res: Response) => {
   }
 });
 
+// POST /refresh-all — Price ALL games with Steam App IDs
+router.post("/refresh-all", authenticate, async (req: Request, res: Response) => {
+  try {
+    const games = await db
+      .select({ id: masterGames.id, title: masterGames.title, steamAppId: masterGames.steamAppId })
+      .from(masterGames)
+      .where(isNotNull(masterGames.steamAppId))
+      .orderBy(sql`RANDOM()`);
+
+    if (!games.length) {
+      res.json({ data: { message: "No games with Steam App IDs found", total: 0, updated: 0 }, error: null });
+      return;
+    }
+
+    const validGames = games.filter((g): g is typeof g & { steamAppId: number } => g.steamAppId != null);
+    const total = validGames.length;
+    let updated = 0;
+    const skipped: string[] = [];
+
+    // Process in batches of 50 to avoid overwhelming CheapShark
+    const BATCH_SIZE = 50;
+    for (let i = 0; i < validGames.length; i += BATCH_SIZE) {
+      const batch = validGames.slice(i, i + BATCH_SIZE);
+      const steamAppIds = batch.map((g) => g.steamAppId);
+
+      const priceMap = await batchGetCheapSharkPrices(steamAppIds);
+
+      for (const game of batch) {
+        const price = priceMap.get(game.steamAppId);
+        if (!price?.currentPrice && !price?.lowestPrice) {
+          skipped.push(game.title);
+          continue;
+        }
+        await updateGamePrices(game.id, price);
+        updated++;
+      }
+
+      // Delay between batches
+      if (i + BATCH_SIZE < validGames.length) {
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+    }
+
+    res.json({
+      data: {
+        message: `Priced ${updated}/${total} games${skipped.length ? ` (${skipped.length} had no price data)` : ""}`,
+        total,
+        updated,
+        skipped: skipped.length,
+      },
+      error: null,
+    });
+  } catch (error) {
+    console.error("[Pricing] Refresh-all error:", error);
+    res.status(500).json({
+      data: null,
+      error: { code: "INTERNAL_ERROR", message: "Failed to refresh all prices" },
+    });
+  }
+});
+
 // POST /:id — Fetch prices for a single game by its internal DB id
 router.post("/:id", authenticate, async (req: Request, res: Response) => {
   try {

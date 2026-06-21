@@ -273,6 +273,9 @@ export interface GameQueryParams {
   seriesId?: number;
   platform?: string;
   provider?: string;
+  format?: "physical" | "digital" | "all";
+  hasPrice?: boolean;
+  hasAchievements?: boolean;
   sort?: "name" | "year" | "genre";
   order?: "asc" | "desc";
   page?: number;

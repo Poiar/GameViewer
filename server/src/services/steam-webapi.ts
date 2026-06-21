@@ -46,6 +46,15 @@ interface SteamAppListResponse {
   };
 }
 
+interface SteamStoreSearchResult {
+  items?: Array<{
+    id: number;
+    name: string;
+    type: string;
+    price?: { final: number };
+  }>;
+}
+
 // ---------------------------------------------------------------------------
 // Public endpoints (no API key needed)
 // ---------------------------------------------------------------------------
@@ -88,6 +97,37 @@ export async function fetchSteamAppList(): Promise<SteamAppEntry[] | null> {
     return json.applist?.apps ?? null;
   } catch (err) {
     console.warn("[Steam WebAPI] App list error:", err);
+    return null;
+  }
+}
+
+/**
+ * Search the Steam Storefront by title (public, no key).
+ * Returns the first app ID match, or null.
+ */
+export async function searchSteamStorefront(title: string): Promise<number | null> {
+  try {
+    const res = await fetch(
+      `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(title)}&cc=US&l=en`,
+    );
+    if (!res.ok) {
+      console.warn(`[Steam WebAPI] Store search failed (${res.status}) for "${title}"`);
+      return null;
+    }
+    const json = (await res.json()) as SteamStoreSearchResult;
+    if (!json.items?.length) return null;
+
+    // Prefer exact name match
+    const exact = json.items.find(
+      (item) => item.type === "game" && item.name.toLowerCase() === title.toLowerCase(),
+    );
+    if (exact) return exact.id;
+
+    // Fall back to first game result
+    const first = json.items.find((item) => item.type === "game");
+    return first?.id ?? null;
+  } catch (err) {
+    console.warn("[Steam WebAPI] Store search error:", err);
     return null;
   }
 }

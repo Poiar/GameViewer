@@ -1,8 +1,9 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { CurrencyPipe } from "@angular/common";
 
 @Component({
-  selector: "app-stats-page", standalone: true, imports: [],
+  selector: "app-stats-page", standalone: true, imports: [CurrencyPipe],
   template: `
     <div class="st-header"><h2>Stats &amp; Analytics</h2><p>Your collection by the numbers</p></div>
     @if (loading()) { <div class="st-load"><div class="spinner"></div></div> }
@@ -16,6 +17,48 @@ import { HttpClient } from "@angular/common/http";
         <div class="st-card"><div class="stc-val">{{ s.totalCollections }}</div><div class="stc-lbl">Collections</div><div class="stc-icon">📦</div></div>
         <div class="st-card"><div class="stc-val">{{ s.totalFavorites }}</div><div class="stc-lbl">Favorites</div><div class="stc-icon">⭐</div></div>
       </div>
+      <!-- Collection Value -->
+      <div class="st-section"><h3>💰 Collection Value</h3>
+        <div class="st-val-grid">
+          <div class="st-val-card"><div class="stvc-lbl">Total Paid</div><div class="stvc-amt">{{ s.totalValue | currency:'USD':'symbol':'1.2-2' }}</div></div>
+          <div class="st-val-card"><div class="stvc-lbl">Market Value</div><div class="stvc-amt stvc-mkt">{{ (s.totalMarketValue ?? 0) | currency:'USD':'symbol':'1.2-2' }}</div></div>
+          <div class="st-val-card" [class.stvc-green]="(s.totalMarketValue ?? 0) >= s.totalValue" [class.stvc-red]="(s.totalMarketValue ?? 0) < s.totalValue">
+            <div class="stvc-lbl">Net</div>
+            <div class="stvc-amt">{{ (s.totalMarketValue ?? 0) >= s.totalValue ? '+' : '' }}{{ ((s.totalMarketValue ?? 0) - s.totalValue) | currency:'USD':'symbol':'1.2-2' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enrichment Coverage -->
+      <div class="st-section"><h3>🔗 Enrichment Coverage</h3>
+        <div class="st-enrich-grid">
+          <div class="st-enrich-item">
+            <div class="ste-header"><span class="ste-lbl">IGDB Enrichment</span><span class="ste-count">{{ s.enrichedIgdb ?? 0 }}/{{ s.totalGames }}</span></div>
+            <div class="ste-track"><div class="ste-fill" [style.width.%]="s.totalGames > 0 ? ((s.enrichedIgdb ?? 0) / s.totalGames * 100) : 0"></div></div>
+          </div>
+          <div class="st-enrich-item">
+            <div class="ste-header"><span class="ste-lbl">Steam App IDs</span><span class="ste-count">{{ s.gamesWithSteamAppId ?? 0 }}/{{ s.totalGames }}</span></div>
+            <div class="ste-track"><div class="ste-fill" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithSteamAppId ?? 0) / s.totalGames * 100) : 0"></div></div>
+          </div>
+          <div class="st-enrich-item">
+            <div class="ste-header"><span class="ste-lbl">Price Data</span><span class="ste-count">{{ s.gamesWithPrice ?? 0 }}/{{ s.totalGames }}</span></div>
+            <div class="ste-track"><div class="ste-fill ste-fill--price" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithPrice ?? 0) / s.totalGames * 100) : 0"></div></div>
+          </div>
+          <div class="st-enrich-item">
+            <div class="ste-header"><span class="ste-lbl">Steam DLCs</span><span class="ste-count">{{ s.gamesWithDlcs ?? 0 }}/{{ s.totalGames }}</span></div>
+            <div class="ste-track"><div class="ste-fill ste-fill--dlc" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithDlcs ?? 0) / s.totalGames * 100) : 0"></div></div>
+          </div>
+          <div class="st-enrich-item">
+            <div class="ste-header"><span class="ste-lbl">OpenCritic</span><span class="ste-count">{{ s.enrichedOpenCritic ?? 0 }}/{{ s.totalGames }}</span></div>
+            <div class="ste-track"><div class="ste-fill ste-fill--oc" [style.width.%]="s.totalGames > 0 ? ((s.enrichedOpenCritic ?? 0) / s.totalGames * 100) : 0"></div></div>
+          </div>
+          <div class="st-enrich-item">
+            <div class="ste-header"><span class="ste-lbl">Covers</span><span class="ste-count">{{ s.gamesWithCovers ?? 0 }}/{{ s.totalGames }}</span></div>
+            <div class="ste-track"><div class="ste-fill ste-fill--cover" [style.width.%]="s.totalGames > 0 ? ((s.gamesWithCovers ?? 0) / s.totalGames * 100) : 0"></div></div>
+          </div>
+        </div>
+      </div>
+
       <div class="st-section"><h3>Platform Distribution</h3>
         @if (s.platformDistribution?.length) {
           <div class="st-bars">
@@ -80,6 +123,26 @@ import { HttpClient } from "@angular/common/http";
     @keyframes spin { to { transform: rotate(360deg); } }
     .st-err { text-align: center; padding: 80px 0; color: var(--text-muted); }
     @media (max-width: 640px) { .stb-label { width: 80px; } }
+
+    .st-val-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 8px; }
+    .st-val-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 18px; text-align: center; }
+    .stvc-lbl { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .stvc-amt { font-size: 24px; font-weight: 700; letter-spacing: -.02em; color: var(--text-primary); }
+    .stvc-mkt { color: var(--accent-secondary); }
+    .stvc-green .stvc-amt { color: var(--accent-secondary); }
+    .stvc-red .stvc-amt { color: #f76e6e; }
+
+    .st-enrich-grid { display: grid; gap: 12px; }
+    .st-enrich-item { display: flex; flex-direction: column; gap: 4px; }
+    .ste-header { display: flex; justify-content: space-between; }
+    .ste-lbl { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+    .ste-count { font-size: 13px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .ste-track { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+    .ste-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .5s ease-out; min-width: 2px; }
+    .ste-fill--price { background: #ffb74d; }
+    .ste-fill--dlc { background: #2a6bc0; }
+    .ste-fill--oc { background: #f76e6e; }
+    .ste-fill--cover { background: var(--accent-secondary); }
   `], changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatsPageComponent implements OnInit {

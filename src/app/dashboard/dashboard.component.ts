@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   enriching = signal(false);
   enrichResult = signal<string | null>(null);
   pricing = signal(false);
+  pricingAll = signal(false);
   pricingResult = signal<string | null>(null);
   importingDlcs = signal(false);
   dlcResult = signal<string | null>(null);
@@ -137,6 +138,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.pricingResult.set(`Error: ${err.message}`);
         this.pricing.set(false);
+      },
+    });
+  }
+
+  priceAll(): void {
+    this.pricingAll.set(true);
+    this.pricingResult.set(null);
+    this.http.post<any>('/api/pricing/refresh-all', {}).subscribe({
+      next: (res) => {
+        const d = res.data ?? res;
+        this.pricingResult.set(`Price refresh: ${d.updated}/${d.total} games updated`);
+        this.pricingAll.set(false);
+        this.loadStats();
+      },
+      error: (err) => {
+        this.pricingResult.set(`Error: ${err.message}`);
+        this.pricingAll.set(false);
       },
     });
   }

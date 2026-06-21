@@ -17,9 +17,11 @@ import {
 } from "../db/schema.js";
 import { authenticate, optionalAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
+import { config } from "../config.js";
 import { enrichGame } from "../services/enrichment.js";
 import { importSteamDlcs } from "../services/steam-storefront.js";
-import { fetchSchemaForGame, fetchGlobalAchievementPercentages } from "../services/steam-webapi.js";
+import { fetchSchemaForGame, fetchGlobalAchievementPercentages, searchSteamStorefront } from "../services/steam-webapi.js";
+import { searchGames } from "../services/rawg.js";
 import { z } from "zod";
 import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
 
@@ -76,6 +78,9 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
     const seriesId = parseInt(req.query.seriesId as string) || undefined;
     const platformSlug = (req.query.platform as string)?.trim();
     const providerSlug = (req.query.provider as string)?.trim();
+    const format = (req.query.format as string)?.trim();
+    const hasPrice = req.query.hasPrice === "true";
+    const hasAchievements = req.query.hasAchievements === "true";
     const sortBy = (req.query.sort as string) || "name";
     const order = (req.query.order as string)?.toLowerCase() === "desc" ? "desc" : "asc";
 
@@ -125,6 +130,36 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
           WHERE rg.master_game_id = ${masterGames.id} AND p.slug = ${providerSlug}
         )`,
       );
+    }
+
+    if (format === "physical") {
+      conditions.push(
+        sql`EXISTS (
+          SELECT 1 FROM ${releaseGroups} rg
+          JOIN ${releases} r ON r.release_group_id = rg.id
+          LEFT JOIN ${mediaFormats} mf ON r.media_format_id = mf.id
+          WHERE rg.master_game_id = ${masterGames.id}
+          AND (r.provider_id = 1 OR mf.slug IN ('dvd', 'cd', 'blu-ray'))
+        )`,
+      );
+    } else if (format === "digital") {
+      conditions.push(
+        sql`EXISTS (
+          SELECT 1 FROM ${releaseGroups} rg
+          JOIN ${releases} r ON r.release_group_id = rg.id
+          WHERE rg.master_game_id = ${masterGames.id}
+          AND r.media_format_id = 2
+          AND r.provider_id != 1
+        )`,
+      );
+    }
+
+    if (hasPrice) {
+      conditions.push(sql`${masterGames.itadCurrentPrice} IS NOT NULL`);
+    }
+
+    if (hasAchievements) {
+      conditions.push(sql`${masterGames.steamAppId} IS NOT NULL`);
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -1020,6 +1055,113 @@ router.post("/import-steam-dlc-batch", authenticate, async (req: Request, res: R
     res.status(500).json({
       data: null,
       error: { code: "INTERNAL_ERROR", message: "Failed to batch import Steam DLCs" },
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Steam ID Batch Sweep
+// ---------------------------------------------------------------------------
+
+// POST /batch-steam-id — Backfill Steam App IDs for games missing them
+router.post("/batch-steam-id", authenticate, async (req: Request, res: Response) => {
+  try {
+    const { limit } = req.body as { limit?: number };
+    const batchLimit = Math.min(limit ?? 25, 50);
+
+    // Find games with igdbId but no steamAppId
+    const games = await db
+      .select({ id: masterGames.id, title: masterGames.title, igdbId: masterGames.igdbId })
+      .from(masterGames)
+      .where(and(sql`${masterGames.steamAppId} IS NULL`, sql`${masterGames.igdbId} IS NOT NULL`))
+      .orderBy(sql`RANDOM()`)
+      .limit(batchLimit);
+
+    if (!games.length) {
+      res.json({ data: { message: "All games already have Steam App IDs", total: 0, updated: 0 }, error: null });
+      return;
+    }
+
+    const results: Array<{ id: number; title: string; steamAppId: number | null; source: string }> = [];
+    let updated = 0;
+
+    for (const game of games) {
+      let steamAppId: number | null = null;
+      let source = "";
+
+      // 1. Try IGDB re-fetch to get external_games
+      try {
+        const igdbRes = await fetch("https://api.igdb.com/v4/games", {
+          method: "POST",
+          headers: {
+            "Client-ID": config.igdbClientId,
+            Authorization: `Bearer ${config.igdbAccessToken}`,
+            "Content-Type": "text/plain",
+          },
+          body: `fields external_games.uid,external_games.external_game_source; where id = ${game.igdbId};`,
+        });
+        if (igdbRes.ok) {
+          const igdbData = (await igdbRes.json()) as Array<{
+            external_games?: Array<{ uid: string; external_game_source: number }>;
+          }>;
+          if (igdbData?.length) {
+            const steam = igdbData[0].external_games?.find((e) => e.external_game_source === 1); // 1 = Steam
+            if (steam) {
+              steamAppId = parseInt(steam.uid, 10);
+              if (!isNaN(steamAppId)) source = "IGDB";
+            }
+          }
+        }
+      } catch { /* fall through */ }
+
+      // 2. Try RAWG
+      if (!steamAppId) {
+        try {
+          const rawgResults = await searchGames(game.title);
+          if (rawgResults?.length) {
+            for (const store of rawgResults[0].stores) {
+              if (store.store?.slug === "steam") {
+                steamAppId = store.store.id;
+                source = "RAWG";
+                // RAWG store IDs are NOT Steam App IDs — use Steam Storefront instead
+                break;
+              }
+            }
+            // RAWG doesn't directly give Steam App ID — skip to Steam Storefront
+          }
+        } catch { /* fall through */ }
+      }
+
+      // 3. Try Steam Storefront search
+      if (!steamAppId) {
+        steamAppId = await searchSteamStorefront(game.title);
+        if (steamAppId) source = "Steam Storefront";
+      }
+
+      // Update the DB if found
+      if (steamAppId) {
+        await db.update(masterGames).set({ steamAppId, updatedAt: new Date() }).where(eq(masterGames.id, game.id));
+        updated++;
+      }
+
+      results.push({ id: game.id, title: game.title, steamAppId, source });
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
+    res.json({
+      data: {
+        message: `Found ${updated}/${games.length} Steam App IDs`,
+        total: games.length,
+        updated,
+        results,
+      },
+      error: null,
+    });
+  } catch (error) {
+    console.error("Batch Steam ID error:", error);
+    res.status(500).json({
+      data: null,
+      error: { code: "INTERNAL_ERROR", message: "Failed to batch find Steam IDs" },
     });
   }
 });

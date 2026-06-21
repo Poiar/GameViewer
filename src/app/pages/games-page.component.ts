@@ -84,6 +84,22 @@ import { MasterGame, Genre } from "../types/game.types";
           </div>
         </div>
 
+        <div class="filter-group filter-group--format">
+          <span class="filter-label">Format</span>
+          <div class="format-chips">
+            <button class="chip" [class.active]="!selectedFormat()" (click)="setFormat('')">All</button>
+            <button class="chip" [class.active]="selectedFormat() === 'physical'" (click)="setFormat('physical')">📀 Physical</button>
+            <button class="chip" [class.active]="selectedFormat() === 'digital'" (click)="setFormat('digital')">💾 Digital</button>
+          </div>
+        </div>
+        <div class="filter-group filter-group--toggles">
+          <button class="chip chip--toggle" [class.active]="hasPriceFilter()" (click)="toggleHasPrice()">
+            💰 {{ hasPriceFilter() ? '✓' : '' }} Has price
+          </button>
+          <button class="chip chip--toggle" [class.active]="hasAchievementsFilter()" (click)="toggleHasAchievements()">
+            🏆 {{ hasAchievementsFilter() ? '✓' : '' }} Has achievements
+          </button>
+        </div>
         <div class="filter-group filter-group--right">
           <span class="filter-label">Sort</span>
           <div class="sort-row">
@@ -419,6 +435,11 @@ import { MasterGame, Genre } from "../types/game.types";
       flex-wrap: wrap;
     }
     .filter-group--right { justify-content: space-between; }
+    .filter-group--format { flex-shrink: 0; }
+    .filter-group--toggles { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .format-chips { display: flex; gap: 4px; }
+    .chip--toggle { opacity: .7; }
+    .chip--toggle.active { opacity: 1; background: rgba(6,214,160,.12); color: var(--accent-secondary); border-color: rgba(6,214,160,.25); }
     .filter-label {
       font-size: 11px;
       font-weight: 700;
@@ -877,6 +898,9 @@ export class GamesPageComponent implements OnInit {
   selectedGenre = signal<string | null>(null);
   selectedPlatform = signal<string | null>(null);
   selectedProvider = signal<string | null>(null);
+  selectedFormat = signal<string>("");
+  hasPriceFilter = signal(false);
+  hasAchievementsFilter = signal(false);
   sort = signal<"name" | "year">("name");
   order = signal<"asc" | "desc">("asc");
 
@@ -916,6 +940,9 @@ export class GamesPageComponent implements OnInit {
       genre: this.selectedGenre() ?? undefined,
       platform: this.selectedPlatform() ?? undefined,
       provider: this.selectedProvider() ?? undefined,
+      format: this.selectedFormat() as any || undefined,
+      hasPrice: this.hasPriceFilter() || undefined,
+      hasAchievements: this.hasAchievementsFilter() || undefined,
       sort: this.sort(),
       order: this.order(),
       page: this.page(),
@@ -949,6 +976,24 @@ export class GamesPageComponent implements OnInit {
       this.sort.set(s);
       this.order.set("asc");
     }
+    this.loadGames();
+  }
+
+  setFormat(f: string): void {
+    this.selectedFormat.set(f);
+    this.page.set(1);
+    this.loadGames();
+  }
+
+  toggleHasPrice(): void {
+    this.hasPriceFilter.update((v) => !v);
+    this.page.set(1);
+    this.loadGames();
+  }
+
+  toggleHasAchievements(): void {
+    this.hasAchievementsFilter.update((v) => !v);
+    this.page.set(1);
     this.loadGames();
   }
 

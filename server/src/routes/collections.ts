@@ -111,7 +111,7 @@ router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
                 releaseGroup: {
                   with: {
                     masterGame: {
-                      columns: { id: true, title: true, slug: true },
+                      columns: { id: true, title: true, slug: true, coverImageUrl: true },
                     },
                   },
                 },

@@ -34,13 +34,24 @@ async function getExportData(userId: number) {
       mg.itad_current_price AS "currentPrice",
       oi.acquired_date AS "acquiredDate",
       r.barcode,
-      r.catalog_number AS "catalogNumber"
+      r.catalog_number AS "catalogNumber",
+      mg.steam_app_id AS "steamAppId",
+      mg.critic_score AS "criticScore",
+      mg.hltb_time AS "hltbTime",
+      mg.itad_lowest_price AS "lowestPrice",
+      oi.notes,
+      r.publisher,
+      r.release_date AS "releaseDate",
+      rg.edition_name AS edition,
+      rg.release_year AS "releaseYear",
+      s.name AS "seriesName"
     FROM owned_instances oi
     JOIN releases r ON oi.release_id = r.id
     JOIN release_groups rg ON r.release_group_id = rg.id
     JOIN master_games mg ON rg.master_game_id = mg.id
     LEFT JOIN providers p ON r.provider_id = p.id
     LEFT JOIN media_formats mf ON r.media_format_id = mf.id
+    LEFT JOIN series s ON mg.series_id = s.id
     WHERE oi.user_id = ${userId}
       AND oi.release_id IS NOT NULL
     ORDER BY mg.title
@@ -66,9 +77,19 @@ router.get("/csv", async (req: Request, res: Response) => {
       "Location",
       "Purchase Price",
       "Current Price",
+      "Lowest Price",
       "Acquired Date",
       "Barcode",
       "Catalog #",
+      "Steam App ID",
+      "Critic Score",
+      "HLTB Time (h)",
+      "Notes",
+      "Publisher",
+      "Release Date",
+      "Edition",
+      "Release Year",
+      "Series",
     ];
 
     const csvEscape = (val: unknown): string => {
@@ -98,9 +119,19 @@ router.get("/csv", async (req: Request, res: Response) => {
             csvEscape(r.location),
             csvEscape(r.purchasePrice),
             csvEscape(r.currentPrice),
+            csvEscape(r.lowestPrice),
             csvEscape(r.acquiredDate),
             csvEscape(r.barcode),
             csvEscape(r.catalogNumber),
+            csvEscape(r.steamAppId),
+            csvEscape(r.criticScore),
+            csvEscape(r.hltbTime),
+            csvEscape(r.notes),
+            csvEscape(r.publisher),
+            csvEscape(r.releaseDate),
+            csvEscape(r.edition),
+            csvEscape(r.releaseYear),
+            csvEscape(r.seriesName),
           ].join(","),
         )
         .join("\n");
