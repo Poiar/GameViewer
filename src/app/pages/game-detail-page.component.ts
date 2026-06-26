@@ -4,12 +4,14 @@ import { HttpClient } from "@angular/common/http";
 import { DatePipe, CurrencyPipe } from "@angular/common";
 import { GamesService } from "../services/games.service";
 import { FavoritesService } from "../services/favorites.service";
+import { AuthService } from "../services/auth.service";
 import { MasterGameDetail } from "../types/game.types";
+import { GameBoxViewerComponent } from "../shared/game-box-viewer.component";
 
 @Component({
   selector: "app-game-detail-page",
   standalone: true,
-  imports: [RouterLink, DatePipe, CurrencyPipe],
+  imports: [RouterLink, DatePipe, CurrencyPipe, GameBoxViewerComponent],
   template: `
     @if (loading()) {
       <div class="center-message"><div class="spinner"></div><p>Loading...</p></div>
@@ -23,10 +25,18 @@ import { MasterGameDetail } from "../types/game.types";
 
       <div class="detail-hero">
         <div class="detail-cover">
-          @if (g.coverImageUrl) {
+          @if (g.scanModelUrl) {
+            <app-game-box-viewer [modelUrl]="g.scanModelUrl" [coverUrl]="g.coverImageUrl" />
+          } @else if (g.coverImageUrl) {
             <img [src]="g.coverImageUrl" [alt]="g.title" />
           } @else {
             <div class="cover-placeholder">🎮</div>
+          }
+          @if (auth.isLoggedIn()) {
+            <input #scanInput type="file" accept=".glb" hidden (change)="uploadScan(g.id, $event)" />
+            <button class="scan-upload-btn" (click)="scanInput.click()" [title]="g.scanModelUrl ? 'Replace 3D scan' : 'Upload 3D scan'">
+              @if (g.scanModelUrl) { 🔄 } @else { 📷 }
+            </button>
           }
         </div>
         <div class="detail-meta">
@@ -334,9 +344,18 @@ import { MasterGameDetail } from "../types/game.types";
     .back-link:hover { text-decoration: underline; }
 
     .detail-hero { display: flex; gap: 32px; margin-bottom: 40px; }
-    .detail-cover { width: 200px; height: 280px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: var(--bg-tertiary); }
+    .detail-cover { width: 200px; height: 280px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: var(--bg-tertiary); position: relative; }
     .detail-cover img { width: 100%; height: 100%; object-fit: cover; }
     .cover-placeholder { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 64px; opacity: 0.3; }
+    .scan-upload-btn {
+      position: absolute; top: 8px; left: 8px; z-index: 10;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--border-default); background: var(--bg-card);
+      font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .15s; opacity: 0; padding: 0; line-height: 1;
+    }
+    .detail-cover:hover .scan-upload-btn { opacity: .8; }
+    .scan-upload-btn:hover { opacity: 1 !important; background: var(--accent); border-color: var(--accent); }
 
     .detail-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .detail-title-row h1 { font-size: 28px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; margin-bottom: 0; }
@@ -552,6 +571,7 @@ export class GameDetailPageComponent implements OnInit {
   private gamesService = inject(GamesService);
   private fs = inject(FavoritesService);
   private http = inject(HttpClient);
+  protected auth = inject(AuthService);
 
   game = signal<MasterGameDetail | null>(null);
   loading = signal(true);
@@ -612,6 +632,24 @@ export class GameDetailPageComponent implements OnInit {
   clearAchievementIcon(ach: any): void {
     ach.icon = null;
     ach.iconGray = null;
+  }
+
+  // 3D Scan upload
+  uploadScan(gameId: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("scan", file);
+    this.http.post(`/api/games/${gameId}/upload-scan`, formData).subscribe({
+      next: () => {
+        // Reload the game to show the scan
+        this.gamesService.getGameBySlug(this.game()?.slug ?? "").subscribe({
+          next: (g) => this.game.set(g),
+        });
+      },
+      error: (err) => console.error("Scan upload failed:", err),
+    });
   }
 
   // Lightbox

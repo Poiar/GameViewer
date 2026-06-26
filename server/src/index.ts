@@ -46,6 +46,12 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Serve 3D scan models
+import path from "path";
+import { fileURLToPath } from "url";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+app.use("/scans", express.static(path.join(__dirname, "..", "scans")));
+
 // ---------------------------------------------------------------------------
 // Routes
 import apiRouter from "./routes/index.js";

@@ -124,6 +124,7 @@ export const masterGames = pgTable(
     ageRating: varchar("age_rating", { length: 20 }),
     trailerUrl: varchar("trailer_url", { length: 500 }),
     franchise: varchar("franchise", { length: 255 }),
+  scanModelUrl: varchar("scan_model_url", { length: 500 }),
     steamAppId: integer("steam_app_id"),
     steamPlayers: integer("steam_players"),
     steamPlayersAt: timestamp("steam_players_at"),

@@ -22,6 +22,7 @@ export interface MasterGame {
   steamAppId?: number | null;
   steamPlayers?: number | null;
   steamPlayersAt?: string | null;
+  scanModelUrl?: string | null;
   // Is There Any Deal price data
   itadPlain?: string | null;
   itadCurrentPrice?: string | null;

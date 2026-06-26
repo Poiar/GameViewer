@@ -23,7 +23,13 @@ import { importSteamDlcs } from "../services/steam-storefront.js";
 import { fetchSchemaForGame, fetchGlobalAchievementPercentages, searchSteamStorefront } from "../services/steam-webapi.js";
 import { searchGames } from "../services/rawg.js";
 import { z } from "zod";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
 import { eq, and, or, ilike, like, desc, asc, count, sql, inArray } from "drizzle-orm";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const upload = multer({ dest: path.join(__dirname, "..", "..", "scans") });
 
 const router = Router();
 
@@ -192,6 +198,7 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
         steamAppId: masterGames.steamAppId,
         itadCurrentPrice: masterGames.itadCurrentPrice,
         itadCurrentShop: masterGames.itadCurrentShop,
+        scanModelUrl: masterGames.scanModelUrl,
         createdAt: masterGames.createdAt,
       })
       .from(masterGames)
@@ -310,6 +317,7 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
       steamAppId: g.steamAppId ?? null,
       itadCurrentPrice: g.itadCurrentPrice ?? null,
       itadCurrentShop: g.itadCurrentShop ?? null,
+      scanModelUrl: g.scanModelUrl ?? null,
       genres: genreMap[g.id] || [],
       releaseGroupsCount: rgCountMap[g.id] || 0,
       ownedReleases: ownedMap[g.id] || [],
@@ -481,6 +489,7 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       steamAppId: game.steamAppId ?? null,
       steamPlayers: game.steamPlayers ?? null,
       steamPlayersAt: game.steamPlayersAt ?? null,
+      scanModelUrl: game.scanModelUrl ?? null,
       itadPlain: game.itadPlain ?? null,
       itadCurrentPrice: game.itadCurrentPrice ?? null,
       itadCurrentShop: game.itadCurrentShop ?? null,
@@ -1056,6 +1065,60 @@ router.post("/import-steam-dlc-batch", authenticate, async (req: Request, res: R
       data: null,
       error: { code: "INTERNAL_ERROR", message: "Failed to batch import Steam DLCs" },
     });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 3D Scan Upload
+// ---------------------------------------------------------------------------
+
+// POST /:id/upload-scan — Upload a .glb 3D scan for a game
+router.post("/:id/upload-scan", authenticate, upload.single("scan"), async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid game ID" } });
+      return;
+    }
+
+    const [game] = await db
+      .select({ id: masterGames.id, title: masterGames.title, slug: masterGames.slug })
+      .from(masterGames)
+      .where(eq(masterGames.id, id))
+      .limit(1);
+
+    if (!game) {
+      res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Game not found" } });
+      return;
+    }
+
+    const file = req.file;
+    if (!file) {
+      res.status(400).json({ data: null, error: { code: "NO_FILE", message: "No file uploaded" } });
+      return;
+    }
+
+    // Check extension
+    if (!file.originalname.toLowerCase().endsWith(".glb")) {
+      res.status(400).json({ data: null, error: { code: "INVALID_FILE", message: "Only .glb files are accepted" } });
+      return;
+    }
+
+    const fs = await import("fs/promises");
+    const filename = `${game.slug || `game-${game.id}`}.glb`;
+    const targetPath = path.join(__dirname, "..", "..", "scans", filename);
+
+    // Move the uploaded file to the proper name
+    await fs.rename(file.path, targetPath);
+
+    const scanUrl = `/scans/${filename}`;
+
+    await db.update(masterGames).set({ scanModelUrl: scanUrl, updatedAt: new Date() }).where(eq(masterGames.id, id));
+
+    res.json({ data: { scanModelUrl: scanUrl }, error: null });
+  } catch (error) {
+    console.error("Scan upload error:", error);
+    res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to upload scan" } });
   }
 });
 
