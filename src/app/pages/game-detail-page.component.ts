@@ -26,7 +26,7 @@ import { GameBoxViewerComponent } from "../shared/game-box-viewer.component";
       <div class="detail-hero">
         <div class="detail-cover">
           @if (g.scanModelUrl) {
-            <app-game-box-viewer [modelUrl]="g.scanModelUrl" [coverUrl]="g.coverImageUrl" />
+            <app-game-box-viewer [modelUrl]="g.scanModelUrl" [coverUrl]="g.coverImageUrl" [title]="g.title" [isPhysical]="hasPhysicalRelease(g)" />
           } @else if (g.coverImageUrl) {
             <img [src]="g.coverImageUrl" [alt]="g.title" />
           } @else {
@@ -632,6 +632,14 @@ export class GameDetailPageComponent implements OnInit {
   clearAchievementIcon(ach: any): void {
     ach.icon = null;
     ach.iconGray = null;
+  }
+
+  hasPhysicalRelease(game: MasterGameDetail): boolean {
+    return game.releaseGroups?.some(rg =>
+      rg.releases?.some(r =>
+        r.provider?.slug === "physical" || r.mediaFormat?.name === "DVD" || r.mediaFormat?.name === "Blu-ray"
+      )
+    ) ?? false;
   }
 
   // 3D Scan upload
