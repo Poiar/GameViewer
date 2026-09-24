@@ -1,9 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function removeErrorOverlay(page: any) {
-  await page.evaluate(() =>
-    document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()),
-  );
+  await page.evaluate(() => document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()));
 }
 
 async function waitForPage(page: any, selector: string, timeout = 15000) {
@@ -99,7 +97,7 @@ test.describe("Game Detail — Releases Section", () => {
 
   test("release rows are expandable", async ({ page }) => {
     const releaseRow = page.locator(".release-row").first();
-    if (await releaseRow.count() > 0) {
+    if ((await releaseRow.count()) > 0) {
       await releaseRow.click();
       await page.waitForTimeout(300);
       // After click, expanded details may appear

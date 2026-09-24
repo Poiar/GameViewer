@@ -52,7 +52,10 @@ const changePasswordSchema = z.object({
 });
 
 // Helpers
-function validateSchema(schema: z.ZodSchema, body: unknown): { success: boolean; details?: Array<{ field: string; message: string }> } {
+function validateSchema(
+  schema: z.ZodSchema,
+  body: unknown,
+): { success: boolean; details?: Array<{ field: string; message: string }> } {
   const result = schema.safeParse(body);
   if (result.success) return { success: true };
   return {
@@ -419,9 +422,7 @@ describe("validate middleware error shape", () => {
   });
 
   it("handles nested path segments", () => {
-    const issues = [
-      { path: ["address", "street"], message: "Required", code: "invalid_type" as const },
-    ];
+    const issues = [{ path: ["address", "street"], message: "Required", code: "invalid_type" as const }];
 
     const details = issues.map((issue) => ({
       field: issue.path.join("."),

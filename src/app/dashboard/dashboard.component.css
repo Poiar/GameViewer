@@ -108,12 +108,15 @@
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius-sm);
-  transition: background .15s;
+  transition: background 0.15s;
   padding: 2px 6px;
   margin: 0 -6px;
   cursor: pointer;
 }
-a.bar-row:hover { background: var(--bg-elevated); }
+
+a.bar-row:hover {
+  background: var(--bg-elevated);
+}
 
 .bar-label {
   font-size: 13px;
@@ -224,11 +227,14 @@ a.bar-row:hover { background: var(--bg-elevated); }
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius-sm);
-  transition: background .15s;
+  transition: background 0.15s;
   padding: 4px 8px;
   margin: 0 -8px;
 }
-.completeness-item:hover { background: var(--bg-elevated); }
+
+.completeness-item:hover {
+  background: var(--bg-elevated);
+}
 
 .completeness-header {
   display: flex;
@@ -304,8 +310,8 @@ a.bar-row:hover { background: var(--bg-elevated); }
 }
 
 .enrich-btn {
-  background: rgba(145,71,255,.1);
-  border-color: rgba(145,71,255,.25);
+  background: rgb(145, 71, 255, 0.1);
+  border-color: rgb(145, 71, 255, 0.25);
   color: #9147ff;
 }
 
@@ -333,7 +339,9 @@ a.bar-row:hover { background: var(--bg-elevated); }
 }
 
 @media (width <= 640px) {
-  .enrich-coverage { grid-template-columns: repeat(2, 1fr); }
+  .enrich-coverage {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .ec-item {
@@ -345,12 +353,17 @@ a.bar-row:hover { background: var(--bg-elevated); }
   border-radius: var(--radius-sm);
   font-size: 12px;
   opacity: 0.5;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
-.ec-item.ec-active { opacity: 1; }
+.ec-item.ec-active {
+  opacity: 1;
+}
 
-.ec-icon { font-size: 14px; flex-shrink: 0; }
+.ec-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
 
 .ec-label {
   color: var(--text-secondary);
@@ -364,7 +377,9 @@ a.bar-row:hover { background: var(--bg-elevated); }
   font-variant-numeric: tabular-nums;
 }
 
-.ec-active .ec-count { color: var(--accent); }
+.ec-active .ec-count {
+  color: var(--accent);
+}
 
 .cover-hint {
   font-size: 11px;

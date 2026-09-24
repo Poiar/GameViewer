@@ -1,9 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function removeErrorOverlay(page: any) {
-  await page.evaluate(() =>
-    document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()),
-  );
+  await page.evaluate(() => document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()));
 }
 
 // Allow auth + API to settle after navigation
@@ -49,9 +47,7 @@ test.describe("Series Page", () => {
   test("shows series cards with cover previews or icons", async ({ page }) => {
     const cards = page.locator(".s-card");
     await expect(cards.first()).toBeVisible({ timeout: 5000 });
-    const total =
-      (await page.locator(".sc-covers").count()) +
-      (await page.locator(".sc-icon").count());
+    const total = (await page.locator(".sc-covers").count()) + (await page.locator(".sc-icon").count());
     expect(total).toBeGreaterThan(0);
   });
 

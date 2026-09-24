@@ -21,7 +21,9 @@ function slugify(text: string): string {
 
 function isMainlineTitle(title: string): boolean {
   // Not mainline if it matches DLC/expansion/bonus/re-release patterns
-  return !/(season pass| [Dd][Ll][Cc] |demo |bonus content|freefall|\.\.\.|\(HD\)|\(HD2\)|Remaster|Definitive Edition|GOTY|Game of the Year|Online Mode)/.test(title);
+  return !/(season pass| [Dd][Ll][Cc] |demo |bonus content|freefall|\.\.\.|\(HD\)|\(HD2\)|Remaster|Definitive Edition|GOTY|Game of the Year|Online Mode)/.test(
+    title,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -68,11 +70,19 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
 
     const rows = await db
       .select({
-        id: series.id, name: series.name, slug: series.slug,
-        description: series.description, createdAt: series.createdAt, updatedAt: series.updatedAt,
+        id: series.id,
+        name: series.name,
+        slug: series.slug,
+        description: series.description,
+        createdAt: series.createdAt,
+        updatedAt: series.updatedAt,
         gameCount: sql<number>`(SELECT COUNT(*) FROM master_games WHERE master_games.series_id = series.id)`,
       })
-      .from(series).where(whereClause).orderBy(orderByClause).limit(limit).offset(offset);
+      .from(series)
+      .where(whereClause)
+      .orderBy(orderByClause)
+      .limit(limit)
+      .offset(offset);
 
     const seriesIds = rows.map((r) => r.id);
 
@@ -83,7 +93,13 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
 
     if (seriesIds.length > 0) {
       const allGames = await db
-        .select({ id: masterGames.id, seriesId: masterGames.seriesId, title: masterGames.title, coverImageUrl: masterGames.coverImageUrl, firstReleaseYear: masterGames.firstReleaseYear })
+        .select({
+          id: masterGames.id,
+          seriesId: masterGames.seriesId,
+          title: masterGames.title,
+          coverImageUrl: masterGames.coverImageUrl,
+          firstReleaseYear: masterGames.firstReleaseYear,
+        })
         .from(masterGames)
         .where(inArray(masterGames.seriesId, seriesIds))
         .orderBy(asc(masterGames.firstReleaseYear));
@@ -130,7 +146,11 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
       ownedCount: ownedMap[r.id] ?? 0,
     }));
 
-    res.json({ data, meta: { page, limit, total: Number(total), totalPages: Math.ceil(Number(total) / limit) }, error: null });
+    res.json({
+      data,
+      meta: { page, limit, total: Number(total), totalPages: Math.ceil(Number(total) / limit) },
+      error: null,
+    });
   } catch (error) {
     console.error("List series error:", error);
     res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to fetch series" } });
@@ -147,21 +167,35 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
       return;
     }
     const games = await db
-      .select({ id: masterGames.id, title: masterGames.title, slug: masterGames.slug, firstReleaseYear: masterGames.firstReleaseYear, coverImageUrl: masterGames.coverImageUrl })
-      .from(masterGames).where(eq(masterGames.seriesId, s.id)).orderBy(desc(masterGames.firstReleaseYear));
+      .select({
+        id: masterGames.id,
+        title: masterGames.title,
+        slug: masterGames.slug,
+        firstReleaseYear: masterGames.firstReleaseYear,
+        coverImageUrl: masterGames.coverImageUrl,
+      })
+      .from(masterGames)
+      .where(eq(masterGames.seriesId, s.id))
+      .orderBy(desc(masterGames.firstReleaseYear));
 
     const ownedGameIds = new Set<number>();
     if (req.user && games.length > 0) {
       const gameIds = games.map((g) => g.id);
       const gameReleases = await db
         .select({ id: releases.id, gameId: releaseGroups.masterGameId })
-        .from(releases).innerJoin(releaseGroups, eq(releases.releaseGroupId, releaseGroups.id))
+        .from(releases)
+        .innerJoin(releaseGroups, eq(releases.releaseGroupId, releaseGroups.id))
         .where(inArray(releaseGroups.masterGameId, gameIds));
       const rgMap = new Map(gameReleases.map((r) => [r.id, r.gameId]));
       if (rgMap.size > 0) {
-        const owned = await db.select({ releaseId: ownedInstances.releaseId }).from(ownedInstances)
+        const owned = await db
+          .select({ releaseId: ownedInstances.releaseId })
+          .from(ownedInstances)
           .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, [...rgMap.keys()])));
-        for (const o of owned) { const gid = o.releaseId ? rgMap.get(o.releaseId) : undefined; if (gid) ownedGameIds.add(gid); }
+        for (const o of owned) {
+          const gid = o.releaseId ? rgMap.get(o.releaseId) : undefined;
+          if (gid) ownedGameIds.add(gid);
+        }
       }
     }
     res.json({ data: { ...s, games: games.map((g) => ({ ...g, userOwns: ownedGameIds.has(g.id) })) }, error: null });
@@ -177,39 +211,88 @@ router.post("/", authenticate, validate(createSeriesSchema), async (req: Request
     const { name, description } = req.body;
     const slug = slugify(name);
     const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.slug, slug)).limit(1);
-    if (existing) { res.status(409).json({ data: null, error: { code: "SLUG_TAKEN", message: `A series with the slug "${slug}" already exists` } }); return; }
-    const [created] = await db.insert(series).values({ name, slug, description: description ?? null }).returning();
+    if (existing) {
+      res.status(409).json({
+        data: null,
+        error: { code: "SLUG_TAKEN", message: `A series with the slug "${slug}" already exists` },
+      });
+      return;
+    }
+    const [created] = await db
+      .insert(series)
+      .values({ name, slug, description: description ?? null })
+      .returning();
     res.status(201).json({ data: created, error: null });
-  } catch (error) { console.error("Create series error:", error); res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to create series" } }); }
+  } catch (error) {
+    console.error("Create series error:", error);
+    res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to create series" } });
+  }
 });
 
 // PUT /:id — Update series (auth required)
 router.put("/:id", authenticate, validate(updateSeriesSchema), async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
-    if (isNaN(id)) { res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid series ID" } }); return; }
+    if (isNaN(id)) {
+      res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid series ID" } });
+      return;
+    }
     const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.id, id)).limit(1);
-    if (!existing) { res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Series not found" } }); return; }
+    if (!existing) {
+      res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Series not found" } });
+      return;
+    }
     const { name, description } = req.body;
     const updateData: Record<string, unknown> = {};
-    if (name !== undefined) { const slug = slugify(name); const [sc] = await db.select({ id: series.id }).from(series).where(and(eq(series.slug, slug), sql`${series.id} != ${id}`)).limit(1); if (sc) { res.status(409).json({ data: null, error: { code: "SLUG_TAKEN", message: `A series with the slug "${slug}" already exists` } }); return; } updateData.name = name; updateData.slug = slug; }
+    if (name !== undefined) {
+      const slug = slugify(name);
+      const [sc] = await db
+        .select({ id: series.id })
+        .from(series)
+        .where(and(eq(series.slug, slug), sql`${series.id} != ${id}`))
+        .limit(1);
+      if (sc) {
+        res.status(409).json({
+          data: null,
+          error: { code: "SLUG_TAKEN", message: `A series with the slug "${slug}" already exists` },
+        });
+        return;
+      }
+      updateData.name = name;
+      updateData.slug = slug;
+    }
     if (description !== undefined) updateData.description = description ?? null;
-    if (Object.keys(updateData).length === 0) { res.status(400).json({ data: null, error: { code: "NO_CHANGES", message: "No fields to update" } }); return; }
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ data: null, error: { code: "NO_CHANGES", message: "No fields to update" } });
+      return;
+    }
     const [updated] = await db.update(series).set(updateData).where(eq(series.id, id)).returning();
     res.json({ data: updated, error: null });
-  } catch (error) { console.error("Update series error:", error); res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to update series" } }); }
+  } catch (error) {
+    console.error("Update series error:", error);
+    res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to update series" } });
+  }
 });
 
 // DELETE /:id — Delete series (auth required)
 router.delete("/:id", authenticate, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
-    if (isNaN(id)) { res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid series ID" } }); return; }
+    if (isNaN(id)) {
+      res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid series ID" } });
+      return;
+    }
     const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.id, id)).limit(1);
-    if (!existing) { res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Series not found" } }); return; }
+    if (!existing) {
+      res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Series not found" } });
+      return;
+    }
     await db.delete(series).where(eq(series.id, id));
     res.json({ data: { message: "Series deleted successfully" }, error: null });
-  } catch (error) { console.error("Delete series error:", error); res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to delete series" } }); }
+  } catch (error) {
+    console.error("Delete series error:", error);
+    res.status(500).json({ data: null, error: { code: "INTERNAL_ERROR", message: "Failed to delete series" } });
+  }
 });
 
 export default router;

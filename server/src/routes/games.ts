@@ -226,9 +226,7 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
             releaseId: ownedInstances.releaseId,
           })
           .from(ownedInstances)
-          .where(
-            and(eq(ownedInstances.userId, req.user!.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
-          );
+          .where(and(eq(ownedInstances.userId, req.user!.userId), inArray(ownedInstances.releaseId, allReleaseIds)));
 
         const ownedReleaseIds = new Set(owned.map((o) => o.releaseId!).filter(Boolean));
 
@@ -359,8 +357,26 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
     }
 
     // If user is authenticated, fetch owned instance details
-    const ownedReleaseMap = new Map<number, { id: number; condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
-    const ownedDlcReleaseMap = new Map<number, { id: number; condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null }>();
+    const ownedReleaseMap = new Map<
+      number,
+      {
+        id: number;
+        condition: string | null;
+        location: string | null;
+        purchasePrice: string | null;
+        acquiredDate: string | null;
+      }
+    >();
+    const ownedDlcReleaseMap = new Map<
+      number,
+      {
+        id: number;
+        condition: string | null;
+        location: string | null;
+        purchasePrice: string | null;
+        acquiredDate: string | null;
+      }
+    >();
     if (req.user) {
       if (allReleaseIds.length > 0) {
         const owned = await db
@@ -373,17 +389,16 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
             acquiredDate: ownedInstances.acquiredDate,
           })
           .from(ownedInstances)
-          .where(
-            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, allReleaseIds)),
-          );
+          .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, allReleaseIds)));
         for (const o of owned) {
-          if (o.releaseId) ownedReleaseMap.set(o.releaseId, {
-            id: o.id,
-            condition: o.condition,
-            location: o.location,
-            purchasePrice: o.purchasePrice,
-            acquiredDate: o.acquiredDate,
-          });
+          if (o.releaseId)
+            ownedReleaseMap.set(o.releaseId, {
+              id: o.id,
+              condition: o.condition,
+              location: o.location,
+              purchasePrice: o.purchasePrice,
+              acquiredDate: o.acquiredDate,
+            });
         }
       }
       if (allDlcReleaseIds.length > 0) {
@@ -401,13 +416,14 @@ router.get("/:slug", optionalAuth, async (req: Request, res: Response) => {
             and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, allDlcReleaseIds)),
           );
         for (const o of ownedDlc) {
-          if (o.dlcReleaseId) ownedDlcReleaseMap.set(o.dlcReleaseId, {
-            id: o.id,
-            condition: o.condition,
-            location: o.location,
-            purchasePrice: o.purchasePrice,
-            acquiredDate: o.acquiredDate,
-          });
+          if (o.dlcReleaseId)
+            ownedDlcReleaseMap.set(o.dlcReleaseId, {
+              id: o.id,
+              condition: o.condition,
+              location: o.location,
+              purchasePrice: o.purchasePrice,
+              acquiredDate: o.acquiredDate,
+            });
         }
       }
     }
@@ -554,25 +570,30 @@ router.post("/", authenticate, validate(createGameSchema), async (req: Request, 
     res.status(201).json({ data, error: null });
 
     // Fire-and-forget enrichment
-    enrichGame(title).then((enrichment) => {
-      if (enrichment.igdbId || enrichment.opencriticId || enrichment.hltbId) {
-        const setData: Record<string, unknown> = {
-          igdbId: enrichment.igdbId ?? undefined,
-          opencriticId: enrichment.opencriticId ?? undefined,
-          hltbId: enrichment.hltbId ?? undefined,
-          hltbTime: enrichment.hltbTime ?? undefined,
-          criticScore: enrichment.opencriticScore ?? undefined,
-          summary: enrichment.igdbSummary ?? undefined,
-          screenshots: enrichment.igdbScreenshots?.length ? enrichment.igdbScreenshots : undefined,
-          updatedAt: new Date(),
-        };
-        if (enrichment.igdbCoverUrl && !enrichment.igdbCoverUrl.includes("nocover")) {
-          setData["coverImageUrl"] = enrichment.igdbCoverUrl;
+    enrichGame(title)
+      .then((enrichment) => {
+        if (enrichment.igdbId || enrichment.opencriticId || enrichment.hltbId) {
+          const setData: Record<string, unknown> = {
+            igdbId: enrichment.igdbId ?? undefined,
+            opencriticId: enrichment.opencriticId ?? undefined,
+            hltbId: enrichment.hltbId ?? undefined,
+            hltbTime: enrichment.hltbTime ?? undefined,
+            criticScore: enrichment.opencriticScore ?? undefined,
+            summary: enrichment.igdbSummary ?? undefined,
+            screenshots: enrichment.igdbScreenshots?.length ? enrichment.igdbScreenshots : undefined,
+            updatedAt: new Date(),
+          };
+          if (enrichment.igdbCoverUrl && !enrichment.igdbCoverUrl.includes("nocover")) {
+            setData["coverImageUrl"] = enrichment.igdbCoverUrl;
+          }
+          db.update(masterGames)
+            .set(setData as any)
+            .where(eq(masterGames.id, created.id))
+            .execute()
+            .catch((e) => console.error("Auto-enrich update failed:", e));
         }
-        db.update(masterGames).set(setData as any).where(eq(masterGames.id, created.id)).execute()
-          .catch((e) => console.error("Auto-enrich update failed:", e));
-      }
-    }).catch((e) => console.error("Auto-enrich search failed:", e));
+      })
+      .catch((e) => console.error("Auto-enrich search failed:", e));
   } catch (error) {
     console.error("Create game error:", error);
     res.status(500).json({

@@ -77,21 +77,42 @@ router.get("/", async (req: Request, res: Response) => {
       const rels = await db.query.releases.findMany({
         where: inArray(releases.id, releaseIds),
         with: {
-          releaseGroup: { with: { masterGame: { columns: { id: true, title: true, slug: true, coverImageUrl: true, firstReleaseYear: true } } } },
+          releaseGroup: {
+            with: {
+              masterGame: {
+                columns: { id: true, title: true, slug: true, coverImageUrl: true, firstReleaseYear: true },
+              },
+            },
+          },
           provider: true,
           mediaFormat: true,
         },
       });
       for (const rel of rels) {
         releaseDataMap.set(rel.id, {
-          id: rel.id, title: rel.title, barcode: rel.barcode, catalogNumber: rel.catalogNumber,
-          publisher: rel.publisher, region: rel.region, releaseDate: rel.releaseDate,
-          controllerSupport: rel.controllerSupport, localMultiplayer: rel.localMultiplayer,
-          onlineMultiplayer: rel.onlineMultiplayer, intendedFor: rel.intendedFor,
-          playableOn: rel.playableOn, versionImageUrl: rel.versionImageUrl,
-          provider: rel.provider ?? null, mediaFormat: rel.mediaFormat ?? null,
+          id: rel.id,
+          title: rel.title,
+          barcode: rel.barcode,
+          catalogNumber: rel.catalogNumber,
+          publisher: rel.publisher,
+          region: rel.region,
+          releaseDate: rel.releaseDate,
+          controllerSupport: rel.controllerSupport,
+          localMultiplayer: rel.localMultiplayer,
+          onlineMultiplayer: rel.onlineMultiplayer,
+          intendedFor: rel.intendedFor,
+          playableOn: rel.playableOn,
+          versionImageUrl: rel.versionImageUrl,
+          provider: rel.provider ?? null,
+          mediaFormat: rel.mediaFormat ?? null,
           masterGame: rel.releaseGroup?.masterGame ?? null,
-          releaseGroup: rel.releaseGroup ? { id: rel.releaseGroup.id, editionName: rel.releaseGroup.editionName, releaseYear: rel.releaseGroup.releaseYear } : null,
+          releaseGroup: rel.releaseGroup
+            ? {
+                id: rel.releaseGroup.id,
+                editionName: rel.releaseGroup.editionName,
+                releaseYear: rel.releaseGroup.releaseYear,
+              }
+            : null,
         });
       }
     }
@@ -107,18 +128,27 @@ router.get("/", async (req: Request, res: Response) => {
       });
       for (const dr of drs) {
         dlcReleaseDataMap.set(dr.id, {
-          id: dr.id, releaseDate: dr.releaseDate, onDiscForConsoleOnly: dr.onDiscForConsoleOnly,
-          dlc: dr.dlc ?? null, provider: dr.provider ?? null, mediaFormat: dr.mediaFormat ?? null,
+          id: dr.id,
+          releaseDate: dr.releaseDate,
+          onDiscForConsoleOnly: dr.onDiscForConsoleOnly,
+          dlc: dr.dlc ?? null,
+          provider: dr.provider ?? null,
+          mediaFormat: dr.mediaFormat ?? null,
         });
       }
     }
 
     const data = baseRows.map((row) => ({
-      id: row.id, condition: row.condition, location: row.location,
-      notes: row.notes, acquiredDate: row.acquiredDate, purchasePrice: row.purchasePrice,
-      createdAt: row.createdAt, updatedAt: row.updatedAt,
-      release: row.releaseId ? releaseDataMap.get(row.releaseId) ?? null : null,
-      dlcRelease: row.dlcReleaseId ? dlcReleaseDataMap.get(row.dlcReleaseId) ?? null : null,
+      id: row.id,
+      condition: row.condition,
+      location: row.location,
+      notes: row.notes,
+      acquiredDate: row.acquiredDate,
+      purchasePrice: row.purchasePrice,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      release: row.releaseId ? (releaseDataMap.get(row.releaseId) ?? null) : null,
+      dlcRelease: row.dlcReleaseId ? (dlcReleaseDataMap.get(row.dlcReleaseId) ?? null) : null,
     }));
 
     res.json({

@@ -40,9 +40,7 @@ async function main() {
   let cleaned = 0;
   for (const game of candidates) {
     const cleanTitle = stripEdition(game.title);
-    const altTitles: string[] = Array.isArray(game.alternativeTitles)
-      ? [...(game.alternativeTitles as string[])]
-      : [];
+    const altTitles: string[] = Array.isArray(game.alternativeTitles) ? [...(game.alternativeTitles as string[])] : [];
 
     // Add the original title to alternatives if not already present
     if (!altTitles.includes(game.title) && game.title !== cleanTitle) {

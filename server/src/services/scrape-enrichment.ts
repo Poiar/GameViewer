@@ -82,32 +82,35 @@ export async function searchOpenCriticBrowser(
   title: string,
 ): Promise<{ opencriticId?: number; criticScore?: number } | null> {
   try {
-    return await page.evaluate(async ({ gameTitle, bearer }: { gameTitle: string; bearer: string }) => {
-      const h = {
-        Authorization: `Bearer ${bearer}`,
-        Accept: "application/json",
-        Origin: "https://opencritic.com",
-        Referer: "https://opencritic.com/search",
-      };
-      const metaUrl = `https://api.opencritic.com/api/meta/search?criteria=${encodeURIComponent(gameTitle)}`;
-      const metaRes = await fetch(metaUrl, { headers: h });
-      if (!metaRes.ok) return null as any;
-      const hits = (await metaRes.json()) as { id: number; name: string; relation: string }[];
-      const games = hits.filter((x: any) => x.relation === "game");
-      if (!games.length) return null as any;
-      const exact = games.find((x: any) => x.name.toLowerCase() === gameTitle.toLowerCase());
-      const match = exact ?? games[0];
+    return (await page.evaluate(
+      async ({ gameTitle, bearer }: { gameTitle: string; bearer: string }) => {
+        const h = {
+          Authorization: `Bearer ${bearer}`,
+          Accept: "application/json",
+          Origin: "https://opencritic.com",
+          Referer: "https://opencritic.com/search",
+        };
+        const metaUrl = `https://api.opencritic.com/api/meta/search?criteria=${encodeURIComponent(gameTitle)}`;
+        const metaRes = await fetch(metaUrl, { headers: h });
+        if (!metaRes.ok) return null as any;
+        const hits = (await metaRes.json()) as { id: number; name: string; relation: string }[];
+        const games = hits.filter((x: any) => x.relation === "game");
+        if (!games.length) return null as any;
+        const exact = games.find((x: any) => x.name.toLowerCase() === gameTitle.toLowerCase());
+        const match = exact ?? games[0];
 
-      const ratingRes = await fetch(`https://api.opencritic.com/api/ratings/game/${match.id}`, {
-        headers: { ...h, Referer: "https://opencritic.com/" },
-      });
-      let score: number | undefined;
-      if (ratingRes.ok) {
-        const rating = (await ratingRes.json()) as { median?: number };
-        score = rating.median;
-      }
-      return { opencriticId: match.id, criticScore: score } as any;
-    }, { gameTitle: title, bearer: OC_BEARER }) as any;
+        const ratingRes = await fetch(`https://api.opencritic.com/api/ratings/game/${match.id}`, {
+          headers: { ...h, Referer: "https://opencritic.com/" },
+        });
+        let score: number | undefined;
+        if (ratingRes.ok) {
+          const rating = (await ratingRes.json()) as { median?: number };
+          score = rating.median;
+        }
+        return { opencriticId: match.id, criticScore: score } as any;
+      },
+      { gameTitle: title, bearer: OC_BEARER },
+    )) as any;
   } catch {
     return null;
   }
@@ -133,7 +136,7 @@ export async function searchHltbBrowser(
   title: string,
 ): Promise<HltbScrapeResult | null> {
   try {
-    return await page.evaluate(async (gameTitle: string) => {
+    return (await page.evaluate(async (gameTitle: string) => {
       const initRes = await fetch(`https://howlongtobeat.com/api/bleed/init?t=${Date.now()}`, {
         headers: { Referer: "https://howlongtobeat.com/", Accept: "application/json" },
       });
@@ -142,14 +145,26 @@ export async function searchHltbBrowser(
       if (!initData.token) return null as any;
 
       const body: Record<string, unknown> = {
-        searchType: "games", searchTerms: gameTitle.split(" "), searchPage: 1, size: 5,
+        searchType: "games",
+        searchTerms: gameTitle.split(" "),
+        searchPage: 1,
+        size: 5,
         searchOptions: {
-          games: { userId: 0, platform: "", sortCategory: "popular", rangeCategory: "main",
+          games: {
+            userId: 0,
+            platform: "",
+            sortCategory: "popular",
+            rangeCategory: "main",
             rangeTime: { min: null, max: null },
             gameplay: { perspective: "", flow: "", genre: "", difficulty: "" },
-            rangeYear: { min: "", max: "" }, modifier: "" },
-          users: { sortCategory: "postcount" }, lists: { sortCategory: "follows" },
-          filter: "", sort: 0, randomizer: 0,
+            rangeYear: { min: "", max: "" },
+            modifier: "",
+          },
+          users: { sortCategory: "postcount" },
+          lists: { sortCategory: "follows" },
+          filter: "",
+          sort: 0,
+          randomizer: 0,
         },
         useCache: true,
       };
@@ -158,8 +173,10 @@ export async function searchHltbBrowser(
       const searchRes = await fetch("https://howlongtobeat.com/api/bleed", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", Referer: "https://howlongtobeat.com/",
-          Accept: "application/json", "x-auth-token": initData.token,
+          "Content-Type": "application/json",
+          Referer: "https://howlongtobeat.com/",
+          Accept: "application/json",
+          "x-auth-token": initData.token,
           ...(initData.hpKey && initData.hpVal ? { "x-hp-key": initData.hpKey, "x-hp-val": initData.hpVal } : {}),
         },
         body: JSON.stringify(body),
@@ -174,7 +191,7 @@ export async function searchHltbBrowser(
         name: match.game_name as string,
         mainTime: match.comp_main ? Math.round((match.comp_main as number) / 3600) : undefined,
       } as any;
-    }, title) as Promise<HltbScrapeResult | null>;
+    }, title)) as Promise<HltbScrapeResult | null>;
   } catch {
     return null;
   }

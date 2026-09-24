@@ -63,7 +63,7 @@
         @if (s.platformDistribution.length > 0) {
           <div class="bar-chart">
             @for (item of s.platformDistribution; track item.slug) {
-              <a class="bar-row" [routerLink]="['/games']" [queryParams]="{platform: item.slug}">
+              <a class="bar-row" [routerLink]="['/games']" [queryParams]="{ platform: item.slug }">
                 <span class="bar-label">{{ item.name }}</span>
                 <div class="bar-track">
                   <div class="bar-fill" [style.width.%]="(item.count / maxPlatformCount()) * 100"></div>
@@ -83,7 +83,7 @@
         @if (s.genreBreakdown.length > 0) {
           <div class="bar-chart">
             @for (item of s.genreBreakdown; track item.slug) {
-              <a class="bar-row" [routerLink]="['/games']" [queryParams]="{genre: item.slug}">
+              <a class="bar-row" [routerLink]="['/games']" [queryParams]="{ genre: item.slug }">
                 <span class="bar-label">{{ item.name }}</span>
                 <div class="bar-track">
                   <div class="bar-fill genre" [style.width.%]="(item.count / maxGenreCount()) * 100"></div>
@@ -162,12 +162,14 @@
                 />
               }
               <div class="recent-info">
-                <span class="recent-title">{{
-                  $any(item).masterGameTitle || $any(item).title || "Unknown"
-                }}</span>
+                <span class="recent-title">{{ $any(item).masterGameTitle || $any(item).title || "Unknown" }}</span>
                 <span class="recent-meta">
-                  @if ($any(item).type === "dlc") { <span class="recent-dlc-badge">DLC</span> }
-                  @if ($any(item).playableOn?.length) { {{ $any(item).playableOn.join(", ") }} · }
+                  @if ($any(item).type === "dlc") {
+                    <span class="recent-dlc-badge">DLC</span>
+                  }
+                  @if ($any(item).playableOn?.length) {
+                    {{ $any(item).playableOn.join(", ") }} ·
+                  }
                   {{ item.condition ?? "Unknown condition" }}
                 </span>
               </div>

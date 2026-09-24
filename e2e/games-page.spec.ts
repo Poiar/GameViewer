@@ -1,9 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function removeErrorOverlay(page: any) {
-  await page.evaluate(() =>
-    document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()),
-  );
+  await page.evaluate(() => document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()));
 }
 
 async function waitForContent(page: any, timeout = 15000) {
@@ -77,7 +75,7 @@ test.describe("Games Page", () => {
 
   test("prev button is disabled on first page", async ({ page }) => {
     const prevBtn = page.locator(".page-btn").first();
-    if (await prevBtn.count() > 0) {
+    if ((await prevBtn.count()) > 0) {
       await expect(prevBtn).toBeDisabled({ timeout: 3000 });
     }
   });
@@ -91,7 +89,12 @@ test.describe("Games Page", () => {
   test("skeleton loading shown on fresh load", async ({ page }) => {
     // Already loaded — verify cards rendered
     const cards = page.locator(".game-card");
-    expect(await cards.first().isVisible().catch(() => false)).toBe(true);
+    expect(
+      await cards
+        .first()
+        .isVisible()
+        .catch(() => false),
+    ).toBe(true);
   });
 
   test("shows empty state for impossible search", async ({ page }) => {
@@ -129,9 +132,9 @@ test.describe("Games Page — filters", () => {
     await page.waitForTimeout(3000);
     await removeErrorOverlay(page);
     const pill = page.locator(".af-chip");
-    if (await pill.count() > 0) {
+    if ((await pill.count()) > 0) {
       const removeBtn = pill.locator("button").first();
-      if (await removeBtn.count() > 0) {
+      if ((await removeBtn.count()) > 0) {
         await removeBtn.click();
         await page.waitForTimeout(800);
       }
@@ -145,8 +148,14 @@ test.describe("Games Page — empty and reset", () => {
     await page.waitForTimeout(3000);
     await removeErrorOverlay(page);
     const hasContent =
-      (await page.locator(".game-card").count().catch(() => 0)) > 0 ||
-      (await page.locator(".empty-icon").isVisible().catch(() => false));
+      (await page
+        .locator(".game-card")
+        .count()
+        .catch(() => 0)) > 0 ||
+      (await page
+        .locator(".empty-icon")
+        .isVisible()
+        .catch(() => false));
     expect(hasContent).toBeDefined();
   });
 });

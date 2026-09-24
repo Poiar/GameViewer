@@ -19,8 +19,7 @@ export function createError(statusCode: number, message: string, code?: string):
 function buildErrorResponse(err: AppError, isProduction: boolean) {
   const statusCode = err.statusCode ?? 500;
   const code = err.code ?? "INTERNAL_SERVER_ERROR";
-  const message =
-    statusCode === 500 && isProduction ? "An unexpected error occurred" : err.message;
+  const message = statusCode === 500 && isProduction ? "An unexpected error occurred" : err.message;
 
   return {
     statusCode,

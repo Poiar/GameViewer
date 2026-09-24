@@ -23,7 +23,12 @@ function cleanGameTitle(title: string): string {
  * Pick the best grid from an array — highest score wins.
  * Mirrors getBestGrid logic.
  */
-interface Grid { id: number; score: number; url: string; style: string }
+interface Grid {
+  id: number;
+  score: number;
+  url: string;
+  style: string;
+}
 function pickBestGrid(grids: Grid[]): Grid | null {
   if (!grids?.length) return null;
   return grids.sort((a, b) => b.score - a.score)[0];
@@ -32,7 +37,11 @@ function pickBestGrid(grids: Grid[]): Grid | null {
 /**
  * Pick the best result from SGDB autocomplete — prefer exact name match, then verified.
  */
-interface SgdbGame { id: number; name: string; verified: boolean }
+interface SgdbGame {
+  id: number;
+  name: string;
+  verified: boolean;
+}
 function pickBestGameMatch(results: SgdbGame[], cleanedTitle: string): SgdbGame | null {
   if (!results?.length) return null;
   const exact = results.find((g) => g.name.toLowerCase() === cleanedTitle.toLowerCase());

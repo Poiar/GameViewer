@@ -106,7 +106,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   bulkEnrich(): void {
     this.enriching.set(true);
     this.enrichResult.set(null);
-    this.http.post<any>('/api/enrich/batch', { limit: 25 }).subscribe({
+    this.http.post<any>("/api/enrich/batch", { limit: 25 }).subscribe({
       next: (res) => {
         const d = res.data ?? res;
         this.enrichResult.set(`Enriched ${d.enriched} of ${d.total} games`);

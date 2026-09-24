@@ -49,7 +49,11 @@ interface RecentResult {
  * Merges release-based and DLC-based instances, sorts by createdAt desc, takes top N.
  * Mirrors the logic in dashboard.ts GET /stats handler.
  */
-function mergeRecentInstances(releaseInstances: RecentInstance[], dlcInstances: RecentInstance[], limit: number = 5): RecentResult[] {
+function mergeRecentInstances(
+  releaseInstances: RecentInstance[],
+  dlcInstances: RecentInstance[],
+  limit: number = 5,
+): RecentResult[] {
   const allRecent = [...releaseInstances, ...dlcInstances]
     .sort((a, b) => {
       const aDate = a.createdAt?.getTime() ?? 0;
@@ -77,7 +81,9 @@ function mergeRecentInstances(releaseInstances: RecentInstance[], dlcInstances: 
 /**
  * Transforms raw DB rows to platform distribution entries.
  */
-function mapPlatformDistribution(rows: Array<{ slug: string; name: string; count: number }>): Array<{ slug: string; name: string; count: number }> {
+function mapPlatformDistribution(
+  rows: Array<{ slug: string; name: string; count: number }>,
+): Array<{ slug: string; name: string; count: number }> {
   return rows.map((r) => ({
     slug: r.slug,
     name: r.name,
@@ -192,9 +198,7 @@ describe("mapPlatformDistribution", () => {
   });
 
   it("sanitizes count via safeNumber", () => {
-    const rows = [
-      { slug: "Win", name: "Windows", count: NaN as unknown as number },
-    ];
+    const rows = [{ slug: "Win", name: "Windows", count: NaN as unknown as number }];
     const result = mapPlatformDistribution(rows);
     expect(result[0].count).toBe(0);
   });
@@ -242,9 +246,7 @@ describe("mergeRecentInstances", () => {
       makeRelease({ id: 1, createdAt: new Date("2024-01-15") }),
       makeRelease({ id: 2, createdAt: new Date("2024-03-10") }),
     ];
-    const dlcs = [
-      makeDlc({ id: 100, createdAt: new Date("2024-02-20") }),
-    ];
+    const dlcs = [makeDlc({ id: 100, createdAt: new Date("2024-02-20") })];
 
     const result = mergeRecentInstances(releases, dlcs, 5);
     expect(result).toHaveLength(3);
@@ -255,9 +257,7 @@ describe("mergeRecentInstances", () => {
   });
 
   it("truncates to the specified limit", () => {
-    const releases = Array.from({ length: 10 }, (_, i) =>
-      makeRelease({ id: i, createdAt: new Date(2024, 0, i + 1) }),
-    );
+    const releases = Array.from({ length: 10 }, (_, i) => makeRelease({ id: i, createdAt: new Date(2024, 0, i + 1) }));
     const result = mergeRecentInstances(releases, [], 5);
     expect(result).toHaveLength(5);
   });
@@ -302,17 +302,19 @@ describe("mergeRecentInstances", () => {
   });
 
   it("maps all fields correctly", () => {
-    const releases = [makeRelease({
-      id: 42,
-      condition: "CIB",
-      location: "Shelf",
-      acquiredDate: "2024-01-01",
-      purchasePrice: "59.99",
-      masterGameTitle: "Zelda",
-      masterGameSlug: "zelda",
-      masterGameCover: "cover.jpg",
-      playableOn: ["Switch"],
-    })];
+    const releases = [
+      makeRelease({
+        id: 42,
+        condition: "CIB",
+        location: "Shelf",
+        acquiredDate: "2024-01-01",
+        purchasePrice: "59.99",
+        masterGameTitle: "Zelda",
+        masterGameSlug: "zelda",
+        masterGameCover: "cover.jpg",
+        playableOn: ["Switch"],
+      }),
+    ];
     const result = mergeRecentInstances(releases, [], 5);
     const r = result[0];
     expect(r.id).toBe(42);

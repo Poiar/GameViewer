@@ -19,9 +19,10 @@ export class ErrorConsoleService {
 
   /** Programmatically push an error into the console. */
   push(error: Partial<CapturedError> & { message: string }): void {
+    const now = new Date();
     const entry: CapturedError = {
       id: this.nextId++,
-      time: new Date().toLocaleTimeString(),
+      time: `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`,
       message: error.message,
       source: error.source ?? "",
       line: error.line ?? "",

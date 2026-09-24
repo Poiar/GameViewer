@@ -103,9 +103,7 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
         const owned = await db
           .select({ dlcReleaseId: ownedInstances.dlcReleaseId })
           .from(ownedInstances)
-          .where(
-            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, dlcReleaseIds)),
-          );
+          .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, dlcReleaseIds)));
         const ownedDrIds = new Set(owned.map((o) => o.dlcReleaseId!).filter(Boolean));
         for (const dr of dlcReleaseRows) {
           if (ownedDrIds.has(dr.id)) ownedDlcIds.add(dr.dlcId);
@@ -175,7 +173,10 @@ router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
     }
 
     // Check ownership per DLC release
-    const ownedDlcReleaseMap = new Map<number, { id: number; condition: string | null; location: string | null; purchasePrice: string | null }>();
+    const ownedDlcReleaseMap = new Map<
+      number,
+      { id: number; condition: string | null; location: string | null; purchasePrice: string | null }
+    >();
     if (req.user && dlc.dlcReleases.length > 0) {
       const drIds = dlc.dlcReleases.map((dr) => dr.id);
       const owned = await db
@@ -187,16 +188,15 @@ router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
           purchasePrice: ownedInstances.purchasePrice,
         })
         .from(ownedInstances)
-        .where(
-          and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, drIds)),
-        );
+        .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, drIds)));
       for (const o of owned) {
-        if (o.dlcReleaseId) ownedDlcReleaseMap.set(o.dlcReleaseId, {
-          id: o.id,
-          condition: o.condition,
-          location: o.location,
-          purchasePrice: o.purchasePrice,
-        });
+        if (o.dlcReleaseId)
+          ownedDlcReleaseMap.set(o.dlcReleaseId, {
+            id: o.id,
+            condition: o.condition,
+            location: o.location,
+            purchasePrice: o.purchasePrice,
+          });
       }
     }
 

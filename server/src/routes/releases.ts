@@ -181,10 +181,10 @@ router.get("/", optionalAuth, async (req: Request, res: Response) => {
       const owned = await db
         .select({ releaseId: ownedInstances.releaseId })
         .from(ownedInstances)
-        .where(
-          and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, rIds)),
-        );
-      for (const o of owned) { if (o.releaseId) ownedReleaseIds.add(o.releaseId); }
+        .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, rIds)));
+      for (const o of owned) {
+        if (o.releaseId) ownedReleaseIds.add(o.releaseId);
+      }
     }
 
     const data = rows.map((r) => ({ ...r, userOwns: ownedReleaseIds.has(r.id) }));

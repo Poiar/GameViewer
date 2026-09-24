@@ -9,32 +9,53 @@
     <div class="inv-filter-bar">
       <div class="inv-search-wrap">
         <svg class="inv-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
         </svg>
-        <input class="inv-search-input" type="text" placeholder="Search by title, location..." [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
+        <input
+          class="inv-search-input"
+          type="text"
+          placeholder="Search by title, location..."
+          [ngModel]="filter()"
+          (ngModelChange)="filter.set($event)"
+        />
         @if (filter()) {
           <button class="inv-clear" (click)="filter.set('')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
           </button>
         }
       </div>
       <div class="inv-filter-chips">
         @if (filterPlatform()) {
-          <span class="ifc-chip">🖥️ {{ filterPlatform() }}
+          <span class="ifc-chip"
+            >🖥️ {{ filterPlatform() }}
             <button class="ifc-remove" (click)="filterPlatform.set(null)">✕</button>
           </span>
         }
         @if (filterCondition()) {
-          <span class="ifc-chip">📋 {{ filterCondition() }}
+          <span class="ifc-chip"
+            >📋 {{ filterCondition() }}
             <button class="ifc-remove" (click)="filterCondition.set(null)">✕</button>
           </span>
         }
         <div class="ifc-dropdowns">
-          <select class="ifc-select" [ngModel]="filterPlatform() ?? ''" (ngModelChange)="filterPlatform.set($event || null)">
+          <select
+            class="ifc-select"
+            [ngModel]="filterPlatform() ?? ''"
+            (ngModelChange)="filterPlatform.set($event || null)"
+          >
             <option value="">All platforms</option>
-            @for (p of allPlatforms(); track p) { <option [value]="p">{{ p }}</option> }
+            @for (p of allPlatforms(); track p) {
+              <option [value]="p">{{ p }}</option>
+            }
           </select>
-          <select class="ifc-select" [ngModel]="filterCondition() ?? ''" (ngModelChange)="filterCondition.set($event || null)">
+          <select
+            class="ifc-select"
+            [ngModel]="filterCondition() ?? ''"
+            (ngModelChange)="filterCondition.set($event || null)"
+          >
             <option value="">All conditions</option>
             <option value="Mint">Mint</option>
             <option value="CIB">CIB</option>
@@ -46,13 +67,14 @@
       </div>
     </div>
 
-    <button class="inv-add-btn" (click)="onToggleAdd()">{{ showAddForm ? '✕ Cancel' : '+ Add to Inventory' }}</button>
+    <button class="inv-add-btn" (click)="onToggleAdd()">{{ showAddForm ? "✕ Cancel" : "+ Add to Inventory" }}</button>
 
     @if (showAddForm) {
       <div class="inv-add">
         <h3>Add Owned Copy</h3>
         <div class="inv-add-grid">
-          <label>Game Version:
+          <label
+            >Game Version:
             <select [(ngModel)]="newReleaseId">
               <option [ngValue]="null">Select a version...</option>
               @for (r of releases(); track r.id) {
@@ -75,8 +97,12 @@
 
     @if (loading()) {
       <div class="inv-skel">
-        @for (i of [0,1,2,3,4]; track i) {
-          <div class="inv-skel-row"><div class="iskel-cover"></div><div class="iskel-l iskel-l--t"></div><div class="iskel-l iskel-l--m"></div></div>
+        @for (i of [0, 1, 2, 3, 4]; track i) {
+          <div class="inv-skel-row">
+            <div class="iskel-cover"></div>
+            <div class="iskel-l iskel-l--t"></div>
+            <div class="iskel-l iskel-l--m"></div>
+          </div>
         }
       </div>
     } @else if (ownedInstances().length === 0) {
@@ -95,12 +121,8 @@
       }
       <div class="inv-list">
         @for (owned of filteredItems(); track owned.id; let i = $index) {
-          <div
-            class="inv-row"
-            [class.inv-row--selected]="selectedOwned === owned"
-            [style.--idx]="i"
-          >
-            <div class="inv-row-main" (click)="selectedOwned === owned ? selectedOwned = undefined : onSelect(owned)">
+          <div class="inv-row" [class.inv-row--selected]="selectedOwned === owned" [style.--idx]="i">
+            <div class="inv-row-main" (click)="selectedOwned === owned ? (selectedOwned = undefined) : onSelect(owned)">
               <div class="ir-cover">
                 @if (owned.release?.releaseGroup?.masterGame?.coverImageUrl) {
                   <img [src]="owned.release?.releaseGroup?.masterGame?.coverImageUrl" alt="" loading="lazy" />
@@ -109,7 +131,14 @@
                 }
               </div>
               <div class="ir-info">
-                <h3 class="ir-title">{{ owned.release?.releaseGroup?.masterGame?.title ?? owned.release?.title ?? owned.dlcRelease?.dlc?.title ?? "Unknown" }}</h3>
+                <h3 class="ir-title">
+                  {{
+                    owned.release?.releaseGroup?.masterGame?.title ??
+                      owned.release?.title ??
+                      owned.dlcRelease?.dlc?.title ??
+                      "Unknown"
+                  }}
+                </h3>
                 <div class="ir-badges">
                   @if (owned.release?.releaseGroup?.editionType?.name) {
                     <span class="irb irb-edition">{{ owned.release?.releaseGroup?.editionType?.name }}</span>
@@ -122,7 +151,7 @@
                   }
                 </div>
                 <div class="ir-platforms">
-                  @for (p of (owned.release?.playableOn ?? []); track p) {
+                  @for (p of owned.release?.playableOn ?? []; track p) {
                     <span class="irb irb-plat">{{ p }}</span>
                   }
                   @if (owned.release?.region) {
@@ -134,7 +163,9 @@
                 @if (owned.condition) {
                   <div class="irm-stat">
                     <span class="irms-lbl">Condition</span>
-                    <span class="irms-val irm-cond" [class.irm-cond--mint]="owned.condition.toLowerCase() === 'mint'">{{ owned.condition }}</span>
+                    <span class="irms-val irm-cond" [class.irm-cond--mint]="owned.condition.toLowerCase() === 'mint'">{{
+                      owned.condition
+                    }}</span>
                   </div>
                 }
                 @if (owned.location) {
@@ -146,7 +177,7 @@
                 @if (owned.acquiredDate) {
                   <div class="irm-stat">
                     <span class="irms-lbl">Acquired</span>
-                    <span class="irms-val">{{ (owned.acquiredDate | slice : 0 : 10) }}</span>
+                    <span class="irms-val">{{ owned.acquiredDate | slice: 0 : 10 }}</span>
                   </div>
                 }
                 @if (owned.purchasePrice) {
@@ -179,7 +210,13 @@
           <div class="inv-add-grid">
             <label>Condition: <input type="text" [(ngModel)]="editing.condition" /></label>
             <label>Location: <input type="text" [(ngModel)]="editing.location" /></label>
-            <label>Acquired: <input type="date" [ngModel]="(editing.acquiredDate | slice : 0 : 10) || ''" (ngModelChange)="editing.acquiredDate = $event" /></label>
+            <label
+              >Acquired:
+              <input
+                type="date"
+                [ngModel]="(editing.acquiredDate | slice: 0 : 10) || ''"
+                (ngModelChange)="editing.acquiredDate = $event"
+            /></label>
             <label>Price: <input type="text" [(ngModel)]="editing.purchasePrice" /></label>
             <label>Notes: <input type="text" [(ngModel)]="editing.notes" /></label>
           </div>

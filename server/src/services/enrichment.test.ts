@@ -28,9 +28,7 @@ function transformScreenshotUrl(url: string | undefined): string | undefined {
  */
 function mapScreenshots(screenshots: { url: string }[] | undefined): string[] | undefined {
   if (!screenshots?.length) return undefined;
-  const result = screenshots
-    .map((s) => transformScreenshotUrl(s.url))
-    .filter((u): u is string => !!u);
+  const result = screenshots.map((s) => transformScreenshotUrl(s.url)).filter((u): u is string => !!u);
   return result.length > 0 ? result : undefined;
 }
 

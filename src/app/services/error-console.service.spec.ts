@@ -33,9 +33,10 @@ function createErrorConsole() {
     },
 
     push(partial: Partial<CapturedError> & { message: string }): CapturedError {
+      const now = new Date();
       const entry: CapturedError = {
         id: nextId++,
-        time: new Date().toLocaleTimeString(),
+        time: `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`,
         message: partial.message,
         source: partial.source ?? "",
         line: partial.line ?? "",

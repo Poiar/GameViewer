@@ -12,7 +12,15 @@ import { FavoritesService } from "./services/favorites.service";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, AuthComponent, ProfileComponent, ErrorConsoleComponent, GlobalSearchComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    AuthComponent,
+    ProfileComponent,
+    ErrorConsoleComponent,
+    GlobalSearchComponent,
+  ],
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -44,53 +44,62 @@ async function delay(): Promise<void> {
 // Scrapers — both use page.evaluate() from browser context
 // --------------------------------------------------------------------------
 
-async function scrapeOpenCritic(page: any, title: string): Promise<{
+async function scrapeOpenCritic(
+  page: any,
+  title: string,
+): Promise<{
   opencriticId?: number;
   criticScore?: number;
 } | null> {
   try {
-    return await page.evaluate(async ({ gameTitle, bearer }: { gameTitle: string; bearer: string }) => {
-      const headers = {
-        Authorization: `Bearer ${bearer}`,
-        Accept: "application/json",
-        Origin: "https://opencritic.com",
-        Referer: "https://opencritic.com/search",
-      };
-
-      // Step 1: search
-      const metaUrl = `https://api.opencritic.com/api/meta/search?criteria=${encodeURIComponent(gameTitle)}`;
-      const metaRes = await fetch(metaUrl, { headers });
-      if (!metaRes.ok) return null as any;
-      const hits = (await metaRes.json()) as { id: number; name: string; relation: string; dist: number }[];
-      const games = hits.filter((h: any) => h.relation === "game");
-      if (!games.length) return null as any;
-
-      const exact = games.find((g: any) => g.name.toLowerCase() === gameTitle.toLowerCase());
-      const match = exact ?? games[0];
-
-      // Step 2: rating
-      const ratingUrl = `https://api.opencritic.com/api/ratings/game/${match.id}`;
-      const ratingRes = await fetch(ratingUrl, {
-        headers: {
+    return (await page.evaluate(
+      async ({ gameTitle, bearer }: { gameTitle: string; bearer: string }) => {
+        const headers = {
           Authorization: `Bearer ${bearer}`,
           Accept: "application/json",
           Origin: "https://opencritic.com",
-          Referer: "https://opencritic.com/",
-        },
-      });
-      let score: number | undefined;
-      if (ratingRes.ok) {
-        const rating = (await ratingRes.json()) as { median?: number };
-        score = rating.median;
-      }
-      return { opencriticId: match.id, criticScore: score } as any;
-    }, { gameTitle: title, bearer: OC_BEARER }) as Promise<{ opencriticId?: number; criticScore?: number } | null>;
+          Referer: "https://opencritic.com/search",
+        };
+
+        // Step 1: search
+        const metaUrl = `https://api.opencritic.com/api/meta/search?criteria=${encodeURIComponent(gameTitle)}`;
+        const metaRes = await fetch(metaUrl, { headers });
+        if (!metaRes.ok) return null as any;
+        const hits = (await metaRes.json()) as { id: number; name: string; relation: string; dist: number }[];
+        const games = hits.filter((h: any) => h.relation === "game");
+        if (!games.length) return null as any;
+
+        const exact = games.find((g: any) => g.name.toLowerCase() === gameTitle.toLowerCase());
+        const match = exact ?? games[0];
+
+        // Step 2: rating
+        const ratingUrl = `https://api.opencritic.com/api/ratings/game/${match.id}`;
+        const ratingRes = await fetch(ratingUrl, {
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            Accept: "application/json",
+            Origin: "https://opencritic.com",
+            Referer: "https://opencritic.com/",
+          },
+        });
+        let score: number | undefined;
+        if (ratingRes.ok) {
+          const rating = (await ratingRes.json()) as { median?: number };
+          score = rating.median;
+        }
+        return { opencriticId: match.id, criticScore: score } as any;
+      },
+      { gameTitle: title, bearer: OC_BEARER },
+    )) as Promise<{ opencriticId?: number; criticScore?: number } | null>;
   } catch {
     return null;
   }
 }
 
-async function scrapeHltb(page: any, title: string): Promise<{
+async function scrapeHltb(
+  page: any,
+  title: string,
+): Promise<{
   hltbId?: number;
   hltbTime?: number;
 } | null> {
@@ -103,22 +112,31 @@ async function scrapeHltb(page: any, title: string): Promise<{
     // The page's JS has a valid Cloudflare clearance, so its API calls succeed.
     const captured: Promise<any> = new Promise((resolve) => {
       let settled = false;
-      const done = (data: any) => { if (settled) return; settled = true; resolve(data); };
+      const done = (data: any) => {
+        if (settled) return;
+        settled = true;
+        resolve(data);
+      };
       const timer = setTimeout(() => done(null), 10_000);
 
       const handler = (resp: any) => {
         if (settled) return;
         if (!resp.url().includes("/api/bleed")) return;
         if (resp.request().method() !== "POST") return;
-        resp.json()
-          .then((j: any) => { if (j?.data?.length) done(j); })
+        resp
+          .json()
+          .then((j: any) => {
+            if (j?.data?.length) done(j);
+          })
           .catch(() => {});
       };
 
       page.on("response", handler);
 
       // Trigger the search in the page UI
-      page.locator('input[type="text"]').first()
+      page
+        .locator('input[type="text"]')
+        .first()
         .fill(title)
         .then(() => page.keyboard.press("Enter"))
         .catch(() => done(null));
@@ -133,9 +151,7 @@ async function scrapeHltb(page: any, title: string): Promise<{
     const json = await captured;
     if (!json?.data?.length) return null;
 
-    const exact = json.data.find(
-      (g: any) => g.game_name?.toLowerCase() === title.toLowerCase(),
-    );
+    const exact = json.data.find((g: any) => g.game_name?.toLowerCase() === title.toLowerCase());
     const match = exact ?? json.data[0];
     return {
       hltbId: match.game_id as number,
@@ -175,7 +191,9 @@ async function scrapeSteam(steamAppId: number): Promise<{
 async function main() {
   const deadline = Date.now() + MAX_HOURS * 3600 * 1000;
   console.log(`[scrape-all] Starting — max ${MAX_HOURS}h, deadline ${new Date(deadline).toLocaleTimeString()}`);
-  console.log(`[scrape-all] OC: ${SCRAPE_OC ? "ON" : "OFF"} | HLTB: ${SCRAPE_HLTB ? "ON" : "OFF"} | Steam: ${SCRAPE_STEAM ? "ON" : "OFF"}`);
+  console.log(
+    `[scrape-all] OC: ${SCRAPE_OC ? "ON" : "OFF"} | HLTB: ${SCRAPE_HLTB ? "ON" : "OFF"} | Steam: ${SCRAPE_STEAM ? "ON" : "OFF"}`,
+  );
 
   // Launch one browser, two tabs — one per site
   const browser = await chromium.launch({ headless: true });
@@ -196,7 +214,10 @@ async function main() {
     console.log("[scrape-all] HLTB browser ready");
   }
 
-  let ocCount = 0, hltbCount = 0, igdbCount = 0, steamCount = 0;
+  let ocCount = 0,
+    hltbCount = 0,
+    igdbCount = 0,
+    steamCount = 0;
 
   // Track repeated OC failures — blacklist after 3 consecutive misses
   const ocFails = new Map<number, number>();
@@ -260,7 +281,7 @@ async function main() {
         .where(
           ocBlacklist.size
             ? and(enrichWhere!, sql`${masterGames.id} NOT IN (${[...ocBlacklist].join(",")})`)
-            : enrichWhere!
+            : enrichWhere!,
         )
         .orderBy(sql`RANDOM()`)
         .limit(1);
@@ -322,7 +343,15 @@ async function main() {
             const ar = igdb.age_ratings?.[0];
             if (ar) {
               const catMap: Record<number, string> = { 1: "ESRB", 2: "PEGI" };
-              const ratingMap: Record<number, string> = { 6: "RP", 7: "EC", 8: "E", 9: "E10+", 10: "T", 11: "M", 12: "AO" };
+              const ratingMap: Record<number, string> = {
+                6: "RP",
+                7: "EC",
+                8: "E",
+                9: "E10+",
+                10: "T",
+                11: "M",
+                12: "AO",
+              };
               sets.ageRating = `${catMap[ar.category] ?? ""} ${ratingMap[ar.rating] ?? ar.rating}`.trim();
             }
             // Trailer
@@ -337,7 +366,7 @@ async function main() {
             // Screenshots
             if (!(g.screenshots as any)?.length && igdb.screenshots?.length) {
               sets.screenshots = igdb.screenshots
-                .map((s) => s.url?.startsWith("//") ? "https:" + s.url.replace("t_thumb", "t_screenshot_big") : s.url)
+                .map((s) => (s.url?.startsWith("//") ? "https:" + s.url.replace("t_thumb", "t_screenshot_big") : s.url))
                 .filter((u): u is string => !!u && !u.includes("nocover"));
             }
             igdbCount++;
@@ -346,7 +375,10 @@ async function main() {
         }
 
         if (Object.keys(sets).length > 1) {
-          await db.update(masterGames).set(sets as any).where(eq(masterGames.id, g.id));
+          await db
+            .update(masterGames)
+            .set(sets as any)
+            .where(eq(masterGames.id, g.id));
           didWork = true;
         }
         console.log(`${label}  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
@@ -382,7 +414,9 @@ async function main() {
             .where(eq(masterGames.id, g.id));
           steamCount++;
           didWork = true;
-          console.log(` Steam✓(${st.steamPlayers})  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
+          console.log(
+            ` Steam✓(${st.steamPlayers})  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`,
+          );
         } else {
           console.log(` Steam✗  [OC:${ocCount} HLTB:${hltbCount} IGDB:${igdbCount} ST:${steamCount}]`);
         }

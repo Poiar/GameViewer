@@ -1,9 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function removeErrorOverlay(page: any) {
-  await page.evaluate(() =>
-    document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()),
-  );
+  await page.evaluate(() => document.querySelectorAll("vite-error-overlay").forEach((e) => e.remove()));
 }
 
 async function navigateToInventory(page: any) {

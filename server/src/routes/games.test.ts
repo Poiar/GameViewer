@@ -12,7 +12,10 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-interface OwnedRelease { platforms: string[]; formats: string[] }
+interface OwnedRelease {
+  platforms: string[];
+  formats: string[];
+}
 
 interface GameRow {
   id: number;
@@ -26,7 +29,11 @@ interface GameRow {
   alternativeTitles: string[];
 }
 
-interface GenreRow { id: number; name: string; slug: string }
+interface GenreRow {
+  id: number;
+  name: string;
+  slug: string;
+}
 
 /**
  * Builds the response game object from a game row, genre map, release count map,
@@ -118,18 +125,14 @@ describe("buildOwnedMap", () => {
   });
 
   it("includes platforms array for each owned release", () => {
-    const owned = [
-      { releaseId: 1, gameId: 100, platforms: ["Win", "Mac"], format: "Digital" },
-    ];
+    const owned = [{ releaseId: 1, gameId: 100, platforms: ["Win", "Mac"], format: "Digital" }];
     const map = buildOwnedMap(owned);
     expect(map[100][0].platforms).toEqual(["Win", "Mac"]);
     expect(map[100][0].formats).toEqual(["Digital"]);
   });
 
   it("handles empty format", () => {
-    const owned = [
-      { releaseId: 1, gameId: 100, platforms: ["PS1"], format: "" },
-    ];
+    const owned = [{ releaseId: 1, gameId: 100, platforms: ["PS1"], format: "" }];
     const map = buildOwnedMap(owned);
     expect(map[100][0].formats).toEqual([]);
   });

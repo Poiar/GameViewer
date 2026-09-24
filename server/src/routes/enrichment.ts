@@ -27,12 +27,19 @@ async function updateGame(gameId: number, enrichment: Awaited<ReturnType<typeof 
   // Use IGDB cover if no cover exists
   if (enrichment.igdbCoverUrl && !enrichment.igdbCoverUrl.includes("nocover")) {
     // Only set cover if game doesn't already have one — check first
-    const [existing] = await db.select({ cover: masterGames.coverImageUrl }).from(masterGames).where(eq(masterGames.id, gameId)).limit(1);
+    const [existing] = await db
+      .select({ cover: masterGames.coverImageUrl })
+      .from(masterGames)
+      .where(eq(masterGames.id, gameId))
+      .limit(1);
     if (!existing?.cover) {
       setData["coverImageUrl"] = enrichment.igdbCoverUrl;
     }
   }
-  await db.update(masterGames).set(setData as any).where(eq(masterGames.id, gameId));
+  await db
+    .update(masterGames)
+    .set(setData as any)
+    .where(eq(masterGames.id, gameId));
 
   // Link IGDB genres if game has no genres yet
   if (enrichment.igdbGenres?.length) {
@@ -47,16 +54,12 @@ async function updateGame(gameId: number, enrichment: Awaited<ReturnType<typeof 
       const toLink: number[] = [];
 
       for (const igdbName of enrichment.igdbGenres) {
-        const match = localGenres.find(
-          (g) => g.name.toLowerCase() === igdbName.toLowerCase(),
-        );
+        const match = localGenres.find((g) => g.name.toLowerCase() === igdbName.toLowerCase());
         if (match) toLink.push(match.id);
       }
 
       if (toLink.length > 0) {
-        await db
-          .insert(masterGameGenres)
-          .values(toLink.map((genreId) => ({ gameId, genreId })));
+        await db.insert(masterGameGenres).values(toLink.map((genreId) => ({ gameId, genreId })));
       }
     }
   }
@@ -75,7 +78,10 @@ router.post("/batch", authenticate, async (req: Request, res: Response) => {
       .orderBy(sql`RANDOM()`)
       .limit(batchLimit);
 
-    if (!games.length) { res.json({ data: { message: "All games already enriched" }, error: null }); return; }
+    if (!games.length) {
+      res.json({ data: { message: "All games already enriched" }, error: null });
+      return;
+    }
 
     const results = [];
     for (const g of games) {
@@ -99,10 +105,20 @@ router.post("/batch", authenticate, async (req: Request, res: Response) => {
 router.post("/:id", authenticate, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string, 10);
-    if (isNaN(id)) { res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid game ID" } }); return; }
+    if (isNaN(id)) {
+      res.status(400).json({ data: null, error: { code: "INVALID_ID", message: "Invalid game ID" } });
+      return;
+    }
 
-    const [game] = await db.select({ id: masterGames.id, title: masterGames.title }).from(masterGames).where(eq(masterGames.id, id)).limit(1);
-    if (!game) { res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Game not found" } }); return; }
+    const [game] = await db
+      .select({ id: masterGames.id, title: masterGames.title })
+      .from(masterGames)
+      .where(eq(masterGames.id, id))
+      .limit(1);
+    if (!game) {
+      res.status(404).json({ data: null, error: { code: "NOT_FOUND", message: "Game not found" } });
+      return;
+    }
 
     const enrichment = await enrichGame(game.title);
     if (!enrichment.igdbId && !enrichment.opencriticId && !enrichment.hltbId) {

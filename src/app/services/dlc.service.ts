@@ -28,9 +28,7 @@ export class DlcService extends ApiBaseService {
     limit?: number;
     gameId?: number;
   }): Observable<{ data: DlcSummary[]; meta?: PaginationMeta }> {
-    return this.get<DlcSummary[]>("/dlc", params as Record<string, string | number | undefined>).pipe(
-      this.mapResponse,
-    );
+    return this.get<DlcSummary[]>("/dlc", params as Record<string, string | number | undefined>).pipe(this.mapResponse);
   }
 
   private mapResponse(

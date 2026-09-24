@@ -107,7 +107,13 @@ export interface Release {
   masterGame?: { id: number; title: string; slug: string } | null;
   editionType?: EditionType | null;
   releaseGroup?: ReleaseGroup & { masterGame?: MasterGame };
-  userOwns?: { id: number; condition: string | null; location: string | null; purchasePrice: string | null; acquiredDate: string | null } | null;
+  userOwns?: {
+    id: number;
+    condition: string | null;
+    location: string | null;
+    purchasePrice: string | null;
+    acquiredDate: string | null;
+  } | null;
 }
 
 export interface ReleaseDetail extends Release {

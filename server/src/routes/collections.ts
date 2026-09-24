@@ -155,9 +155,7 @@ router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
         const owned = await db
           .select({ releaseId: ownedInstances.releaseId })
           .from(ownedInstances)
-          .where(
-            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, releaseIds)),
-          );
+          .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.releaseId, releaseIds)));
         for (const o of owned) {
           if (o.releaseId) ownedReleaseIds.add(o.releaseId);
         }
@@ -166,9 +164,7 @@ router.get("/:id", optionalAuth, async (req: Request, res: Response) => {
         const ownedDlc = await db
           .select({ dlcReleaseId: ownedInstances.dlcReleaseId })
           .from(ownedInstances)
-          .where(
-            and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, dlcReleaseIds)),
-          );
+          .where(and(eq(ownedInstances.userId, req.user.userId), inArray(ownedInstances.dlcReleaseId, dlcReleaseIds)));
         for (const o of ownedDlc) {
           if (o.dlcReleaseId) ownedDlcReleaseIds.add(o.dlcReleaseId);
         }

@@ -56,10 +56,7 @@ function shouldApplyIgdbCover(igdbCoverUrl: string | undefined, existingCover: s
 /**
  * Match IGDB genre names to local genre IDs.
  */
-function matchGenres(
-  igdbGenres: string[],
-  localGenres: Array<{ id: number; name: string }>,
-): number[] {
+function matchGenres(igdbGenres: string[], localGenres: Array<{ id: number; name: string }>): number[] {
   return igdbGenres
     .map((igdbName) => {
       const match = localGenres.find((g) => g.name.toLowerCase() === igdbName.toLowerCase());

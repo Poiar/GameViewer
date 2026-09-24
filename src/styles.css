@@ -81,12 +81,17 @@ body {
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  html { scroll-behavior: auto; }
+
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* ── Focus visible ── */
@@ -103,8 +108,12 @@ body {
 }
 
 /* ── Better mobile tap targets ── */
-@media (max-width: 768px) {
-  button, a, .chip, .page-btn, .page-dot {
+@media (width <= 768px) {
+  button,
+  a,
+  .chip,
+  .page-btn,
+  .page-dot {
     min-height: 40px;
     min-width: 40px;
   }

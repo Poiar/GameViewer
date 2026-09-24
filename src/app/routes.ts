@@ -18,7 +18,8 @@ export const routes: Routes = [
   },
   {
     path: "collections/:id",
-    loadComponent: () => import("./pages/collection-detail-page.component").then((m) => m.CollectionDetailPageComponent),
+    loadComponent: () =>
+      import("./pages/collection-detail-page.component").then((m) => m.CollectionDetailPageComponent),
     data: { title: "Collection Detail" },
   },
   {
