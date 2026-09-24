@@ -503,7 +503,7 @@ All endpoints are prefixed with `/api`. Auth-required endpoints marked with 🔒
 | `format`        | Format source files with Prettier                                                                                                              |
 | `format:check`  | Check formatting without fixing                                                                                                                |
 | `typecheck`     | TypeScript type checking (tsc --noEmit)                                                                                                        |
-| `build-readme`  | npx tsx scripts/build-readme.ts                                                                                                                |
+| `build-readme`  | npx tsx scripts/build-readme.ts && prettier --write README.md                                                                                  |
 | `check`         | npm run lint && npm run format:check && npm run test:unit && npm run build-readme                                                              |
 | `prepare`       | Install Husky git hooks                                                                                                                        |
 
